@@ -1,0 +1,24 @@
+[general]
+context=from-internal
+bindport=${SIP_INTERNAL_PORT}
+bindaddr=0.0.0.0
+transport=udp
+externaddr=172.30.1.11:${SIP_EXTERNAL_PORT}
+localnet=172.18.0.0/255.255.0.0
+
+nat=force_rport,comedia
+directmedia=no
+dtmfmode=rfc2833
+relaxdtmf=yes
+qualify=yes
+
+; --- SIP Trunk Definition (Item 4) ---
+[${TRUNK_NAME}]
+type=peer
+host=${TRUNK_HOST}
+username=${TRUNK_USER}
+secret=${TRUNK_SECRET}
+fromuser=${TRUNK_USER}
+context=from-trunk
+insecure=invite,port
+qualify=yes

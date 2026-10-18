@@ -1,0 +1,133 @@
+services:
+  asterisk-db:
+    image: mysql:8.0
+    container_name: asterisk-db-crm
+    environment: 
+      - MYSQL_ROOT_PASSWORD=Crmbank123!
+      - MYSQL_DATABASE=asterisk
+      - TZ=Asia/Seoul
+    command: ["mysqld", "--lower-case-table-names=1"]
+    ports: ["3308:3306"]
+    volumes:
+      - /data/smart-erp-crm/mysql:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: always
+
+  asterisk:
+    build:
+      context: .
+      dockerfile: Dockerfile.asterisk
+    image: smart-erp-crm-asterisk:latest
+    container_name: asterisk-crm
+    ports:
+      - "5062:5060/udp"
+      - "5039:5038/tcp"
+      - "10200-10300:10200-10300/udp"
+    environment:
+      - ODBCINI=/etc/odbc.ini
+      - ODBCSYSINI=/etc
+      - TZ=Asia/Seoul
+    volumes:
+      - ./asterisk_config:/etc/asterisk
+      - /data/smart-erp-crm/sounds/custom:/var/lib/asterisk/sounds/custom:rw
+      - /data/smart-erp-crm/recordings:/var/spool/asterisk/monitor:rw
+      - ./asterisk_config/odbc.ini:/etc/odbc.ini
+      - ./asterisk_config/odbcinst.ini:/etc/odbcinst.ini
+      - /usr/lib/x86_64-linux-gnu/odbc:/usr/lib/x86_64-linux-gnu/odbc:ro
+      - /usr/lib/x86_64-linux-gnu/libssl.so.1.1:/usr/lib/x86_64-linux-gnu/libssl.so.1.1:ro
+      - /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1:/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1:ro
+    depends_on:
+      - asterisk-db
+    restart: always
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./k8s-deploy/backend/Dockerfile
+    image: smart-erp-crm-backend:latest
+    container_name: backend-crm
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATA_REDIS_HOST=chatwoot-redis-crm
+      - SPRING_DATA_REDIS_PORT=6379
+      - ERP_DB_HOST=172.30.1.11
+      - ERP_DB_PORT=3308
+      - ASTERISK_HOST=172.30.1.11
+      - ASTERISK_PORT=5039
+      - ASTERISK_USERNAME=admin
+      - ASTERISK_PASSWORD=Crmbank123!
+      - SECURITY_USERNAME=admin
+      - SECURITY_PASSWORD=Crmbank123!
+    ports: ["8090:8080"]
+    volumes: 
+      - /data/smart-erp-crm/storage:/app/storage
+      - /data/smart-erp-crm/sounds/custom:/var/lib/asterisk/sounds/custom:rw
+      - /data/smart-erp-crm/recordings:/var/spool/asterisk/monitor:ro
+      - ./backend.log:/app/backend.log
+    depends_on: [asterisk-db, chatwoot-redis-crm]
+    restart: always
+
+  frontend:
+    build:
+      context: ./erp-frontend
+      dockerfile: Dockerfile
+    image: smart-erp-crm-frontend:latest
+    container_name: frontend-crm
+    ports: ["18889:80"]
+    volumes:
+      - ./nginx_config/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - /data/smart-erp-crm/sounds/custom:/var/lib/asterisk/sounds/custom:ro
+      - /data/smart-erp-crm/recordings:/data/smart-erp-crm/recordings:ro
+    depends_on: [backend]
+    restart: always
+
+  chatwoot-postgres:
+    image: pgvector/pgvector:pg12
+    container_name: chatwoot-postgres-crm
+    environment:
+      POSTGRES_DB: chatwoot
+      POSTGRES_USER: chatwoot
+      POSTGRES_PASSWORD: "Crmbank123!"
+    volumes:
+      - /data/smart-erp-crm/chatwoot/postgres:/var/lib/postgresql/data
+    restart: always
+
+  chatwoot-redis-crm:
+    image: redis:6-alpine
+    container_name: chatwoot-redis-crm
+    ports: ["6380:6379"]
+    restart: always
+
+  chatwoot-web:
+    image: chatwoot/chatwoot:latest
+    container_name: chatwoot-web-crm
+    command: ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
+    environment:
+      FRONTEND_URL: "http://172.30.1.11:3001"
+      REDIS_URL: "redis://chatwoot-redis-crm:6379/0"
+      POSTGRES_HOST: chatwoot-postgres-crm
+      POSTGRES_DATABASE: chatwoot
+      POSTGRES_USERNAME: chatwoot
+      POSTGRES_PASSWORD: "Crmbank123!"
+      RAILS_ENV: production
+      SECRET_KEY_BASE: 7ba8ef8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e
+    ports: ["3001:3000"]
+    depends_on: [chatwoot-postgres, chatwoot-redis-crm]
+    restart: always
+
+  chatwoot-worker:
+    image: chatwoot/chatwoot:latest
+    container_name: chatwoot-worker-crm
+    command: ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
+    environment:
+      FRONTEND_URL: "http://172.30.1.11:3001"
+      REDIS_URL: "redis://chatwoot-redis-crm:6379/0"
+      POSTGRES_HOST: chatwoot-postgres-crm
+      POSTGRES_DATABASE: chatwoot
+      POSTGRES_USERNAME: chatwoot
+      POSTGRES_PASSWORD: "Crmbank123!"
+      RAILS_ENV: production
+      SECRET_KEY_BASE: 7ba8ef8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e8e
+    depends_on: [chatwoot-postgres, chatwoot-redis-crm]
+    restart: always
