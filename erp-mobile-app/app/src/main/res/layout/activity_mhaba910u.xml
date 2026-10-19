@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- Header (Airbnb Style) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="내 상태 관리"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#222222"
+            android:letterSpacing="-0.03"/>
+        <TextView
+            android:id="@+id/tvUserSub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전화 연결 및 근무 상태 설정"
+            android:textSize="14sp"
+            android:textColor="#717171"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp">
+
+            <!-- My Info Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="내 정보"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#222222"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="12dp">
+                <TextView android:layout_width="80dp" android:layout_height="wrap_content" android:text="내선번호" android:textColor="#717171" android:textSize="14sp"/>
+                <TextView android:id="@+id/tvInnerNo" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-" android:textColor="#222222" android:textSize="14sp" android:textStyle="bold"/>
+            </LinearLayout>
+            <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#F0F0F0"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="12dp">
+                <TextView android:layout_width="80dp" android:layout_height="wrap_content" android:text="휴대폰" android:textColor="#717171" android:textSize="14sp"/>
+                <TextView android:id="@+id/tvHpNo" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="-" android:textColor="#222222" android:textSize="14sp" android:textStyle="bold"/>
+            </LinearLayout>
+            <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#F0F0F0"/>
+
+            <!-- Settings Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="전화 및 근무 설정"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#222222"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="32dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="근무 상태" android:textSize="12sp" android:textColor="#0d6efd" android:textStyle="bold" android:layout_marginBottom="8dp"/>
+            <Spinner
+                android:id="@+id/spStatus"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginBottom="20dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="전화 연결 모드" android:textSize="12sp" android:textColor="#0d6efd" android:textStyle="bold" android:layout_marginBottom="8dp"/>
+            <Spinner
+                android:id="@+id/spRouting"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginBottom="32dp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_button_gradient"
+                android:text="설정 저장"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="40dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

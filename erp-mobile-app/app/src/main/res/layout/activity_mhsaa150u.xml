@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F2F5"
+    android:importantForAutofill="noExcludeDescendants">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="영업문서 등록"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReset"
+            android:layout_width="52dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_button_gradient_gray"
+            android:text="신규"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSave"
+            android:layout_width="52dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="저장"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnDelete"
+            android:layout_width="52dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_button_gradient_orange"
+            android:text="삭제"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- Row 1: Sales Search & Add Time -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp"
+                android:baselineAligned="false">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="4dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="영업건 *"
+                        android:textSize="11sp"
+                        android:textColor="#0d6efd"
+                        android:textStyle="bold"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:orientation="horizontal">
+                        <EditText
+                            android:id="@+id/etSalesTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_input_field"
+                            android:focusable="false"
+                            android:hint="영업건 선택"
+                            android:paddingHorizontal="10dp"
+                            android:textSize="13sp"
+                            android:textColor="#333333"/>
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnSalesSearch"
+                            android:layout_width="45dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="4dp"
+                            android:background="@drawable/bg_button_gradient_gray"
+                            android:text="조회"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical"
+                    android:layout_marginStart="4dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="등록일자 *"
+                        android:textSize="11sp"
+                        android:textColor="#666666"/>
+                    <TextView
+                        android:id="@+id/tvAddTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="center"
+                        android:textSize="13sp"
+                        android:textColor="#333333"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Row 2: Doc Type | Title -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp"
+                android:baselineAligned="false">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="4dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="문서유형"
+                        android:textSize="11sp"
+                        android:textColor="#666666"/>
+                    <Spinner
+                        android:id="@+id/spDocGb"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:background="@drawable/bg_input_field"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.2"
+                    android:orientation="vertical"
+                    android:layout_marginStart="4dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="문서제목 *"
+                        android:textSize="11sp"
+                        android:textColor="#666666"/>
+                    <EditText
+                        android:id="@+id/etTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingHorizontal="10dp"
+                        android:textSize="13sp"
+                        android:textColor="#333333"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Row 3: File selection -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="파일 선택 (이미지)"
+                android:textSize="11sp"
+                android:textColor="#666666"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <EditText
+                    android:id="@+id/etFileName"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_input_field"
+                    android:focusable="false"
+                    android:hint="선택된 파일 없음"
+                    android:paddingHorizontal="10dp"
+                    android:textSize="13sp"
+                    android:textColor="#333333"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnCamera"
+                    android:layout_width="50dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/bg_button_gradient_gray"
+                    android:text="📷"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnGallery"
+                    android:layout_width="50dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/bg_button_gradient_gray"
+                    android:text="🖼"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ivPreview"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="12dp"
+                android:background="#DDDDDD"
+                android:scaleType="centerInside"
+                android:visibility="gone"/>
+
+            <!-- List Area -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="해당 영업건 관련 문서 리스트"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#FFFFFF">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="#E0E0E0"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="8dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.6" android:text="유형" android:gravity="center" android:textSize="10sp" android:textStyle="bold"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.5" android:text="제목" android:gravity="center" android:textSize="10sp" android:textStyle="bold"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.8" android:text="등록일" android:gravity="center" android:textSize="10sp" android:textStyle="bold"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/llDocsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:background="#FFFFFF"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="1dp">
+
+    <!-- 품명 (가장 넓게 차지) -->
+    <TextView
+        android:id="@+id/tvItemNm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.5"
+        android:text="상품명"
+        android:textSize="12sp"
+        android:textColor="#333333"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:paddingEnd="4dp"/>
+
+    <!-- 적정재고 -->
+    <TextView
+        android:id="@+id/tvProperQty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0"
+        android:textSize="12sp"
+        android:textColor="#666666"
+        android:gravity="end"
+        android:paddingEnd="4dp"/>
+
+    <!-- 현재고 -->
+    <TextView
+        android:id="@+id/tvStockQty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0"
+        android:textSize="12sp"
+        android:textColor="#2196F3"
+        android:textStyle="bold"
+        android:gravity="end"
+        android:paddingEnd="4dp"/>
+
+    <!-- 재고금액 -->
+    <TextView
+        android:id="@+id/tvStockAmt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.8"
+        android:text="0"
+        android:textSize="12sp"
+        android:textColor="#333333"
+        android:gravity="end"/>
+
+</LinearLayout>

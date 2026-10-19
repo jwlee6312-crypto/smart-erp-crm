@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical">
+
+    <!-- 거래처명 -->
+    <TextView
+        android:id="@+id/tvPopCustNm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="11sp"
+        android:textColor="#333333"
+        android:gravity="start"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+    <!-- 발주일 -->
+    <TextView
+        android:id="@+id/tvPopBalYmd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:textSize="11sp"
+        android:textColor="#333333"
+        android:gravity="center"/>
+
+    <!-- 발주번호 -->
+    <TextView
+        android:id="@+id/tvPopBalno"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:textSize="11sp"
+        android:textColor="#2196F3"
+        android:gravity="center"/>
+
+</LinearLayout>

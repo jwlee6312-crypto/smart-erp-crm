@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#FFFFFF">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="콜백 응대 결과 등록"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="상담 메모"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/etRemark"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/bg_input_field"
+        android:gravity="top"
+        android:hint="상담 내용을 입력하세요."
+        android:padding="12dp"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_button_gradient_blue"
+        android:text="저장하기"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold" />
+
+</LinearLayout>

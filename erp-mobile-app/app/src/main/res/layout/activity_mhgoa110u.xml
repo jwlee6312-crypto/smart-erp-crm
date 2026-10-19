@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F7FA">
+
+    <!-- 상단 검색 영역 (MHABA920U 스타일 계승) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp">
+
+        <EditText
+            android:id="@+id/etSearchPhone"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:hint="전화번호 검색"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btnSearch"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bg_button_gradient_blue"
+            android:text="조회"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 요약 바 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="#E3F2FD"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/tvSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="미결 콜백: 0건"
+            android:textColor="#1976D2"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 콜백 리스트 -->
+    <ListView
+        android:id="@+id/lvCallbackList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:padding="8dp"
+        android:clipToPadding="false"/>
+
+</LinearLayout>

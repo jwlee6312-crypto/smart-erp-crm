@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/ic_main_logo"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/ic_main_logo"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SmartERP"
+        android:usesCleartextTraffic="true">
+
+
+        <activity
+            android:name="com.crmbank.erp.mobile.LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.crmbank.erp.mobile.MenuActivity" />
+        <activity android:name="com.crmbank.erp.mobile.SubMenuActivity" />
+        <activity android:name="com.crmbank.erp.mobile.CommonMenuActivity" />
+        <activity android:name="com.crmbank.erp.mobile.InboundRegisterActivity" />
+        <activity android:name="com.crmbank.erp.mobile.OutboundRegisterActivity" />
+
+        <!-- 🚀 콜백 관리 (HGOA) -->
+        <activity android:name="com.crmbank.erp.mobile.hgoa.MHGOA110U" />
+
+        <!-- 🚀 M+PGMID 명칭 표준화 완료 (언더바 없음) -->
+        <activity android:name="com.crmbank.erp.mobile.haba.MHABA060U" />
+        <activity android:name="com.crmbank.erp.mobile.haba.MHABA920U" />
+        <activity android:name="com.crmbank.erp.mobile.hpba.MHPBA200U" />
+        <activity android:name="com.crmbank.erp.mobile.hpba.MHPBA210U" />
+        <activity android:name="com.crmbank.erp.mobile.hpio.MHPIO230S" />
+        <activity android:name="com.crmbank.erp.mobile.hpio.MHPIO250U" />
+        <activity android:name="com.crmbank.erp.mobile.hpio.MHPIO251S" />
+        <activity android:name="com.crmbank.erp.mobile.hpio.MHPIO252S" />
+        <activity android:name="com.crmbank.erp.mobile.hpio.MHPIO300U" />
+        <activity android:name="com.crmbank.erp.mobile.hpio.MHPIO320U" />
+        <activity android:name="com.crmbank.erp.mobile.hpio.MHPIO360S" />
+        <activity android:name="com.crmbank.erp.mobile.hpio.MHPIO400U" />
+        <activity android:name="com.crmbank.erp.mobile.hpio.MHPIO420S" />
+        <activity android:name="com.crmbank.erp.mobile.hpio.MHPIO720S" />
+        <activity android:name="com.crmbank.erp.mobile.hpio.MHPIO900U" />
+        <activity android:name="com.crmbank.erp.mobile.hppl.MHPPL150U" />
+        <activity android:name="com.crmbank.erp.mobile.hppl.MHPPL170U" />
+        <activity android:name="com.crmbank.erp.mobile.hsba.MHSBA010U" />
+        <activity android:name="com.crmbank.erp.mobile.hsba.MHSBA070U" />
+        <activity android:name="com.crmbank.erp.mobile.hsba.MHSBA900U" />
+
+        <activity android:name="com.crmbank.erp.mobile.hsaa.MHSAA100U" />
+        <activity android:name="com.crmbank.erp.mobile.hsaa.MHSAA110U" />
+        <activity android:name="com.crmbank.erp.mobile.hsaa.MHSAA120U" />
+        <activity android:name="com.crmbank.erp.mobile.hsaa.MHSAA130U" />
+        <activity android:name="com.crmbank.erp.mobile.hsaa.MHSAA140U" />
+        <activity android:name="com.crmbank.erp.mobile.hsaa.MHSAA150U" />
+        <activity android:name="com.crmbank.erp.mobile.hsaa.MHSAA200S" />
+        <activity android:name="com.crmbank.erp.mobile.hsaa.MHSAA400U" />
+        <activity android:name="com.crmbank.erp.mobile.haba.MHABA910U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO690S" />
+
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO010U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO052U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO060U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO070U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO080S" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO104U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO204U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO110U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO120U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO190U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO200S" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO300U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO400S" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO490U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO510U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO520U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO550U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO560U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO570U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO580U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO590U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO600S" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO600U" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO620S" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO650S" />
+        <activity android:name="com.crmbank.erp.mobile.hsio.MHSIO680S" />
+        <activity android:name="com.crmbank.erp.mobile.hsod.MHSOD100U" />
+        <activity android:name="com.crmbank.erp.mobile.hsod.MHSOD110S" />
+        <activity android:name="com.crmbank.erp.mobile.hsod.MHSOD200U" />
+        <activity android:name="com.crmbank.erp.mobile.hsod.MHSOD300U" />
+        <activity android:name="com.crmbank.erp.mobile.hsst.MHSST010S" />
+        <activity android:name="com.crmbank.erp.mobile.hsst.MHSST100S" />
+        <activity android:name="com.crmbank.erp.mobile.hsst.MHSST180S" />
+        <activity android:name="com.crmbank.erp.mobile.hsst.MHSST200S" />
+
+        <!-- 공통 바코드 스캐너 액티비티 -->
+        <activity
+            android:name="com.crmbank.erp.mobile.BarcodeScanActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- 🌐 웹뷰 폴백 액티비티 추가 -->
+        <activity
+            android:name="com.crmbank.erp.mobile.CommonWebViewActivity"
+            android:configChanges="orientation|screenSize" />
+
+    </application>
+
+</manifest>

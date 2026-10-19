@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:gravity="center_vertical"
+    android:background="#FFFFFF">
+
+    <!-- 거래처 / 입고일자 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvCustNm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="#212529"
+            android:textStyle="bold"
+            android:ellipsize="end"
+            android:maxLines="1"/>
+        <TextView
+            android:id="@+id/tvInYmd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:textColor="#6C757D"
+            android:layout_marginTop="2dp"/>
+    </LinearLayout>
+
+    <!-- 품목명 -->
+    <TextView
+        android:id="@+id/tvItemNm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:textSize="12sp"
+        android:textColor="#495057"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:ellipsize="end"
+        android:maxLines="2"/>
+
+    <!-- 수량 -->
+    <TextView
+        android:id="@+id/tvInQty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:textSize="13sp"
+        android:textColor="#212529"
+        android:textStyle="bold"
+        android:gravity="end"/>
+
+    <!-- 공급가 -->
+    <TextView
+        android:id="@+id/tvInAmt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:textSize="12sp"
+        android:textColor="#495057"
+        android:gravity="end"/>
+
+    <!-- 부가세 (필요시 표시, 현재는 공급가까지만 헤더에 있음) -->
+    <TextView
+        android:id="@+id/tvInVat"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:textSize="11sp"
+        android:textColor="#868E96"
+        android:gravity="end"/>
+
+</LinearLayout>

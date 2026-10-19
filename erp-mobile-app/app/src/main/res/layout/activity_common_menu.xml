@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F2F5"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="공통 관리"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="기초 정보를 관리합니다"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            android:layout_marginBottom="40dp"/>
+
+        <!-- 거래처등록 버튼 (회색/남색) -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCustomerRegister"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_button_gradient"
+            android:backgroundTint="#607D8B"
+            android:text="거래처 등록"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:stateListAnimator="@null"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- 직원현황 버튼 (파란색) -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnEmployeeStatus"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="직원현황"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:stateListAnimator="@null"/>
+
+    </LinearLayout>
+</ScrollView>

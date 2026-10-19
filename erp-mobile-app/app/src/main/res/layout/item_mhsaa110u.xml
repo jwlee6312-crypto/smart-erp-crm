@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="8dp"
+    android:paddingHorizontal="8dp"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:orientation="vertical"
+        android:paddingEnd="4dp">
+        <TextView
+            android:id="@+id/tvItemNm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="품목명"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+        <TextView
+            android:id="@+id/tvItemCd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="IT001"
+            android:textSize="10sp"
+            android:textColor="#999999"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/etQty"
+        android:layout_width="0dp"
+        android:layout_height="34dp"
+        android:layout_weight="0.5"
+        android:background="@drawable/bg_input_field"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:text="1"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/tvAmt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:gravity="end"
+        android:paddingEnd="8dp"
+        android:text="100,000"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#0d6efd"/>
+
+    <ImageButton
+        android:id="@+id/btnDelete"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_delete"
+        android:contentDescription="삭제"
+        app:tint="#dc3545"
+        xmlns:app="http://schemas.android.com/apk/res-auto"/>
+
+</LinearLayout>

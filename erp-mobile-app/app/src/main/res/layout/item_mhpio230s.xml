@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@drawable/bg_card"
+    android:layout_marginBottom="6dp">
+
+    <!-- Row 1: 지시일자 & LOT NO. & 생산공정 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:id="@+id/tvOrdYmd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2026-10-10"
+            android:textSize="11sp"
+            android:textColor="#333333"
+            android:layout_marginEnd="6dp"/>
+
+        <TextView
+            android:id="@+id/tvLotDisp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="LOT-0001"
+            android:textSize="11sp"
+            android:textColor="#005A9F"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/tvProgNm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="조립공정"
+            android:textSize="10sp"
+            android:textColor="#666666"
+            android:background="#E2E8F0"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="1dp"/>
+    </LinearLayout>
+
+    <!-- Row 2: 품목명 & 규격/단위 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:id="@+id/tvItemName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:text="제품명"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:textColor="#333333"
+            android:textStyle="bold"
+            android:layout_marginEnd="6dp"/>
+
+        <TextView
+            android:id="@+id/tvItSize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="규격 / EA"
+            android:textSize="11sp"
+            android:textColor="#666666"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+    </LinearLayout>
+
+    <!-- Row 3: 지시수량 & 생산수량 & 납품처 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvOrdQty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="지시: 0"
+            android:textSize="11sp"
+            android:textColor="#005A9F"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/tvProdQty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="생산: 0"
+            android:textSize="11sp"
+            android:textColor="#2E7D32"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/tvCustNm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="납품처명"
+            android:textSize="11sp"
+            android:textColor="#666666"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+    </LinearLayout>
+
+</LinearLayout>

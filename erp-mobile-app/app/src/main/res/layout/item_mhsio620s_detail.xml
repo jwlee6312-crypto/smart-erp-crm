@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:gravity="center_vertical"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvItemNm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="품명"
+            android:textSize="12sp"
+            android:textColor="#333333"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+        <TextView
+            android:id="@+id/tvSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="규격"
+            android:textSize="10sp"
+            android:textColor="#757575"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvQty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:text="0"
+        android:gravity="end"
+        android:textSize="12sp"
+        android:textColor="#333333"/>
+
+    <TextView
+        android:id="@+id/tvAmt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:text="0"
+        android:gravity="end"
+        android:textSize="12sp"
+        android:textColor="#333333"
+        android:textStyle="bold"/>
+
+</LinearLayout>

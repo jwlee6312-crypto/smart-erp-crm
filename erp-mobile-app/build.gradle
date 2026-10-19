@@ -1,0 +1,8 @@
+// Top-level build file for the mobile app sub-project.
+plugins {
+    // 🚀 안드로이드 앱 빌드에 필요한 플러그인 버전을 명시합니다.
+    id 'com.android.application' version '8.5.2' apply false
+    id 'com.android.library' version '8.5.2' apply false
+}
+
+// 💡 settings.gradle에서 저장소를 관리하므로, 이곳의 중복 설정은 제거합니다.

@@ -1,0 +1,131 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'net'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '21'
+}
+
+bootRun {
+	// ✅ 한글 깨짐 방지를 위해 실행 환경의 인코딩을 UTF-8로 강제 고정합니다.
+	jvmArgs = [
+		"-Duser.timezone=Asia/Seoul", 
+		"-Dfile.encoding=UTF-8", 
+		"-Dconsole.encoding=UTF-8",
+		"-Dsun.stdout.encoding=UTF-8",
+		"-Dsun.stderr.encoding=UTF-8"
+	]
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Playwright
+	implementation "com.microsoft.playwright:playwright:1.56.0"
+	runtimeOnly  "com.microsoft.playwright:driver-bundle:1.56.0"
+	constraints {
+		implementation("com.microsoft.playwright:driver-bundle:1.56.0")
+		implementation("com.microsoft.playwright:driver:1.56.0")
+	}
+	implementation 'org.eclipse.angus:angus-activation:2.0.1'
+	runtimeOnly "com.sun.activation:jakarta.activation:2.0.1"
+
+	// Spring Boot Starters
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-logging'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// implementation 'org.springframework.boot:spring-boot-starter-batch'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	// MyBatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+
+	// JWT
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	// Database
+	runtimeOnly 'com.h2database:h2'
+	implementation 'com.mysql:mysql-connector-j:8.4.0'
+	implementation 'com.microsoft.sqlserver:mssql-jdbc:12.2.0.jre11'
+
+	// Lombok 설정
+	compileOnly 'org.projectlombok:lombok:1.18.48'
+	annotationProcessor 'org.projectlombok:lombok:1.18.48'
+
+	// Apache POI (Excel)
+	implementation 'org.apache.poi:poi:5.4.0'
+	implementation 'org.apache.poi:poi-ooxml:5.4.0'
+
+	// HTML to PDF
+	implementation 'com.openhtmltopdf:openhtmltopdf-core:1.0.10'
+	implementation 'com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10'
+
+	// Devtools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// Test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+	testImplementation 'org.mockito:mockito-core:4.0.0'
+	testImplementation 'com.jayway.jsonpath:json-path:2.7.0'
+
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.session:spring-session-data-redis'
+
+	// prometheus
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
+	// Asterisk-Java
+	// implementation 'org.asteriskjava:asterisk-java:3.12.0'
+	implementation 'org.asteriskjava:asterisk-java:3.41.0'
+
+	// Swagger (SpringDoc OpenAPI)
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+}
+
+
+configurations.all {
+	resolutionStrategy {
+		force "com.microsoft.playwright:playwright:1.56.0",
+				"com.microsoft.playwright:driver-bundle:1.56.0",
+				"com.microsoft.playwright:driver:1.56.0"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// ✅ 컴파일 및 리소스 처리 시 인코딩을 UTF-8로 지정합니다.
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+tasks.withType(ProcessResources) {
+	filteringCharset = 'UTF-8'
+}
+
+tasks.register('playwrightCliInstallChromium', JavaExec) {
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.microsoft.playwright.CLI'
+	args 'install', 'chromium'
+}

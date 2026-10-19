@@ -1,0 +1,49 @@
+# ==========================================
+# Smart ERP CRM - .gitignore
+# ==========================================
+
+# Build outputs & dependencies
+.gradle/
+build/
+bin/
+node_modules/
+dist/
+erp-backend/build/
+erp-mobile-app/.gradle/
+erp-mobile-app/app/build/
+erp-frontend/node_modules/
+erp-frontend/dist/
+
+# Logs & temp files
+*.log
+.idea/
+.vscode/
+backups/
+*.bak
+scratch/
+
+# Databases & local runtime volumes
+mysql_data/
+mssql_data/
+asterisk_data/
+storage/
+data/
+recordings/
+
+# AI Agent Artifacts & Credentials
+.artifacts/
+.credentials
+.credentials_rsaparams
+local.properties
+
+# Binaries & Archives
+*.jar
+*.apk
+*.aab
+*.apks
+*.gdmp
+*.tar.gz
+
+# Stray index entries
+...
+erp-backend/...

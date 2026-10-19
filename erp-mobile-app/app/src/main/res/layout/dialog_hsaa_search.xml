@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <TextView
+        android:id="@+id/tvPopTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="영업건 검색"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- 기간 섹션 -->
+    <TextView
+        android:id="@+id/tvPopDateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="등록기간"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#0d6efd"
+        android:layout_marginBottom="4dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:id="@+id/tvPopStartDate"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="#333333"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="~"
+            android:textColor="#333333"
+            android:paddingHorizontal="8dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvPopEndDate"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="#333333"/>
+    </LinearLayout>
+
+    <!-- 검색어 섹션 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="거래처/건명"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#0d6efd"
+        android:layout_marginBottom="4dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <EditText
+            android:id="@+id/etPopSearch"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:hint="검색어 입력"
+            android:paddingStart="12dp"
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:textColorHint="#AAAAAA"
+            android:singleLine="true"
+            android:importantForAutofill="no"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnPopSearch"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_button_gradient_blue"
+            android:text="조회"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 결과 리스트 헤더 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="#E0E0E0"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="거래처" android:textSize="11sp" android:textStyle="bold" android:textColor="#333333" android:gravity="center"/>
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.2" android:text="영업건명" android:textSize="11sp" android:textStyle="bold" android:textColor="#333333" android:gravity="center"/>
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.8" android:text="등록일" android:textSize="11sp" android:textStyle="bold" android:textColor="#333333" android:gravity="center"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lvPopList"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:divider="#EEEEEE"
+        android:dividerHeight="1dp"
+        android:background="#FFFFFF"/>
+
+    <Button
+        android:id="@+id/btnPopClose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="닫기"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#757575"
+        android:textColor="#FFFFFF"/>
+
+</LinearLayout>

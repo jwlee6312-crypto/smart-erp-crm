@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erp-backend
+  labels:
+    app: erp-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: erp-backend
+  template:
+    metadata:
+      labels:
+        app: erp-backend
+    spec:
+      containers:
+      - name: erp-backend
+        image: erp-backend:v1
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-backend-service
+spec:
+  selector:
+    app: erp-backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: NodePort

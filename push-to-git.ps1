@@ -1,22 +1,20 @@
 # ==========================================
-# GitHub Repository Push Automation Script (PowerShell)
-# Repository: https://github.com/jwlee6312-crypto/smart-erp-crm
+# Clean Git Push Script (PowerShell)
 # ==========================================
 
-Write-Host "🚀 [Git] Staging project files..." -ForegroundColor Green
-git add .
+Write-Host "🧹 [Git] Cleaning up git state..." -ForegroundColor Yellow
+if (Test-Path ".git/index") {
+    Remove-Item .git/index -Force
+}
+git reset
 
-Write-Host "📦 [Git] Committing changes..." -ForegroundColor Green
-git commit -m "chore: Clean up project structure and finalize clean repository"
+Write-Host "🚀 Staging current project files..." -ForegroundColor Green
+git add -A
 
-Write-Host "🔗 [Git] Connecting remote repository..." -ForegroundColor Green
-git remote remove origin 2>$null
-git remote add origin https://github.com/jwlee6312-crypto/smart-erp-crm.git
+Write-Host "📦 Committing changes..." -ForegroundColor Green
+git commit -m "feat: Update project source code" --allow-empty
 
-Write-Host "🌿 [Git] Setting branch to main..." -ForegroundColor Green
-git branch -M main
+Write-Host "📤 Pushing to GitHub..." -ForegroundColor Green
+git push origin main
 
-Write-Host "📤 [Git] Pushing code to GitHub (https://github.com/jwlee6312-crypto/smart-erp-crm)..." -ForegroundColor Green
-git push -u origin main
-
-Write-Host "✨ [Git] Successfully pushed project to GitHub!" -ForegroundColor Cyan
+Write-Host "✨ Done!" -ForegroundColor Cyan

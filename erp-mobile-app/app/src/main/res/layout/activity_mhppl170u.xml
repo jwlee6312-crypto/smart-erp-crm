@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F2F5">
+
+    <!-- 1. Header Area -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="주간 생산계획 (MHPPL170U)"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReset"
+            android:layout_width="55dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_button_gradient_gray"
+            android:text="초기화"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSearch"
+            android:layout_width="55dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="조회"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 2. Search Filter Card -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:background="#FFFFFF"
+        android:layout_margin="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="납기기간"
+                android:textSize="11sp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvStartDate"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#333333"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="~"
+                android:textColor="#333333"
+                android:paddingHorizontal="6dp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvEndDate"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="대상구분"
+                android:textSize="11sp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <Spinner
+                android:id="@+id/spGubun"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 3. Dual List Panel (Targets & Plans) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="8dp">
+
+        <!-- Top List: Orders & Requests -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:layout_marginBottom="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:background="#E2E8F0"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="주문/요청 내역"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#005A9F"/>
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/lvTargetList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#F0F2F5"
+                android:dividerHeight="1dp"/>
+        </LinearLayout>
+
+        <!-- Bottom List: Confirmed Production Plans -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:background="#E2E8F0"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="공정별 생산계획"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#2E7D32"/>
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/lvPlanList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#F0F2F5"
+                android:dividerHeight="1dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

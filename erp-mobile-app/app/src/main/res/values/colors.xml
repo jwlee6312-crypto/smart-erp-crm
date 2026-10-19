@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- 🚀 Premium Brand Palette -->
+    <color name="primary">#005a9f</color>
+    <color name="primary_variant">#003d6d</color>
+    <color name="secondary">#ffc107</color>
+    <color name="background">#F7FAFC</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="error">#E53E3E</color>
+
+    <!-- Web Branding Sync & Legacy Support -->
+    <color name="smart_blue">#005a9f</color>
+    <color name="core_amber">#ffc107</color>
+    <color name="text_title">#1A202C</color>
+    <color name="text_subtitle">#718096</color>
+    <color name="form_label">#4A5568</color>
+    <color name="input_bg">#F8FAFC</color>
+    <color name="input_border">#E2E8F0</color>
+
+    <!-- Text Colors (Internal) -->
+    <color name="text_primary">#1A202C</color>
+    <color name="text_secondary">#4A5568</color>
+    <color name="text_muted">#A0AEC0</color>
+
+    <!-- Accent Colors -->
+    <color name="bg_blue_light">#EBF8FF</color>
+    <color name="bg_amber_light">#FFFBEB</color>
+    <color name="border_light">#E2E8F0</color>
+
+    <color name="login_bg_start">#e3f2fd</color>
+    <color name="login_bg_end">#f0f4f8</color>
+    <color name="ai_badge_bg">#eef6ff</color>
+</resources>

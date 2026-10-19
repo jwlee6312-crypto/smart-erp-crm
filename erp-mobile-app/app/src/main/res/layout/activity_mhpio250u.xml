@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F2F5">
+
+    <!-- 1. Header Area -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="자재불출요청 (MHPIO250U)"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReset"
+            android:layout_width="55dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_button_gradient_gray"
+            android:text="초기화"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSearch"
+            android:layout_width="55dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="조회"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 2. Search Filter Card -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:background="#FFFFFF"
+        android:layout_margin="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="불출일자"
+                android:textSize="11sp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvStartDate"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#333333"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="~"
+                android:textColor="#333333"
+                android:paddingHorizontal="6dp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvEndDate"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="생산라인"
+                android:textSize="11sp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <Spinner
+                android:id="@+id/spLine"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 3. Form Input Card (Scrollable) -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="8dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Detail Form Panel -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:background="#FFFFFF"
+                android:layout_marginBottom="8dp">
+
+                <!-- Row 1: 요청라인 & 요청일자 & 희망일자 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:text="요청라인 *"
+                        android:textSize="11sp"
+                        android:textColor="#005A9F"
+                        android:textStyle="bold"/>
+
+                    <Spinner
+                        android:id="@+id/spFormLine"
+                        android:layout_width="0dp"
+                        android:layout_height="38dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_input_field"
+                        android:layout_marginEnd="6dp"/>
+
+                    <TextView
+                        android:layout_width="55dp"
+                        android:layout_height="wrap_content"
+                        android:text="요청일자"
+                        android:textSize="11sp"
+                        android:textColor="#333333"/>
+
+                    <TextView
+                        android:id="@+id/tvOutYmd"
+                        android:layout_width="0dp"
+                        android:layout_height="38dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="center"
+                        android:textSize="12sp"
+                        android:textColor="#333333"
+                        android:layout_marginEnd="6dp"/>
+
+                    <TextView
+                        android:layout_width="55dp"
+                        android:layout_height="wrap_content"
+                        android:text="희망일자"
+                        android:textSize="11sp"
+                        android:textColor="#005A9F"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tvHopeYmd"
+                        android:layout_width="0dp"
+                        android:layout_height="38dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="center"
+                        android:textSize="12sp"
+                        android:textColor="#005A9F"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Row 2: 출고창고 & 현장창고 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:text="출고창고 *"
+                        android:textSize="11sp"
+                        android:textColor="#005A9F"
+                        android:textStyle="bold"/>
+
+                    <Spinner
+                        android:id="@+id/spWhCd"
+                        android:layout_width="0dp"
+                        android:layout_height="38dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_input_field"
+                        android:layout_marginEnd="6dp"/>
+
+                    <TextView
+                        android:layout_width="55dp"
+                        android:layout_height="wrap_content"
+                        android:text="현장창고 *"
+                        android:textSize="11sp"
+                        android:textColor="#005A9F"
+                        android:textStyle="bold"/>
+
+                    <Spinner
+                        android:id="@+id/spIWhCd"
+                        android:layout_width="0dp"
+                        android:layout_height="38dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_input_field"/>
+                </LinearLayout>
+
+                <!-- Row 3: 비고 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:text="비고"
+                        android:textSize="11sp"
+                        android:textColor="#333333"/>
+
+                    <EditText
+                        android:id="@+id/etBigo"
+                        android:layout_width="0dp"
+                        android:layout_height="38dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="특기사항"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Detail List Area -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:orientation="vertical"
+                android:background="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:background="#E2E8F0"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="10dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="불출 요청 자재 상세"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#005A9F"/>
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/lvDetailList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="#F0F2F5"
+                    android:dividerHeight="1dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/tvCustNm"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="거래처명"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="#222222"/>
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_status_badge"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
+                android:text="보고요청"
+                android:textSize="10sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp">
+            <TextView
+                android:id="@+id/tvUserNm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="담당자"
+                android:textSize="12sp"
+                android:textColor="#0d6efd"
+                android:textStyle="bold"/>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="10dp"
+                android:background="#DDDDDD"
+                android:layout_marginHorizontal="8dp"
+                android:layout_gravity="center_vertical"/>
+            <TextView
+                android:id="@+id/tvContDt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2026-08-20"
+                android:textSize="12sp"
+                android:textColor="#666666"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvContentSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="상담 내용 요약..."
+            android:textSize="12sp"
+            android:textColor="#444444"
+            android:maxLines="2"
+            android:ellipsize="end"/>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

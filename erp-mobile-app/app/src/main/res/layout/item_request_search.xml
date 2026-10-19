@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical"
+    android:background="#FFFFFF">
+
+    <!-- 거래처명 -->
+    <TextView
+        android:id="@+id/tvPopDeptNm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:gravity="center"
+        android:text="거래처명"
+        android:textSize="11sp"
+        android:textColor="#333333"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+    <!-- 의뢰일자 -->
+    <TextView
+        android:id="@+id/tvPopReqYmd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:gravity="center"
+        android:text="2026-09-01"
+        android:textSize="11sp"
+        android:textColor="#555555"/>
+
+    <!-- 의뢰번호 -->
+    <TextView
+        android:id="@+id/tvPopReqNo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:gravity="center"
+        android:text="202609-0001"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#005A9F"/>
+
+</LinearLayout>

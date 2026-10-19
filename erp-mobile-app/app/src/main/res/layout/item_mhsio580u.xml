@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.8"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvItemNm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="품목명"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+        <TextView
+            android:id="@+id/tvSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="규격"
+            android:textSize="11sp"
+            android:textColor="#757575"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/etQty"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_weight="0.7"
+        android:background="@drawable/bg_input_field"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:text="0"
+        android:textSize="13sp"
+        android:textColor="#333333"/>
+
+    <ImageButton
+        android:id="@+id/btnDelete"
+        android:layout_width="40dp"
+        android:layout_height="36dp"
+        android:background="?attr/selectableItemBackground"
+        android:src="@android:drawable/ic_menu_delete"
+        android:contentDescription="삭제" />
+
+</LinearLayout>

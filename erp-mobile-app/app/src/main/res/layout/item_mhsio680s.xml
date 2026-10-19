@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:gravity="center_vertical"
+    android:background="#FFFFFF">
+
+    <!-- 거래처명 -->
+    <TextView
+        android:id="@+id/tvCustNm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:text="거래처명"
+        android:textSize="12sp"
+        android:textColor="#333333"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+    <!-- 수량 -->
+    <TextView
+        android:id="@+id/tvQty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.7"
+        android:text="1,000"
+        android:gravity="end"
+        android:textSize="12sp"
+        android:textColor="#2196F3"
+        android:textStyle="bold"/>
+
+    <!-- 공급가 -->
+    <TextView
+        android:id="@+id/tvSupply"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:text="1,000,000"
+        android:gravity="end"
+        android:textSize="12sp"
+        android:textColor="#333333"/>
+
+    <!-- 부가세 -->
+    <TextView
+        android:id="@+id/tvVat"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="100,000"
+        android:gravity="end"
+        android:textSize="12sp"
+        android:textColor="#666666"/>
+
+</LinearLayout>

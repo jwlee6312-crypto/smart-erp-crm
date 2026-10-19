@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical"
+    android:background="#FFFFFF">
+
+    <!-- 일자 (MM-dd) -->
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:text="01-01"
+        android:textSize="11sp"
+        android:textColor="#666666"
+        android:gravity="center"/>
+
+    <!-- 적요/거래처 -->
+    <TextView
+        android:id="@+id/tvRemark"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.8"
+        android:text="거래처명 / 유형"
+        android:textSize="12sp"
+        android:textColor="#333333"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:paddingStart="4dp"/>
+
+    <!-- 입고 -->
+    <TextView
+        android:id="@+id/tvInQty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.7"
+        android:text="0"
+        android:gravity="end"
+        android:textSize="12sp"
+        android:textColor="#2196F3"
+        android:paddingEnd="4dp"/>
+
+    <!-- 출고 -->
+    <TextView
+        android:id="@+id/tvOutQty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.7"
+        android:text="0"
+        android:gravity="end"
+        android:textSize="12sp"
+        android:textColor="#F44336"
+        android:paddingEnd="4dp"/>
+
+    <!-- 재고 -->
+    <TextView
+        android:id="@+id/tvStockQty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:text="0"
+        android:gravity="end"
+        android:textSize="12sp"
+        android:textColor="#333333"
+        android:textStyle="bold"/>
+
+</LinearLayout>

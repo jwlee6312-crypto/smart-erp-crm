@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F2F5">
+
+    <!-- 1. Header Area -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="제품검사의뢰 (MHPIO900U)"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReset"
+            android:layout_width="50dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_button_gradient_gray"
+            android:text="신규"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:textStyle="bold"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSearch"
+            android:layout_width="55dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="조회"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 2. Search Filter Card -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:background="#FFFFFF"
+        android:layout_margin="8dp">
+
+        <!-- Row 1: 검사분류 & 생산라인 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="검사분류"
+                android:textSize="11sp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <Spinner
+                android:id="@+id/spInspGb"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginEnd="6dp"/>
+
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="생산라인"
+                android:textSize="11sp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <Spinner
+                android:id="@+id/spLine"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"/>
+        </LinearLayout>
+
+        <!-- Row 2: 생산일자 기간 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="생산일자"
+                android:textSize="11sp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvProYmdFr"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#333333"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="~"
+                android:textColor="#333333"
+                android:paddingHorizontal="6dp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvProYmdTo"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#333333"/>
+        </LinearLayout>
+
+        <!-- Row 3: 검사요청일자 지정 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="75dp"
+                android:layout_height="wrap_content"
+                android:text="검사요청일"
+                android:textSize="11sp"
+                android:textColor="#005A9F"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvInspReqDt"
+                android:layout_width="140dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#005A9F"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="※ 의뢰저장 시 지정일자로 반영"
+                android:textSize="10sp"
+                android:textColor="#666666"
+                android:gravity="end"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 3. Target List Panel -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:background="#E2E8F0"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="10dp">
+
+            <TextView
+                android:id="@+id/tvListHeaderTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="의뢰 대상 생산실적 목록"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#005A9F"/>
+
+            <TextView
+                android:id="@+id/tvTotalCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total: 0건"
+                android:textSize="11sp"
+                android:textColor="#666666"/>
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lvTargetList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#F0F2F5"
+            android:dividerHeight="1dp"/>
+    </LinearLayout>
+
+</LinearLayout>

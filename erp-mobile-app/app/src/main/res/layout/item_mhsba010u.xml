@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical"
+    android:background="@drawable/bg_input_field"
+    android:layout_marginBottom="6dp">
+
+    <!-- 품목코드 -->
+    <TextView
+        android:id="@+id/tvItemCode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.9"
+        android:gravity="center"
+        android:text="P000001"
+        android:textSize="11sp"
+        android:textColor="#005A9F"
+        android:textStyle="bold"/>
+
+    <!-- 품목명 -->
+    <TextView
+        android:id="@+id/tvItemName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.6"
+        android:gravity="center_vertical"
+        android:text="테스트 상품명"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="11sp"
+        android:textColor="#333333"/>
+
+    <!-- 규격 -->
+    <TextView
+        android:id="@+id/tvItSize"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:gravity="center"
+        android:text="-"
+        android:textSize="10sp"
+        android:textColor="#666666"
+        android:singleLine="true"
+        android:ellipsize="end"/>
+
+    <!-- 단위 -->
+    <TextView
+        android:id="@+id/tvUnit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:gravity="center"
+        android:text="EA"
+        android:textColor="#333333"
+        android:textSize="11sp"/>
+
+    <!-- 매출단가 -->
+    <TextView
+        android:id="@+id/tvOmPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.9"
+        android:gravity="end"
+        android:text="0"
+        android:textColor="#005A9F"
+        android:textStyle="bold"
+        android:textSize="11sp"/>
+
+</LinearLayout>

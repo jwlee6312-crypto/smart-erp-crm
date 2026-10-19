@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F2F5">
+
+    <!-- 상단 헤더 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="16dp"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="입고 등록"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReset"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_button_gradient_gray"
+            android:text="초기화"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="발주번호 (조회/스캔)"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#2196F3"
+                android:layout_marginBottom="4dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                
+                <EditText
+                    android:id="@+id/etOrderNo"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="여기를 눌러 발주 선택"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:textSize="13sp"
+                    android:textColor="#333333"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:inputType="none"/>
+
+                <!-- 스캔 버튼 추가 -->
+                <ImageButton
+                    android:id="@+id/btnScan"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_button_gradient_teal"
+                    android:src="@android:drawable/ic_menu_camera"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="스캔"/>
+                    
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnSearchOrder"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_button_gradient_orange"
+                    android:text="조회"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="입고번호 (자동생성)"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="4dp"/>
+            <EditText
+                android:id="@+id/etInboundNo"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="저장 시 자동 생성됩니다"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textSize="13sp"
+                android:textColor="#757575"
+                android:focusable="false"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="거래처명"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="4dp"/>
+            <EditText
+                android:id="@+id/etCustomerName"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="조회 시 자동 입력"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textSize="13sp"
+                android:textColor="#333333"
+                android:focusable="false"
+                android:layout_marginBottom="12dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="8dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="입고창고"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="4dp"/>
+                    <Spinner
+                        android:id="@+id/spWarehouse"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_input_field"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="입고일자"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="4dp"/>
+                    <TextView
+                        android:id="@+id/tvInboundDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="center_vertical"
+                        android:paddingStart="12dp"
+                        android:textSize="13sp"
+                        android:textColor="#333333"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="비고"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="4dp"/>
+            <EditText
+                android:id="@+id/etRemark"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="특이사항 입력"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textSize="13sp"
+                android:textColor="#333333"
+                android:inputType="text"
+                android:layout_marginBottom="12dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="#FFFFFF">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:background="#E0E0E0"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.7"
+                android:text="품번"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#333333"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.5"
+                android:text="품명"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#333333"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:text="발주"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#333333"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:text="입고"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#333333"/>
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lvRegisterList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#F0F2F5"
+            android:dividerHeight="1dp"/>
+            
+    </LinearLayout>
+
+</LinearLayout>

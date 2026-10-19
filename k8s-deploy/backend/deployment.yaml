@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erp-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: erp-backend
+  template:
+    metadata:
+      labels:
+        app: erp-backend
+    spec:
+      containers:
+      - name: erp-backend
+        image: erp-backend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_APPLICATION_NAME
+          value: "erp"
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+        - name: SERVER_PORT
+          value: "8080"
+        - name: DB_HOST
+          value: "172.30.1.14"
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_NAME
+          value: "haion_erp"
+        - name: DB_USERNAME
+          value: "root"
+        - name: DB_PASSWORD
+          value: "gkdldhs12#$"
+        - name: AESKEY
+          value: "gkdldhsspt123456"
+        # ... 나머지 변수들 유지
+        volumeMounts:
+        - name: config-volume
+          mountPath: /data/erp/config
+        - name: upload-volume
+          mountPath: /data/erp/upload
+      volumes:
+      - name: config-volume
+        hostPath:
+          path: /mnt/d/erp.crmbank.co.kr/k8s-deploy/backend/config
+          type: DirectoryOrCreate
+      - name: upload-volume
+        hostPath:
+          path: /mnt/d/erp.crmbank.co.kr/k8s-deploy/backend/upload
+          type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-backend-service
+spec:
+  selector:
+    app: erp-backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      # 💡 [핵심 해결] 프론트엔드가 찾는 8080 포트를 외부로 직접 개방합니다.
+      nodePort: 8080
+  type: NodePort

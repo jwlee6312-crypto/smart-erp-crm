@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical"
+    android:background="@drawable/bg_input_field"
+    android:layout_marginBottom="4dp">
+
+    <!-- 선택 체크박스 (강조색 적용) -->
+    <CheckBox
+        android:id="@+id/cbSelect"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:buttonTint="#2196F3" />
+
+    <!-- 출고일 -->
+    <TextView
+        android:id="@+id/tvIoYmd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:textSize="11sp"
+        android:gravity="center"
+        android:textColor="#333333"
+        android:text="2024-01-26" />
+
+    <!-- 거래처명 -->
+    <TextView
+        android:id="@+id/tvCustNm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:textSize="11sp"
+        android:textColor="#333333"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="거래처명" />
+
+    <!-- 출고금액 (색상 강조) -->
+    <TextView
+        android:id="@+id/tvTotAmt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:textSize="11sp"
+        android:textColor="#E91E63"
+        android:textStyle="bold"
+        android:gravity="end"
+        android:paddingEnd="4dp"
+        android:text="1,000,000" />
+
+    <!-- 창고 -->
+    <TextView
+        android:id="@+id/tvWhNm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="11sp"
+        android:textColor="#333333"
+        android:gravity="center"
+        android:text="본사창고" />
+
+    <!-- 확정여부 체크박스 (강조색 적용) -->
+    <CheckBox
+        android:id="@+id/cbConfirmYn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:buttonTint="#4CAF50" />
+
+</LinearLayout>

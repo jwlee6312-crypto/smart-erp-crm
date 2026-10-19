@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical"
+    android:background="#FFFFFF">
+
+    <!-- 입금유형 (콤보박스) -->
+    <Spinner
+        android:id="@+id/spPaymentType"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_input_field"
+        android:layout_marginEnd="4dp"/>
+
+    <!-- 입금액 (우측 정렬 추가) -->
+    <EditText
+        android:id="@+id/etPaymentAmt"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_input_field"
+        android:hint="금액"
+        android:inputType="number"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:gravity="end|center_vertical"
+        android:textColor="#333333"
+        android:textSize="13sp"
+        android:layout_marginEnd="4dp"/>
+
+    <!-- 관리번호 -->
+    <EditText
+        android:id="@+id/etRefNo"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1.2"
+        android:background="@drawable/bg_input_field"
+        android:hint="관리번호"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textColor="#333333"
+        android:textSize="13sp"
+        android:focusable="true"
+        android:layout_marginEnd="4dp"/>
+
+    <!-- 삭제 버튼 -->
+    <ImageButton
+        android:id="@+id/btnDeleteRow"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_delete"
+        android:contentDescription="삭제" />
+
+</LinearLayout>

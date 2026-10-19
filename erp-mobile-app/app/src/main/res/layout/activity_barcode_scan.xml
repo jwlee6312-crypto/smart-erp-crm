@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- 1. 실시간 카메라 미리보기 -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 2. 슬림 바코드 조준 프레임 (290dp x 70dp) -->
+    <View
+        android:id="@+id/viewFinder"
+        android:layout_width="290dp"
+        android:layout_height="70dp"
+        android:background="@drawable/bg_barcode_frame"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 2-1. 정밀 조준 네온 빨간색 레이저 가이드 선 -->
+    <View
+        android:id="@+id/laserLine"
+        android:layout_width="270dp"
+        android:layout_height="2dp"
+        android:background="#FF1744"
+        app:layout_constraintBottom_toBottomOf="@id/viewFinder"
+        app:layout_constraintEnd_toEndOf="@id/viewFinder"
+        app:layout_constraintStart_toStartOf="@id/viewFinder"
+        app:layout_constraintTop_toTopOf="@id/viewFinder" />
+
+    <!-- 2-2. 안내 가이드 배지 -->
+    <TextView
+        android:id="@+id/tvScanGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:background="@drawable/bg_button_gradient"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:text="바코드를 레이저선에 조준 후 [스캔 확정하기] 버튼을 누르세요"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 2-3. 감지된 바코드 번호 표출 배지 -->
+    <TextView
+        android:id="@+id/tvDetectedBarcode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:background="#E000E5FF"
+        android:paddingHorizontal="18dp"
+        android:paddingVertical="8dp"
+        android:text=""
+        android:textColor="#000000"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/btnTriggerScan"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- 2-4. 사용자 클릭 확정 버튼 -->
+    <Button
+        android:id="@+id/btnTriggerScan"
+        android:layout_width="240dp"
+        android:layout_height="52dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#00E676"
+        android:text="📸 스캔 확정하기 (클릭)"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/btnClose"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- 3. 하단 닫기 컨트롤 버튼 -->
+    <Button
+        android:id="@+id/btnClose"
+        android:layout_width="160dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="40dp"
+        android:backgroundTint="#E53935"
+        android:text="닫기"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

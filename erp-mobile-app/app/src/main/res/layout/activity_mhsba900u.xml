@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F2F5"
+    android:importantForAutofill="noExcludeDescendants">
+
+    <!-- 상단 헤더 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="16dp"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="코드 정보 등록"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReset"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_button_gradient_gray"
+            android:text="신규"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSave"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="저장"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- 입력 폼 -->
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="코드 그룹 (구분)" android:textSize="11sp" android:textColor="#333333" android:layout_marginBottom="4dp"/>
+            <Spinner
+                android:id="@+id/spCodeGbn"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginBottom="12dp"/>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginEnd="8dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="코드 (3자리)" android:textSize="11sp" android:textColor="#333333" android:layout_marginBottom="4dp"/>
+                    <EditText android:id="@+id/etCode" android:layout_width="match_parent" android:layout_height="40dp" android:background="@drawable/bg_input_field" android:paddingStart="12dp" android:textSize="14sp" android:maxLength="3" android:inputType="text"/>
+                </LinearLayout>
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="2" android:orientation="vertical">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="코드명" android:textSize="11sp" android:textColor="#333333" android:layout_marginBottom="4dp"/>
+                    <EditText android:id="@+id/etCodeName" android:layout_width="match_parent" android:layout_height="40dp" android:background="@drawable/bg_input_field" android:paddingStart="12dp" android:textSize="14sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginEnd="8dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="정렬 순서" android:textSize="11sp" android:textColor="#333333" android:layout_marginBottom="4dp"/>
+                    <EditText android:id="@+id/etDspOrd" android:layout_width="match_parent" android:layout_height="40dp" android:background="@drawable/bg_input_field" android:paddingStart="12dp" android:textSize="14sp" android:inputType="number"/>
+                </LinearLayout>
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="사용 여부" android:textSize="11sp" android:textColor="#333333" android:layout_marginBottom="4dp"/>
+                    <Switch android:id="@+id/swUseYn" android:layout_width="wrap_content" android:layout_height="40dp" android:checked="true" android:text="사용"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="비고" android:textSize="11sp" android:textColor="#333333" android:layout_marginBottom="4dp"/>
+            <EditText android:id="@+id/etRemark" android:layout_width="match_parent" android:layout_height="40dp" android:background="@drawable/bg_input_field" android:paddingStart="12dp" android:textSize="13sp" android:layout_marginBottom="16dp"/>
+
+            <!-- 목록 헤더 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:background="#E0E0E0"
+                android:gravity="center_vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.7" android:text="코드" android:gravity="center" android:textSize="11sp" android:textStyle="bold" android:textColor="#333333"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.8" android:text="코드명" android:gravity="center" android:textSize="11sp" android:textStyle="bold" android:textColor="#333333"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.5" android:text="사용" android:gravity="center" android:textSize="11sp" android:textStyle="bold" android:textColor="#333333"/>
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/lvCodeList"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:divider="#F0F2F5"
+                android:dividerHeight="1dp"
+                android:background="#FFFFFF"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

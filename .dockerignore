@@ -1,0 +1,17 @@
+# [중요] 노드 모듈 및 빌드 도구 제외
+**/node_modules/
+.git/
+.idea/
+.vscode/
+
+# [중요] 백엔드 관련 제외
+# erp-backend/build/
+# erp-backend/bin/
+**/.gradle/
+
+# [💡 핵심] 프론트엔드 빌드 결과물(dist)은 절대로 제외하면 안 됨
+# 만약 기존에 dist/ 가 있었다면 삭제하세요.
+
+*.tar
+*.zip
+*.log

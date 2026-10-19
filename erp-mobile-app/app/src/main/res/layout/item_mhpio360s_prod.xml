@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@drawable/bg_card"
+    android:layout_marginBottom="6dp">
+
+    <!-- Row 1: 제품코드 & 제품명 & 생산구분 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:id="@+id/tvItemCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="P000001"
+            android:textSize="11sp"
+            android:textColor="#005A9F"
+            android:textStyle="bold"
+            android:layout_marginEnd="6dp"/>
+
+        <TextView
+            android:id="@+id/tvItemName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="제품명"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:textColor="#333333"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvProdName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="자가생산"
+            android:textSize="10sp"
+            android:textColor="#666666"
+            android:background="#E2E8F0"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="1dp"/>
+    </LinearLayout>
+
+    <!-- Row 2: 규격/단위 & 금회생산 & 양품 & 불량 & 월누계 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvItSize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="규격 / EA"
+            android:textSize="11sp"
+            android:textColor="#666666"/>
+
+        <TextView
+            android:id="@+id/tvPrdQty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="생산: 0"
+            android:textSize="11sp"
+            android:textColor="#005A9F"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/tvGodQty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="양품: 0"
+            android:textSize="11sp"
+            android:textColor="#2E7D32"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/tvPrdQtyM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="월누계: 0"
+            android:textSize="11sp"
+            android:textColor="#333333"/>
+    </LinearLayout>
+
+</LinearLayout>

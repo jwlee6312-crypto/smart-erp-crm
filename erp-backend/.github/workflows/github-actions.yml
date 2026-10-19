@@ -1,0 +1,95 @@
+name: Build & Push (Spring) to GHCR
+
+on:
+  push:
+    branches: [ "develop" ]
+    paths:
+      - "Dockerfile"
+      - "**/*.java"
+      - "build.gradle"
+      - "settings.gradle"
+      - "gradlew"
+      - "gradle/**"
+      - ".github/workflows/github-actions.yml"
+  workflow_dispatch: { }
+
+jobs:
+  docker:
+    runs-on: self-hosted
+    concurrency:
+      group: develop-build-backend
+      cancel-in-progress: true
+
+    env:
+      GHCR_IMAGE: ghcr.io/haionnet/erp-backend
+      KUBECONFIG: /home/githubrunner/.kube/config
+
+    permissions:
+      contents: read
+      packages: write   # GHCR 푸시에 필수
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.GHCR_IMAGE }}
+          tags: |
+                  type=raw,value=latest
+
+      # ✅ 캐시 정리 추가 (Playwright ZipException 방지)
+      - name: Clean Maven & Playwright cache
+        run: |
+          echo "🧹 Cleaning Maven and Playwright caches..."
+          rm -rf ~/.m2/repository/com/microsoft/playwright || true
+          rm -rf ~/.cache/ms-playwright || true
+          rm -rf /tmp/playwright* || true
+
+      #Dockerfile로 빌드 & 푸시 (linux/amd64)
+      - name: Build & Push (linux/amd64) with LOCAL cache
+        uses: docker/build-push-action@v6
+        env:
+          BUILDKIT_PROGRESS: plain
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          # tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.GHCR_IMAGE }}:latest
+          labels: ${{ steps.meta.outputs.labels }}
+
+      # 쿠버네티스 배포 재시작 (배포명/네임스페이스 맞게 수정)
+      - name: Restart Kubernetes Deployment
+        run: |
+          kubectl rollout restart deployment/erp-backend -n erp
+
+  # 최근 1개를 제외하고 GHCR 컨테이너 패키지 버전 삭제
+  cleanup:
+    needs: docker
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Keep only the most recent 1 image version
+        uses: actions/delete-package-versions@v5
+        with:
+          # 컨테이너 패키지명은 '이미지명'만 적음 (owner는 별도 지정)
+          package-name: erp-backend
+          package-type: container
+          min-versions-to-keep: 1
+          owner: ${{ github.repository_owner }}

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@drawable/bg_card"
+    android:layout_marginBottom="6dp">
+
+    <!-- Row 1: 자재코드 & 자재명 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:id="@+id/tvMItemCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="M000001"
+            android:textSize="11sp"
+            android:textColor="#2E7D32"
+            android:textStyle="bold"
+            android:layout_marginEnd="6dp"/>
+
+        <TextView
+            android:id="@+id/tvMItemName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="투입자재명"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:textColor="#333333"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- Row 2: 규격/단위 & 요청수량 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvMItSize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="규격 / EA"
+            android:textSize="11sp"
+            android:textColor="#666666"/>
+
+        <TextView
+            android:id="@+id/tvReqQty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="요청수량: 0"
+            android:textSize="12sp"
+            android:textColor="#005A9F"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+</LinearLayout>

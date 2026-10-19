@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@drawable/bg_card"
+    android:layout_marginBottom="8dp">
+
+    <!-- 첫 번째 줄: 일시 및 상태 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/tvStartTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="2026-08-10 10:00"
+            android:textSize="12sp"
+            android:textColor="#888888"/>
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="대기"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_status_badge"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"/>
+    </LinearLayout>
+
+    <!-- 두 번째 줄: 회사명 및 전화번호 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:id="@+id/tvCustNm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="가나다컴퓨터"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+
+        <TextView
+            android:id="@+id/tvCallbackNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="010-1234-5678"
+            android:textSize="15sp"
+            android:textColor="#D32F2F"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 액션 영역 (음성듣기, 전화걸기) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnPlay"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/bg_button_gradient_gray"
+            android:text="고객음성"
+            android:textSize="12sp"
+            android:textColor="#333333"
+            android:drawableStart="@android:drawable/ic_btn_speak_now"
+            android:paddingLeft="8dp" />
+
+        <Button
+            android:id="@+id/btnCall"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="4dp"
+            android:background="@drawable/bg_button_gradient_blue"
+            android:text="전화걸기"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:drawableStart="@android:drawable/ic_menu_call"
+            android:paddingLeft="8dp"/>
+    </LinearLayout>
+
+</LinearLayout>

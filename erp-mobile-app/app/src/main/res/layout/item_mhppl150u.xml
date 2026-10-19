@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@drawable/bg_card"
+    android:layout_marginBottom="8dp">
+
+    <!-- Row 1: 제품명 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="제품명"
+            android:textSize="11sp"
+            android:textColor="#005A9F"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvItemNm"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textColor="#005A9F"
+            android:textStyle="bold"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <!-- Row 2: 규격 & 단위 & 요청수량 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="6dp">
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="규격/단위"
+            android:textSize="11sp"
+            android:textColor="#333333"/>
+
+        <TextView
+            android:id="@+id/tvItSize"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:text="-"
+            android:textColor="#666666"
+            android:textSize="11sp"
+            android:layout_marginEnd="6dp"/>
+
+        <TextView
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:text="요청수량"
+            android:textSize="11sp"
+            android:textColor="#005A9F"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvPlanQty"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical|end"
+            android:paddingEnd="8dp"
+            android:text="0"
+            android:textColor="#005A9F"
+            android:textStyle="bold"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <!-- Row 3: 완료요청일 & 거래처 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="완료요청일"
+            android:textSize="11sp"
+            android:textColor="#333333"/>
+
+        <TextView
+            android:id="@+id/tvNapgiYmd"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center"
+            android:textSize="11sp"
+            android:textColor="#333333"
+            android:layout_marginEnd="6dp"/>
+
+        <TextView
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:text="거래처"
+            android:textSize="11sp"
+            android:textColor="#333333"/>
+
+        <TextView
+            android:id="@+id/tvCustNm"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textSize="11sp"/>
+    </LinearLayout>
+
+</LinearLayout>

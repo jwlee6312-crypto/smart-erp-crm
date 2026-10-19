@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="12dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="비상연락망"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#222222"
+            android:letterSpacing="-0.03"/>
+        <CheckBox
+            android:id="@+id/cbSelectAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전체선택"
+            android:textSize="12sp"
+            android:textColor="#666666"/>
+    </LinearLayout>
+
+    <!-- Search Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_vertical">
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:hint="성명 또는 부서 검색"
+            android:paddingHorizontal="12dp"
+            android:textSize="13sp"
+            android:importantForAutofill="no"
+            android:inputType="text"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSearch"
+            android:layout_width="54dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_button_gradient_blue"
+            android:text="검색"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <!-- List Header (Grid Style) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="#F8F9FA"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:orientation="horizontal">
+        <TextView android:layout_width="30dp" android:layout_height="wrap_content" android:text="선택" android:textSize="10sp" android:textColor="#999999" android:gravity="center"/>
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.2" android:text="성명/부서" android:textSize="10sp" android:textColor="#999999" android:paddingStart="8dp"/>
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.8" android:text="연락처/이메일" android:textSize="10sp" android:textColor="#999999"/>
+        <TextView android:layout_width="60dp" android:layout_height="wrap_content" android:text="연결" android:textSize="10sp" android:textColor="#999999" android:gravity="center"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/llAgentList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+        </ScrollView>
+
+        <!-- Bulk Action Bar -->
+        <LinearLayout
+            android:id="@+id/layoutBulkAction"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:background="#F0F2F5"
+            android:elevation="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:visibility="gone">
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBulkSms"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_button_gradient_gray"
+                android:text="단체 SMS"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="13sp"/>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBulkMail"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_gradient_blue"
+                android:text="단체 메일"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="13sp"/>
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

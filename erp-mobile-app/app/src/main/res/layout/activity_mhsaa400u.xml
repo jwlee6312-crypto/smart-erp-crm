@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F2F5"
+    android:importantForAutofill="noExcludeDescendants">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="영업코칭 등록"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReset"
+            android:layout_width="52dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_button_gradient_gray"
+            android:text="신규"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSearch"
+            android:layout_width="52dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_button_gradient_blue"
+            android:text="조회"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSave"
+            android:layout_width="52dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="저장"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- Filter Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:id="@+id/tvSdate"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:text="2026-01-01"
+                android:textSize="13sp"
+                android:textColor="#333333"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="~"
+                android:paddingHorizontal="8dp"/>
+            <TextView
+                android:id="@+id/tvEdate"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:text="2026-12-31"
+                android:textSize="13sp"
+                android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <Spinner
+                android:id="@+id/spSalesman"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginEnd="4dp"/>
+            <EditText
+                android:id="@+id/etCustNm"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1.2"
+                android:background="@drawable/bg_input_field"
+                android:hint="거래처명 검색"
+                android:paddingHorizontal="10dp"
+                android:textSize="13sp"
+                android:inputType="text"
+                android:importantForAutofill="no"/>
+        </LinearLayout>
+
+        <!-- New Status Filters -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <CheckBox
+                android:id="@+id/cbReportOnly"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="보고요청건"
+                android:textSize="12sp"
+                android:textColor="#0d6efd"/>
+            <CheckBox
+                android:id="@+id/cbCoachedOnly"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="코칭완료건"
+                android:textSize="12sp"
+                android:textColor="#198754"
+                android:layout_marginStart="16dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Main Content: List & Detail -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCoachingList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:clipToPadding="false"/>
+
+        <!-- Detail Layout (Hidden by default, shown when item clicked) -->
+        <LinearLayout
+            android:id="@+id/layoutDetail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvDetailTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="거래처명 | 상담일자"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#0d6efd"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Original Diary -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="상담 원본 내용"
+                        android:textSize="11sp"
+                        android:textColor="#666666"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/tvDiaryContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="80dp"
+                        android:background="#F8F9FA"
+                        android:padding="10dp"
+                        android:textSize="12sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Report Content -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="보고요청 내용"
+                        android:textSize="11sp"
+                        android:textColor="#666666"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/tvReportContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="60dp"
+                        android:background="#F8F9FA"
+                        android:padding="10dp"
+                        android:textSize="12sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Coaching Input -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="상담코칭 (지시사항) *"
+                        android:textSize="11sp"
+                        android:textColor="#dc3545"
+                        android:textStyle="bold"/>
+                    <EditText
+                        android:id="@+id/etSalesCoaching"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minLines="10"
+                        android:maxLines="20"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="top"
+                        android:padding="10dp"
+                        android:textSize="13sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="16dp"
+                        android:inputType="textMultiLine"
+                        android:hint="영업사원에게 전달할 지시 및 코칭 내용을 입력하세요."
+                        android:importantForAutofill="no"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="코칭일자"
+                        android:textSize="11sp"
+                        android:textColor="#666666"/>
+                    <TextView
+                        android:id="@+id/tvReportDt"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="10dp"
+                        android:textSize="13sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="24dp"/>
+
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

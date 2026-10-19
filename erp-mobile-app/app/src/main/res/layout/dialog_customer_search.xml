@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#FFFFFF">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="조회"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- 검색어 입력 및 버튼 한 줄 배치 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+        <EditText
+            android:id="@+id/etSearchQuery"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:hint="검색어를 입력하세요"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:inputType="text"
+            android:privateImeOptions="defaultInputmode=korean"
+            android:layout_marginEnd="8dp"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSearch"
+            android:layout_width="60dp"
+            android:layout_height="48dp"
+            android:text="조회"
+            android:textSize="13sp"
+            android:background="@drawable/bg_button_gradient_gray"
+            android:textColor="#FFFFFF"/>
+    </LinearLayout>
+
+    <!-- 🚀 고성능 네비처리를 위해 RecyclerView로 전면 교체 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPopupList"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnClose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="닫기"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_button_gradient_gray"
+        android:textColor="#FFFFFF" />
+
+</LinearLayout>

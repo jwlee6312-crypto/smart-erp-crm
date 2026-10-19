@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F2F5">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="영업활동 관리"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnNew"
+            android:layout_width="60dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="신규"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- Search Filter Area -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="#FFFFFF"
+        android:layout_marginBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:id="@+id/tvStartDate"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#333333"
+                android:layout_marginEnd="4dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="~"
+                android:layout_gravity="center_vertical"/>
+            <TextView
+                android:id="@+id/tvEndDate"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#333333"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <EditText
+                android:id="@+id/etSchCustNm"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:hint="거래처/건명 검색"
+                android:paddingStart="10dp"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"/>
+            <Spinner
+                android:id="@+id/spUser"
+                android:layout_width="120dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_input_field"/>
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSearch"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_button_gradient_blue"
+            android:text="조회"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- List Area -->
+    <ListView
+        android:id="@+id/lvMasterList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:padding="8dp"
+        android:clipToPadding="false"/>
+</LinearLayout>

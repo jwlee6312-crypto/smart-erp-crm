@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="#FFFFFF"
+    android:layout_marginBottom="4dp">
+
+    <!-- 첫 번째 줄: 거래처명 -->
+    <TextView
+        android:id="@+id/tvCustNm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="거래처명"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:layout_marginBottom="8dp"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+    <!-- 두 번째 줄: 금액 정보 (이월액, 매출계, 입금계, 잔액) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="이월액" android:textSize="10sp" android:textColor="#999999"/>
+            <TextView android:id="@+id/tvPrevAmt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="12sp" android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="매출계" android:textSize="10sp" android:textColor="#999999"/>
+            <TextView android:id="@+id/tvSalesAmt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="12sp" android:textColor="#333333"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="입금계" android:textSize="10sp" android:textColor="#999999"/>
+            <TextView android:id="@+id/tvDepositAmt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="12sp" android:textColor="#4CAF50" android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="잔액" android:textSize="10sp" android:textColor="#999999"/>
+            <TextView android:id="@+id/tvBalanceAmt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="12sp" android:textColor="#F44336" android:textStyle="bold"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

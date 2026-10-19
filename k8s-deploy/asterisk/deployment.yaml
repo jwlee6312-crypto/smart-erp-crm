@@ -1,0 +1,161 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: asterisk-config
+data:
+  # 💡 asterisk_config 디렉토리의 내용을 서버 컨테이너에 그대로 이식
+  res_odbc.conf: |
+    [asterisk]
+    enabled => yes
+    dsn => asterisk-connector
+    username => root
+    password => gkdldhs12#$
+    pre-connect => yes
+    max_connections => 10
+
+  extconfig.conf: |
+    [settings]
+    ps_endpoints => odbc,asterisk
+    ps_auths => odbc,asterisk
+    ps_aors => odbc,asterisk
+    ps_contacts => odbc,asterisk
+    ps_transports => odbc,asterisk
+    ps_registrations => odbc,asterisk
+    extensions => odbc,asterisk
+    queues => odbc,asterisk
+    queue_members => odbc,asterisk
+
+  sorcery.conf: |
+    [res_pjsip]
+    endpoint=realtime,ps_endpoints
+    auth=realtime,ps_auths
+    aor=realtime,ps_aors
+    contact=realtime,ps_contacts
+    transport=realtime,ps_transports
+    registration=realtime,ps_registrations
+    [res_pjsip_endpoint_identifier_ip]
+    identify=realtime,ps_endpoint_id_ips
+
+  modules.conf: |
+    [modules]
+    autoload=yes
+    load => res_odbc.so
+    load => res_config_odbc.so
+    load => res_pjsip.so
+    load => res_pjsip_session.so
+    load => chan_pjsip.so
+    load => res_pjsip_outbound_registration.so
+    load => app_dial.so
+    load => app_queue.so
+    load => res_musiconhold.so
+    load => app_mixmonitor.so
+    load => app_playback.so
+    load => app_stack.so
+    load => res_rtp_asterisk.so
+    load => func_cut.so
+    load => func_curl.so
+    noload => chan_sip.so
+    noload => res_config_mysql.so
+
+  odbc.ini: |
+    [asterisk-connector]
+    Description = MySQL connection to Asterisk DB
+    Driver      = MySQL
+    Database    = asterisk
+    Server      = asterisk-db
+    User        = root
+    Password    = gkdldhs12#$
+    Port        = 3306
+    Option      = 3
+
+  odbcinst.ini: |
+    [MySQL]
+    Description = ODBC for MySQL
+    Driver      = /usr/lib/mariadb/libmaodbc.so
+    FileUsage   = 1
+
+  # 런타임 스위치 (파일 내용은 무시하고 DB를 보라는 선언)
+  extensions.conf: |
+    [general]
+    static=yes
+    writeprotect=no
+    [from-internal]
+    switch => Realtime/from-internal@extensions
+    [ivr-main]
+    switch => Realtime/ivr-main@extensions
+
+  manager.conf: |
+    [general]
+    enabled = yes
+    port = 5038
+    bindaddr = 0.0.0.0
+    [admin]
+    secret = gkdldhs12#$
+    read = system,call,log,verbose,agent,user,config,dtmf,reporting,cdr,dialplan
+    write = system,call,log,verbose,agent,user,config,dtmf,reporting,cdr,dialplan
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erp-asterisk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: erp-asterisk
+  template:
+    metadata:
+      labels:
+        app: erp-asterisk
+    spec:
+      hostNetwork: true
+      containers:
+      - name: asterisk
+        image: andrius/asterisk:latest
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/asterisk/res_odbc.conf
+          subPath: res_odbc.conf
+        - name: config-volume
+          mountPath: /etc/asterisk/extconfig.conf
+          subPath: extconfig.conf
+        - name: config-volume
+          mountPath: /etc/asterisk/sorcery.conf
+          subPath: sorcery.conf
+        - name: config-volume
+          mountPath: /etc/asterisk/modules.conf
+          subPath: modules.conf
+        - name: config-volume
+          mountPath: /etc/asterisk/extensions.conf
+          subPath: extensions.conf
+        - name: config-volume
+          mountPath: /etc/asterisk/manager.conf
+          subPath: manager.conf
+        - name: config-volume
+          mountPath: /etc/odbc.ini
+          subPath: odbc.ini
+        - name: config-volume
+          mountPath: /etc/odbcinst.ini
+          subPath: odbcinst.ini
+      volumes:
+      - name: config-volume
+        configMap:
+          name: asterisk-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-asterisk-service
+spec:
+  selector:
+    app: erp-asterisk
+  ports:
+    - name: ami
+      protocol: TCP
+      port: 5038
+    - name: sip
+      protocol: UDP
+      port: 5060
+  type: NodePort

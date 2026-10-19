@@ -1,0 +1,19 @@
+# VCS / IDE
+.git
+.gitignore
+.idea
+.vscode
+
+# Build outputs
+build
+out
+target
+
+# Gradle local caches (도커 내부 캐시를 쓰므로 로컬 캐시는 제외)
+.gradle
+
+# Node / others (있다면)
+node_modules
+
+# OS / misc
+.DS_Store

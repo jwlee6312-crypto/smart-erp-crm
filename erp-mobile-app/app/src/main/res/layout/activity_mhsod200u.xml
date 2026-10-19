@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F2F5">
+
+    <!-- 상단 헤더 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="16dp"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="출고 확정"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReset"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_button_gradient_gray"
+            android:text="신규"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSave"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="저장"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- 출고번호 & 출고일자 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="bottom"
+                android:layout_marginBottom="12dp">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="4dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="출고번호"
+                        android:textSize="12sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="4dp"/>
+                    <EditText
+                        android:id="@+id/etOrderNo"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="(조회 선택)"
+                        android:paddingStart="12dp"
+                        android:textColor="#333333"
+                        android:textSize="13sp"
+                        android:focusable="false"/>
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnOrderSearch"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_button_gradient_gray"
+                    android:text="조회"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:stateListAnimator="@null"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="출고일자"
+                        android:textSize="12sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="4dp"/>
+                    <TextView
+                        android:id="@+id/tvOrderDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="center_vertical"
+                        android:paddingStart="12dp"
+                        android:textSize="13sp"
+                        android:textColor="#757575"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 거래처 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="거래처"
+                android:textSize="12sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="4dp"/>
+            <EditText
+                android:id="@+id/etCustomerName"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_input_field"
+                android:focusable="false"
+                android:hint="조회 시 자동 입력"
+                android:textColor="#333333"
+                android:textSize="13sp"
+                android:paddingStart="12dp"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- 확정 상태 & 출고금액 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="8dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="확정상태"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="4dp"/>
+                    <Switch
+                        android:id="@+id/swConfirm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="확정함"
+                        android:textSize="13sp"
+                        android:textColor="@color/primary"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="출고금액 (합계)"
+                        android:textSize="12sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="4dp"/>
+                    <EditText
+                        android:id="@+id/etTotalSum"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_input_field"
+                        android:focusable="false"
+                        android:gravity="end|center_vertical"
+                        android:paddingEnd="12dp"
+                        android:text="0"
+                        android:textColor="@color/primary"
+                        android:textStyle="bold"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 리스트 영역 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:background="#E0E0E0"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="품명"
+                        android:gravity="center"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.7"
+                        android:text="수량"
+                        android:gravity="center"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.1"
+                        android:text="금액"
+                        android:gravity="center"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.1"
+                        android:text="합계"
+                        android:gravity="center"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"/>
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/lvDetailList"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:divider="#F0F2F5"
+                    android:dividerHeight="1dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
