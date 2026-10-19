@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.crm.mapper.inbound.InboundMapper">
+
+    <!-- [1. 통합 Interaction 로그] - MySQL INSERT ... ON DUPLICATE KEY UPDATE -->
+    <insert id="insertTotalInteractionLog" parameterType="com.crmbank.erp.crm.dto.TotalCallLogDto">
+        INSERT INTO total_interaction_log (interaction_id, cmpycd, media_type, source_id, direction, src_no, dst_no, start_time, status, result_cd, rec_file, keyword, callback_yn, callback_no, callback_retry_cnt, callback_req_time)
+        VALUES (#{uniqueid}, #{cmpycd}, IFNULL(#{media_type, jdbcType=VARCHAR}, 'CALL'), #{linkedid, jdbcType=VARCHAR}, #{direction, jdbcType=VARCHAR}, #{src_no, jdbcType=VARCHAR}, #{dst_no, jdbcType=VARCHAR}, IFNULL(#{start_time, jdbcType=TIMESTAMP}, NOW()), '010', '100', #{rec_file, jdbcType=VARCHAR}, IFNULL(#{keyword, jdbcType=VARCHAR}, #{src_no, jdbcType=VARCHAR}), #{callback_yn, jdbcType=CHAR}, #{callback_no, jdbcType=VARCHAR}, #{callback_retry_cnt, jdbcType=INTEGER}, #{callback_req_time, jdbcType=TIMESTAMP})
+        ON DUPLICATE KEY UPDATE source_id = #{linkedid, jdbcType=VARCHAR},
+        rec_file = #{rec_file, jdbcType=VARCHAR},
+        result_cd = IFNULL(#{result_cd, jdbcType=VARCHAR}, result_cd),
+        keyword = IFNULL(#{keyword, jdbcType=VARCHAR}, keyword),
+        status = '300'
+    </insert>
+
+    <update id="updateCallAnswer" parameterType="map">
+        UPDATE TOTAL_INTERACTION_LOG
+        SET ANSWER_TIME = NOW(),
+        STATUS = '200',
+        RESULT_CD = '200',
+        EXTEN = #{exten, jdbcType=VARCHAR},
+        USERID = #{userid, jdbcType=VARCHAR},
+        EXT_DATA = CONCAT('{"queue_nm":"', IFNULL(#{queue_nm, jdbcType=VARCHAR}, ''), '"}')
+        WHERE INTERACTION_ID = #{uniqueid, jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateCallHangup" parameterType="map">
+        UPDATE TOTAL_INTERACTION_LOG
+        SET END_TIME = NOW(),
+        TALK_SEC = TIMESTAMPDIFF(SECOND, IFNULL(answer_time, start_time), NOW()),
+        HANGUP_CAUSE = #{hangup_cause, jdbcType=VARCHAR},
+        RESULT_CD = #{result_cd, jdbcType=VARCHAR},
+        REC_FILE = #{rec_file, jdbcType=VARCHAR},
+        STATUS = '300'
+        WHERE INTERACTION_ID = #{uniqueid, jdbcType=VARCHAR}
+    </update>
+
+    <!-- [2. 기준 정보 및 체크] -->
+    <select id="checkWorkMode" parameterType="map" resultType="string">
+        select useyn from haba900t_tbl where cdtype = '605' and codecd = '000'
+    </select>
+
+    <select id="checkHoliday" parameterType="map" resultType="string">
+        SELECT holi_dt FROM pd_holiday WHERE holi_dt = #{yymmdd} AND cmpycd = #{cmpycd}
+    </select>
+
+    <select id="checkAgentStatus" parameterType="map" resultType="map">
+        SELECT
+            userid,
+            usernm,
+            useyn,
+            IFNULL(routing_mode, '0') as routing_mode,
+            IFNULL(status, '0') as status,
+            IFNULL(hpno, '') as mobile_no,
+            IFNULL(duty_yn, 'N') as duty_yn
+        FROM haba920t_tbl
+        WHERE cmpycd = #{cmpycd} AND inner_no = #{exten}
+    </select>
+
+    <select id="getDutyAgent" parameterType="map" resultType="map">
+        SELECT inner_no, hpno as mobile_no
+        FROM haba920t_tbl
+        WHERE cmpycd = #{cmpycd} AND duty_yn = 'Y' AND useyn = 'Y'
+        LIMIT 1
+    </select>
+
+    <!-- [3. 고객 정보 조회] -->
+    <select id="findCustomerByPhoneMap" parameterType="map" resultType="map">
+        select b.custcd, b.custnm, IFNULL(a.name, b.bossnm) as usernm, b.telno as company_tel, IFNULL(a.phoneno, b.telno) as hpno, b.address, b.email, b.custgbn, b.status
+        from phone_number_map a
+        inner join haba020t_tbl b on b.cmpycd = #{cmpycd} and a.custcd = b.custcd
+        where replace(a.phoneno, '-', '') = REPLACE(#{phone, jdbcType=VARCHAR}, '-', '') and a.useyn = 'Y'
+    </select>
+
+    <select id="findCustomerByCustCd" parameterType="map" resultType="map">
+        select custcd, custnm, bossnm as usernm, telno as company_tel, telno as hpno, address, email, custgbn, status
+        from haba020t_tbl
+        where cmpycd = #{cmpycd} and custcd = #{custcd}
+    </select>
+
+    <!-- [4. 상담 관리] - SVCNO 채번 -->
+    <select id="generateSvcNo" parameterType="map" resultType="string">
+        SELECT CONCAT(SUBSTRING(#{svcymd, jdbcType=VARCHAR}, 1, 6), LPAD(IFNULL(MAX(CAST(SUBSTRING(SVCNO, 7, 6) AS SIGNED)), 0) + 1, 6, '0')) AS SVCNO
+        FROM CALL_MST_TBL
+        WHERE CMPYCD = #{cmpycd, jdbcType=VARCHAR}
+        AND SUBSTRING(SVCNO, 1, 6) = SUBSTRING(#{svcymd, jdbcType=VARCHAR}, 1, 6)
+    </select>
+
+    <insert id="insertCallMst" parameterType="com.crmbank.erp.crm.dto.CallMstDto">
+        insert into call_mst_tbl
+        (cmpycd, svcno, deptcd, custcd, svcymd, iono, itemcd, trb_ment, ans_ment, ai_summary, start_time, end_time, consultid, rec_file, escalation_yn, escalation_no, esc_memo, happycall_yn, interaction_id, linkedid, call_telno, call_usernm, call_email, addtime, updtime, updemp)
+        values
+        (#{cmpycd}, #{svcno}, #{deptcd, jdbcType=VARCHAR}, #{custcd, jdbcType=VARCHAR}, #{svcymd, jdbcType=VARCHAR},
+        #{iono, jdbcType=VARCHAR}, #{itemcd, jdbcType=VARCHAR}, #{trb_ment, jdbcType=VARCHAR}, #{ans_ment, jdbcType=VARCHAR}, #{ai_summary, jdbcType=VARCHAR},
+        #{start_time, jdbcType=TIMESTAMP}, #{end_time, jdbcType=TIMESTAMP}, #{consultid, jdbcType=VARCHAR}, #{rec_file, jdbcType=VARCHAR},
+        #{escalation_yn, jdbcType=VARCHAR}, #{escalation_no, jdbcType=VARCHAR}, #{esc_memo, jdbcType=VARCHAR}, #{happycall_yn, jdbcType=VARCHAR},
+        #{interaction_id, jdbcType=VARCHAR}, IFNULL(#{linkedid, jdbcType=VARCHAR}, 'MANUAL'), #{call_telno, jdbcType=VARCHAR}, #{call_usernm, jdbcType=VARCHAR}, #{call_email, jdbcType=VARCHAR},
+        NOW(), NOW(), #{updemp, jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateCallMst" parameterType="com.crmbank.erp.crm.dto.CallMstDto">
+        update call_mst_tbl
+        set trb_ment = #{trb_ment, jdbcType=VARCHAR},
+        ANS_MENT = #{ans_ment, jdbcType=VARCHAR},
+        AI_SUMMARY = #{ai_summary, jdbcType=VARCHAR},
+        ITEMCD = #{itemcd, jdbcType=VARCHAR},
+        IONO = #{iono, jdbcType=VARCHAR},
+        SVCYMD = #{svcymd, jdbcType=VARCHAR},
+        ESCALATION_YN = #{escalation_yn, jdbcType=VARCHAR},
+        ESCALATION_NO = #{escalation_no, jdbcType=VARCHAR},
+        ESC_MEMO = #{esc_memo, jdbcType=VARCHAR},
+        REC_FILE = #{rec_file, jdbcType=VARCHAR},
+        INTERACTION_ID = #{interaction_id, jdbcType=VARCHAR},
+        LINKEDID = IFNULL(#{linkedid, jdbcType=VARCHAR}, 'MANUAL'),
+        CALL_TELNO = #{call_telno, jdbcType=VARCHAR},
+        CALL_USERNM = #{call_usernm, jdbcType=VARCHAR},
+        CALL_EMAIL = #{call_email, jdbcType=VARCHAR},
+        HAPPYCALL_YN = #{happycall_yn, jdbcType=VARCHAR},
+        UPDTIME = NOW(),
+        UPDEMP = #{updemp, jdbcType=VARCHAR}
+        WHERE CMPYCD = #{cmpycd}
+        AND SVCNO = #{svcno}
+    </update>
+
+    <update id="updateCallMstAiResult" parameterType="com.crmbank.erp.crm.dto.CallMstDto">
+        update call_mst_tbl
+        set TRB_MENT = IFNULL(#{trb_ment, jdbcType=VARCHAR}, TRB_MENT),
+            ANS_MENT = IFNULL(#{ans_ment, jdbcType=VARCHAR}, ANS_MENT),
+            AI_SUMMARY = #{ai_summary, jdbcType=VARCHAR},
+            UPDTIME = NOW(),
+            UPDEMP = #{updemp, jdbcType=VARCHAR}
+        WHERE CMPYCD = #{cmpycd}
+        AND SVCNO = #{svcno}
+    </update>
+
+    <delete id="deleteCallMst" parameterType="map">
+        delete from call_mst_tbl where cmpycd = #{cmpycd} and svcno = #{svcno}
+    </delete>
+
+    <select id="selectCallMst" parameterType="map" resultType="com.crmbank.erp.crm.dto.CallMstDto">
+        select * from call_mst_tbl where cmpycd = #{cmpycd} and svcno = #{svcno}
+    </select>
+
+    <insert id="insertEscalation" parameterType="com.crmbank.erp.crm.dto.CtiEscalationDto" useGeneratedKeys="true" keyProperty="ESCALATION_NO">
+        insert into cti_escalation_tbl
+        (svcno, linkedid, reg_date, sender_id, deptcd, summary, esc_memo, status, addtime, updtime, updemp)
+        values
+        (#{svcno, jdbcType=VARCHAR}, IFNULL(#{linkedid, jdbcType=VARCHAR}, 'MANUAL'), NOW(), #{sender_id, jdbcType=VARCHAR}, #{deptcd, jdbcType=VARCHAR},
+        #{summary, jdbcType=VARCHAR}, #{esc_memo, jdbcType=VARCHAR}, '100', NOW(), NOW(), #{sender_id, jdbcType=VARCHAR})
+    </insert>
+
+    <!-- [6. 녹취 파일 관리] -->
+    <insert id="insertCallMonitor" parameterType="com.crmbank.erp.crm.dto.CallMonitorDto">
+        insert into call_monitor_tbl (cmpycd, svcno, `row`, moniternm, addtime, updtime, updemp)
+        VALUES (#{cmpycd}, #{svcno}, #{row}, #{moniternm, jdbcType=VARCHAR}, NOW(), NOW(), #{updemp, jdbcType=VARCHAR})
+    </insert>
+
+    <delete id="deleteCallMonitor" parameterType="map">
+        delete from call_monitor_tbl where cmpycd = #{cmpycd} and svcno = #{svcno}
+    </delete>
+
+    <!-- [7. 이력 조회] -->
+    <select id="selectItemList" parameterType="map" resultType="map">
+        select a.salsymd, b.itemnm, a.iono, a.itemcd
+        from hsio102t_tbl a left outer join hsba010t_tbl b
+        on a.cmpycd = b.cmpycd and a.itemcd = b.itemcd
+        WHERE A.CMPYCD = #{cmpycd, jdbcType=VARCHAR} AND A.CUSTCD = #{custcd, jdbcType=VARCHAR} AND A.IOGBN = '200' AND A.CFMYN = 'Y'
+        ORDER BY A.SALSYMD DESC
+    </select>
+
+    <select id="selectCallHistory" parameterType="map" resultType="map">
+        select a.svcno, DATE_FORMAT(a.start_time, '%Y-%m-%d %H:%i') as start_time,
+        a.ai_summary, a.trb_ment, a.ans_ment, b.usernm as consultnm, a.rec_file,
+        a.call_telno as hpno, a.call_usernm, a.call_email
+        from call_mst_tbl a
+        left outer join haba920t_tbl b on a.cmpycd = b.cmpycd and a.consultid = b.userid
+        WHERE A.CMPYCD = #{cmpycd, jdbcType=VARCHAR} AND A.CUSTCD = #{custcd, jdbcType=VARCHAR}
+        ORDER BY A.START_TIME DESC
+    </select>
+
+    <!-- [8. 이관 데이터 관리] -->
+    <select id="selectTransferData" parameterType="string" resultType="map">
+        SELECT * FROM CTI_TRANSFER_TBL WHERE LINKEDID = #{linkedid, jdbcType=VARCHAR}
+    </select>
+
+    <insert id="upsertTransferData" parameterType="map">
+        INSERT INTO CTI_TRANSFER_TBL (linkedid, cmpycd, from_exten, to_exten, transfer_cnt, addtime, updtime)
+        VALUES (#{linkedid, jdbcType=VARCHAR}, #{cmpycd, jdbcType=VARCHAR}, #{from_exten, jdbcType=VARCHAR}, #{to_exten, jdbcType=VARCHAR}, 1, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE from_exten = #{from_exten, jdbcType=VARCHAR},
+        TO_EXTEN = #{to_exten, jdbcType=VARCHAR},
+        TRANSFER_CNT = IFNULL(transfer_cnt, 0) + 1,
+        UPDTIME = NOW();
+    </insert>
+
+    <!-- 인바운드 상담현황 조회 (HGIA020S) -->
+    <select id="selectStatusList" parameterType="map" resultType="map">
+        select a.start_time,
+        c.custnm,
+        a.call_telno as hpno,
+        a.call_usernm,
+        a.call_email,
+        a.svcno,
+        a.ai_summary,
+        a.trb_ment,
+        a.ans_ment,
+        a.esc_memo,
+        u.usernm as consultnm,
+        a.consultid,
+        a.rec_file,
+        a.cmpycd
+        FROM CALL_MST_TBL A
+        left join haba020t_tbl c on a.cmpycd = c.cmpycd and a.custcd = c.custcd
+        left join haba920t_tbl u on a.cmpycd = u.cmpycd and a.consultid = u.userid
+        WHERE A.CMPYCD = #{cmpycd, jdbcType=VARCHAR}
+        AND A.SVCYMD BETWEEN #{fromdt, jdbcType=VARCHAR} AND #{todt, jdbcType=VARCHAR}
+        <if test="custnm != null and custnm != ''">
+            AND C.CUSTNM LIKE CONCAT('%', #{custnm, jdbcType=VARCHAR}, '%')
+        </if>
+        order by a.start_time desc
+    </select>
+
+    <select id="selectServiceHistory" parameterType="map" resultType="map">
+        SELECT * FROM call_mst_tbl WHERE 1=0
+    </select>
+
+    <select id="selectSettleHistory" parameterType="map" resultType="map">
+        SELECT * FROM call_mst_tbl WHERE 1=0
+    </select>
+
+    <!-- [9. 콜백 통합 관리] HGOA110U 조회 및 결과 저장 -->
+    <select id="selectCallbackList" parameterType="map" resultType="map">
+        SELECT
+            a.start_time,
+            a.src_no,
+            IFNULL(b.custnm, a.keyword) as custnm,
+            a.callback_no,
+            a.rec_file,
+            a.callback_agent_id,
+            a.result_cd,
+            a.callback_rec_file,
+            a.call_memo,
+            a.interaction_id,
+            a.status as callback_status
+        FROM total_interaction_log a
+        LEFT JOIN haba020t_tbl b ON a.cmpycd = b.cmpycd AND a.src_no = b.telno
+        WHERE a.cmpycd = #{cmpycd}
+          AND a.callback_yn = 'y'
+        <if test="fromdt != null and fromdt != ''">
+          AND a.start_time >= #{fromdt}
+        </if>
+        <if test="todt != null and todt != ''">
+          AND a.start_time &lt;= #{todt}
+        </if>
+        ORDER BY a.start_time DESC
+    </select>
+
+    <update id="updateCallbackResult" parameterType="map">
+        UPDATE total_interaction_log
+        SET RESULT_CD = #{result_cd, jdbcType=VARCHAR},
+            CALL_MEMO = #{call_memo, jdbcType=VARCHAR},
+            CALLBACK_AGENT_ID = #{callback_agent_id, jdbcType=VARCHAR},
+            STATUS = '300'
+        WHERE INTERACTION_ID = #{uniqueid, jdbcType=VARCHAR}
+    </update>
+</mapper>

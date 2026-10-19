@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crmbank.erp.comm.mapper.EmailMapper">
+
+  <!-- 💡 결과 매핑 (SELECT 결과 컬럼명 -> DTO 필드명) -->
+  <select id="getMailHistory" parameterType="map" resultType="com.crmbank.erp.comm.dto.EmailSendHistoryDto">
+    select case when docgb = '200' then '거래명세서'
+                when docgb = '700' then '상담실초대'
+             end as docgbnm,
+        a.sendymd as sendymd,
+        a.sendno as sendno,
+        a.userid as userid,
+        c.usernm as usernm,
+        a.send_date as senddate,
+        a.custcd as custcd,
+        b.custnm as custnm,
+        a.email as email,
+        a.send_email as sendemail,
+        a.attach_url as attachurl,
+        a.schedule_type as scheduletype,
+        a.reserved_date as reserveddate,
+        a.reserved_h as reservedh,
+        a.conn_info as conninfo,
+        a.sendyn as sendyn
+    from mail_send_hist_tbl a left join haba020t_tbl b
+      on a.cmpycd = b.cmpycd
+     and a.custcd = b.custcd
+         left join haba920t_tbl c
+      on a.cmpycd = c.cmpycd
+     and a.userid = c.userid
+    where a.cmpycd = #{cmpycd}  <!-- 💡 service의 map key와 일치 (소문자) -->
+      and a.sendymd between #{fromdt} and #{todt}
+      and a.sendyn = #{sendyn}
+    <if test="docgb != null and docgb != ''">
+      and a.docgb = #{docgb}
+    </if>
+    <if test="custnm != null and custnm != ''">
+      and b.custnm like concat('%', #{custnm}, '%')
+    </if>
+    order by a.send_date desc
+  </select>
+
+  <!-- 💡 파라미터 매핑 (DTO 필드명 -> DB 컬럼명) -->
+  <insert id="saveMailHist" parameterType="com.crmbank.erp.comm.dto.EmailSendHistoryDto">
+    insert into mail_send_hist_tbl
+        (cmpycd, docgb, sendymd, sendno, userid, send_date, custcd,
+         email, send_email, subject, attach_url, schedule_type,
+         reserved_date, reserved_h, conn_info, sendyn, addtime, updtime, updemp)
+    values
+        (#{cmpycd}, #{docgb}, #{sendymd}, #{sendno}, #{userid}, #{senddate}, #{custcd},
+         #{email}, #{sendemail}, #{subject}, #{attachurl}, #{scheduletype},
+         #{reserveddate}, #{reservedh}, #{conninfo}, #{sendyn}, #{addtime}, #{updtime}, #{updemp})
+  </insert>
+
+</mapper>

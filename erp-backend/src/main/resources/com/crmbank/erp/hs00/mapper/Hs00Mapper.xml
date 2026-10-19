@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.hs00.mapper.Hs00Mapper">
+
+    <select id="HS00_000S_STR" parameterType="map" resultType="map">
+        SELECT codecd as code, codenm, remark as etcval
+        FROM haba900t_tbl
+        WHERE useyn = 'Y'
+        <if test="gbncd != null and gbncd != ''">
+            AND cdtype = #{gbncd}
+        </if>
+        <if test="code != null and code != ''">
+            AND codecd = #{code}
+        </if>
+        ORDER BY dspord
+    </select>
+
+    <select id="HS00_150S_STR" parameterType="map" resultType="map">
+        SELECT custcd, custnm, ceo, telno, address
+        FROM haba020t_tbl
+        WHERE cmpycd = #{cmpycd}
+        <if test="custnm != null and custnm != ''">
+            AND custnm LIKE CONCAT('%', #{custnm}, '%')
+        </if>
+        ORDER BY custnm
+    </select>
+
+</mapper>

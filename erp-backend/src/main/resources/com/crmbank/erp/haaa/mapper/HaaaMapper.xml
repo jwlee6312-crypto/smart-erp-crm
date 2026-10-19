@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.haaa.mapper.HaaaMapper">
+
+    <select id="HAAA_010U_STR" parameterType="map" resultType="map">
+        <choose>
+            <when test="actkind == 'S1' or actkind == 'S2' or actkind == 'S3' or actkind == 'SR' or actkind == 'S0' or actkind == 'L'">
+                SELECT * FROM haba900t_tbl WHERE 1=1
+                <if test="cmpycd != null and cmpycd != ''">
+                    AND cmpycd = #{cmpycd}
+                </if>
+            </when>
+            <otherwise>
+                SELECT 'OK' as RESULT, '성공' as MSG
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="HAAA_800U_STR" parameterType="map" resultType="map">
+        <choose>
+            <when test="actkind == 'S0' or actkind == 'S1' or actkind == 'L'">
+                SELECT * FROM haaa800t_tbl WHERE 1=1
+                <if test="pgmnm != null and pgmnm != ''">
+                    AND pgmnm LIKE CONCAT('%', #{pgmnm}, '%')
+                </if>
+            </when>
+            <otherwise>
+                SELECT 'OK' as RESULT, '성공' as MSG
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="HAAA_810U_STR" parameterType="map" resultType="map">
+        <choose>
+            <when test="actkind == 'S0' or actkind == 'S1' or actkind == 'L'">
+                SELECT * FROM haaa800t_tbl WHERE 1=1
+            </when>
+            <otherwise>
+                SELECT 'OK' as RESULT, '성공' as MSG
+            </otherwise>
+        </choose>
+    </select>
+
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crmbank.erp.crm.mapper.CtiEscalationMapper">
+
+    <!-- 업무 이관 등록 (MySQL 최적화) -->
+    <insert id="insertEscalation" parameterType="com.crmbank.erp.crm.dto.CtiEscalationDto" useGeneratedKeys="true" keyProperty="escalation_no">
+        insert into cti_escalation_tbl
+        (svcno, linkedid, reg_date, sender_id, deptcd, summary, esc_memo, status, addtime, updtime, updemp)
+        values
+        (#{svcno, jdbcType=VARCHAR},
+         IFNULL(#{linkedid, jdbcType=VARCHAR}, 'MANUAL'),
+         IFNULL(#{reg_date, jdbcType=TIMESTAMP}, NOW()),
+         #{sender_id, jdbcType=VARCHAR},
+         #{deptcd, jdbcType=VARCHAR},
+         #{summary, jdbcType=VARCHAR},
+         #{esc_memo, jdbcType=VARCHAR},
+         IFNULL(#{status, jdbcType=VARCHAR}, '100'),
+         NOW(), NOW(), #{sender_id, jdbcType=VARCHAR})
+    </insert>
+
+    <!-- 업무 이관 수정 (피드백 포함) -->
+    <update id="updateEscalation" parameterType="com.crmbank.erp.crm.dto.CtiEscalationDto">
+        UPDATE CTI_ESCALATION_TBL
+        SET DEPTCD = #{deptcd, jdbcType=VARCHAR},
+            SUMMARY = #{summary, jdbcType=VARCHAR},
+            ESC_MEMO = #{esc_memo, jdbcType=VARCHAR},
+            STATUS = #{status, jdbcType=VARCHAR},
+            FEEDBACK_MEMO = #{feedback_memo, jdbcType=VARCHAR},
+            FEEDBACK_DATE = #{feedback_date, jdbcType=TIMESTAMP},
+            FEEDBACK_USER = #{feedback_user, jdbcType=VARCHAR},
+            UPDTIME = NOW(),
+            UPDEMP = #{feedback_user, jdbcType=VARCHAR}
+        WHERE ESCALATION_NO = #{escalation_no}
+    </update>
+
+    <!-- 업무 이관 삭제 -->
+    <delete id="deleteEscalation" parameterType="int">
+        DELETE FROM CTI_ESCALATION_TBL
+        WHERE ESCALATION_NO = #{escalation_no}
+    </delete>
+
+    <!-- 업무 이관 목록 조회 -->
+    <select id="selectEscalationList" parameterType="map" resultType="com.crmbank.erp.crm.dto.CtiEscalationDto">
+        SELECT * FROM CTI_ESCALATION_TBL
+        <where>
+            <if test="deptcd != null and deptcd != ''"> AND DEPTCD = #{deptcd} </if>
+            <if test="status != null and status != ''"> AND STATUS = #{status} </if>
+            <if test="svcno != null and svcno != ''"> AND SVCNO = #{svcno} </if>
+        </where>
+        ORDER BY REG_DATE DESC
+    </select>
+
+    <!-- 단건 조회 -->
+    <select id="selectEscalation" parameterType="int" resultType="com.crmbank.erp.crm.dto.CtiEscalationDto">
+        SELECT * FROM CTI_ESCALATION_TBL
+        WHERE ESCALATION_NO = #{escalation_no}
+    </select>
+
+</mapper>

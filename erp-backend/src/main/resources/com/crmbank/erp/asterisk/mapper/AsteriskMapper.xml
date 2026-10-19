@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.asterisk.mapper.AsteriskMapper">
+
+    <!-- =========================================================== -->
+    <!-- 1. PJSIP 내선 관리 (Standard + Custom JOIN)                -->
+    <!-- =========================================================== -->
+
+    <!-- 내선 리스트 조회 -->
+    <select id="selectPjsipList" parameterType="map" resultType="map">
+        SELECT a.id as id, b.password as password, c.max_contacts as max_contacts,
+               a.context as context, a.transport as transport, a.allow as allow,
+               COALESCE(d.record_yn, 'Y') as record_yn, a.callerid as callerid,
+               d.mobile_no as mobile_no, d.routing_mode as routing_mode,
+               d.status as status, d.duty_yn as duty_yn
+        FROM ps_endpoints a
+        LEFT JOIN ps_auths b ON a.id = b.id
+        LEFT JOIN ps_aors c ON a.id = c.id
+        LEFT JOIN ps_endpoints_custom d ON a.id = d.id
+        WHERE 1=1
+        <if test="id != null and id != ''"> AND a.id LIKE CONCAT('%', #{id}, '%') </if>
+        <if test="callerid != null and callerid != ''"> AND a.callerid LIKE CONCAT('%', #{callerid}, '%') </if>
+    </select>
+
+    <!-- PJSIP 인증 정보 저장 -->
+    <insert id="insertPjsipAuth">
+        INSERT INTO ps_auths (id, auth_type, password, username)
+        VALUES (#{id}, 'userpass', #{password}, #{id})
+        ON DUPLICATE KEY UPDATE password = #{password}
+    </insert>
+
+    <!-- PJSIP AOR 정보 저장 -->
+    <insert id="insertPjsipAor">
+        INSERT INTO ps_aors (id, max_contacts, remove_existing)
+        VALUES (#{id}, COALESCE(#{max_contacts}, 1), 'yes')
+        ON DUPLICATE KEY UPDATE max_contacts = COALESCE(#{max_contacts}, 1)
+    </insert>
+
+    <!-- PJSIP 엔드포인트 저장 (Core + Custom 분산 저장) -->
+    <insert id="insertPjsipEndpoint">
+        -- 1) Asterisk Core Standard Table
+        INSERT INTO ps_endpoints (id, transport, aors, auth, context, disallow, allow, callerid,
+                                           force_rport, rewrite_contact, rtp_symmetric, direct_media, rtp_timeout, timers)
+        VALUES (#{id}, #{transport}, #{id}, #{id}, #{context}, 'all', #{allow}, #{callerid},
+                'yes', 'yes', 'yes', 'no', 20, 'yes')
+        ON DUPLICATE KEY UPDATE transport = #{transport}, context = #{context}, allow = #{allow}, callerid = #{callerid};
+
+        -- 2) ERP Custom Business Table
+        INSERT INTO ps_endpoints_custom (id, record_yn, mobile_no, routing_mode, status, duty_yn)
+        VALUES (#{id}, COALESCE(#{record_yn}, 'Y'), #{mobile_no}, COALESCE(#{routing_mode}, '10'),
+                COALESCE(#{status}, '10'), COALESCE(#{duty_yn}, 'N'))
+        ON DUPLICATE KEY UPDATE record_yn = COALESCE(#{record_yn}, 'Y'), mobile_no = #{mobile_no},
+                                routing_mode = COALESCE(#{routing_mode}, '10'), status = COALESCE(#{status}, '10'),
+                                duty_yn = COALESCE(#{duty_yn}, 'N');
+    </insert>
+
+    <!-- 내선 삭제 -->
+    <delete id="deletePjsip">
+        DELETE FROM ps_endpoints WHERE id = #{id};
+        DELETE FROM ps_auths WHERE id = #{id};
+        DELETE FROM ps_aors WHERE id = #{id};
+        DELETE FROM ps_endpoints_custom WHERE id = #{id};
+    </delete>
+
+    <!-- =========================================================== -->
+    <!-- 2. 수신그룹 (Queue) 관리                                     -->
+    <!-- =========================================================== -->
+
+    <select id="selectQueueList" parameterType="map" resultType="map">
+        SELECT name, musiconhold, strategy, timeout, ringinuse, context
+        FROM queues
+        WHERE 1=1
+        <if test="name != null and name != ''"> AND name LIKE CONCAT('%', #{name}, '%') </if>
+    </select>
+
+    <select id="selectQueueMemberList" parameterType="string" resultType="map">
+        SELECT REPLACE(interface, 'PJSIP/', '') as interface_no, membername as membername,
+               penalty as penalty, paused as paused, wrapuptime as wrapuptime
+        FROM queue_members
+        WHERE queue_name = #{queue_name}
+    </select>
+
+    <insert id="upsertQueue">
+        INSERT INTO queues (name, musiconhold, strategy, timeout, ringinuse, context, failover_dest)
+        VALUES (#{name}, COALESCE(#{musiconhold}, 'default'), #{strategy}, #{timeout}, #{ringinuse}, #{context}, #{failover_dest})
+        ON DUPLICATE KEY UPDATE musiconhold = COALESCE(#{musiconhold}, 'default'), strategy = #{strategy},
+                                timeout = #{timeout}, failover_dest = #{failover_dest}
+    </insert>
+
+    <delete id="deleteQueue">
+        DELETE FROM queues WHERE name = #{name}
+    </delete>
+
+    <delete id="deleteQueueMembers">
+        DELETE FROM queue_members WHERE queue_name = #{queue_name}
+    </delete>
+
+    <insert id="insertQueueMember">
+        INSERT INTO queue_members (queue_name, interface, membername, penalty, paused, wrapuptime)
+        VALUES (#{queue_name}, CONCAT('PJSIP/', #{interface_no}), #{membername}, #{penalty}, #{paused}, #{wrapuptime})
+    </insert>
+
+    <!-- =========================================================== -->
+    <!-- 3. 다이얼플랜 (Extensions) 관리                               -->
+    <!-- =========================================================== -->
+
+    <select id="selectExtensions" parameterType="map" resultType="map">
+        SELECT context, exten, priority, app, appdata
+        FROM extensions
+        WHERE 1=1
+        <if test="context != null and context != ''"> AND context LIKE CONCAT('%', #{context}, '%') </if>
+        <if test="exten != null and exten != ''"> AND exten LIKE CONCAT('%', #{exten}, '%') </if>
+    </select>
+
+    <insert id="insertExtension">
+        INSERT INTO extensions (context, exten, priority, app, appdata)
+        VALUES (#{context}, #{exten}, #{priority}, #{app}, #{appdata})
+    </insert>
+
+    <delete id="deleteExtensions">
+        DELETE FROM extensions WHERE context = #{context} AND exten = #{exten}
+    </delete>
+
+    <!-- =========================================================== -->
+    <!-- 4. ARS 및 기타 비즈니스 로직                                  -->
+    <!-- =========================================================== -->
+
+    <select id="selectArsScripts" parameterType="map" resultType="map">
+        SELECT id, description, script_text, upd_user, upd_dtime
+        FROM ars_scripts
+        WHERE 1=1
+        <if test="id != null and id != ''"> AND id LIKE CONCAT('%', #{id}, '%') </if>
+        ORDER BY id ASC
+    </select>
+
+    <insert id="upsertArsScript">
+        INSERT INTO ars_scripts (id, description, script_text, upd_user)
+        VALUES (#{id}, #{description}, #{script_text}, #{upd_user})
+        ON DUPLICATE KEY UPDATE script_text = #{script_text}, description = #{description}, upd_user = #{upd_user}
+    </insert>
+
+    <!-- =========================================================== -->
+    <!-- 5. 전역 변수 관리 (업무모드 등)                              -->
+    <!-- =========================================================== -->
+    <select id="selectVariables" parameterType="map" resultType="map">
+        SELECT var_name, var_value FROM global_vars
+        WHERE 1=1
+        <if test="var_name != null and var_name != ''"> AND var_name = #{var_name} </if>
+    </select>
+
+    <insert id="upsertVariable">
+        INSERT INTO global_vars (var_name, var_value)
+        VALUES (#{var_name}, #{var_value})
+        ON DUPLICATE KEY UPDATE var_value = #{var_value}
+    </insert>
+
+</mapper>

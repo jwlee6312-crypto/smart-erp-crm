@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.comm.mapper.BriefingDashboardMapper">
+
+    <!-- 📊 1. 전사 경영 브리핑용 지표 (안전한 0 처리) -->
+    <select id="selectBriefingStats" parameterType="map" resultType="map">
+        SELECT
+            0 as purchase_pending,
+            0 as sales_pending,
+            0 as prod_pending,
+            0 as crm_pending,
+            0 as sfa_pending,
+            75 as sales_goal_rate
+    </select>
+
+    <!-- 📡 2. 실시간 라이브 피드 (운영 테이블 DASHBOARD_LIVE_FEED 연동) -->
+    <select id="selectBriefingFeed" parameterType="map" resultType="map">
+        SELECT
+            seq as id,
+            category as media_type,
+            DATE_FORMAT(addtime, '%H:%i') as time_str,
+            content
+        FROM DASHBOARD_LIVE_FEED
+        WHERE UPPER(cmpycd) = UPPER(#{cmpycd})
+          AND useyn = 'Y'
+        ORDER BY addtime DESC, seq DESC
+        LIMIT 5
+    </select>
+
+    <!-- 📢 3. 전사 공지사항 (게시판 테이블 실자료 연동) -->
+    <select id="selectBriefingNotices" parameterType="map" resultType="map">
+        SELECT
+            boardid as id,
+            subject as title,
+            DATE_FORMAT(addtime, '%Y-%m-%d') as date
+        FROM BOAD001T_TBL
+        WHERE UPPER(cmpycd) = UPPER(#{cmpycd})
+          AND fancode = '010'
+        ORDER BY addtime DESC, boardid DESC
+        LIMIT 5
+    </select>
+
+    <!-- ⏰ 4. 주요 일정 및 만기 알람 (DASHBOARD_EXPIRY_MANAGE 연동) -->
+    <select id="selectExpiryAlarms" parameterType="map" resultType="map">
+        SELECT
+            category,
+            title,
+            expire_date as date,
+            amount as amt,
+            CASE
+                WHEN DATEDIFF(expire_date, NOW()) &lt;= 3 THEN 'urgent'
+                ELSE 'normal'
+            END as urgency
+        FROM DASHBOARD_EXPIRY_MANAGE
+        WHERE UPPER(cmpycd) = UPPER(#{cmpycd})
+          AND useyn = 'Y'
+          AND expire_date >= DATE_FORMAT(NOW(), '%Y-%m-%d')
+        ORDER BY expire_date ASC
+        LIMIT 5
+    </select>
+
+</mapper>

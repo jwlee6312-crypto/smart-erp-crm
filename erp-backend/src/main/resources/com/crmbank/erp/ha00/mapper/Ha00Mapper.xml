@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.ha00.mapper.Ha00Mapper">
+
+    <!-- 💡 공통 코드 테이블(haba900t_tbl) 조회 기능을 도메인 모듈로 이전 -->
+    <select id="GET_CODE_LIST" resultType="map">
+        select cdtype, codecd, codenm, remark, dspord, useyn
+        from haba900t_tbl
+        where cdtype = #{cdtype} and useyn = 'y'
+        order by dspord
+    </select>
+
+    <select id="HA00_00P_STR" parameterType="map" resultType="map">
+        SELECT codecd as code, codenm as remark
+        FROM haba900t_tbl
+        WHERE cmpycd = #{cmpycd}
+        <if test="gbncd != null and gbncd != ''">
+            AND cdtype = #{gbncd}
+        </if>
+        <if test="code != null and code != ''">
+            AND codecd LIKE CONCAT('%', #{code}, '%')
+        </if>
+        ORDER BY dspord
+    </select>
+
+    <select id="HA00_010S_STR" parameterType="map" resultType="map">
+        SELECT cdtype, codecd, codenm, remark, dspord, useyn
+        FROM haba900t_tbl
+        WHERE cmpycd = #{cmpycd}
+        <if test="cdkind != null and cdkind != ''">
+            AND cdtype = #{cdkind}
+        </if>
+        <if test="code != null and code != ''">
+            AND codecd = #{code}
+        </if>
+        ORDER BY dspord
+    </select>
+
+</mapper>

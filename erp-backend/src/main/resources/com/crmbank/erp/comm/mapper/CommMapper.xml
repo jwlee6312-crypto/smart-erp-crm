@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.comm.mapper.CommMapper">
+
+    <select id="GET_TOP_MENU_LIST" resultType="map">
+        select codecd, codenm from haba900t_tbl where cdtype = '320' and useyn = 'Y' order by dspord
+    </select>
+
+    <select id="GET_TOP_MENU_MOBILE_LIST" resultType="map">
+        select codecd, codenm from haba900t_tbl where cdtype = '320' and updyn = 'Y' order by dspord
+    </select>
+
+    <select id="GET_PROGRAM_LIST" resultType="map">
+        SELECT A.pgmid, A.pgmnm,
+               CASE WHEN B.progid IS NOT NULL THEN 'Y' ELSE 'N' END as regyn
+        FROM haaa800t_tbl A
+        LEFT JOIN COM_MANUAL B ON REPLACE(A.pgmid, '_', '') = B.progid
+        WHERE A.useyn = 'y'
+        <if test="pgmnm != null and pgmnm != ''">
+            AND A.pgmnm LIKE CONCAT('%', #{pgmnm}, '%')
+        </if>
+        ORDER BY A.pgmid
+    </select>
+
+    <select id="GET_COMPANY_INFO" resultType="map">
+        SELECT CMPYCD,  CMPYNM, SAUPNO, LEGALNO, CMPYENM, BOSSNM,  BOSSENM, JUMINNO, POSTNO,
+               ADDRESS, D_ADDRESS,UPJONG, UPTAE,  TELNO,   FAXNO,   FONDYMD, CLOSEMM, DOMAIN,  EIPYN,   ELCYN, USEYN
+          FROM haba990t_tbl
+         WHERE RTRIM(CMPYCD) = #{cmpycd}
+    </select>
+
+    <select id="GET_USER_INFO" resultType="map">
+        SELECT A.USERNM, A.DEPTNM, A.USERID, A.DEPTCD, A.PW, A.EMPNO, A.USEYN, A.INNER_NO, A.EMAIL,
+               CASE WHEN #{userid} in ('crmbank','jwlee') THEN 'N' ELSE B.EIPYN END AS EIPYN,
+               A.SALSYN, A.SDEPT, A.USERGRP, DAYNAME(NOW()) DATENAME, A.PHOTO_PATH,
+               A.HPNO, A.STATUS, A.ROUTING_MODE
+          FROM haba920t_tbl A INNER JOIN haba990t_tbl B
+            ON RTRIM(A.CMPYCD) = RTRIM(B.CMPYCD)
+           AND B.USEYN  = 'Y'
+         WHERE RTRIM(A.CMPYCD)  = #{cmpycd}
+           AND RTRIM(A.USERID)  = RTRIM(#{userid})
+    </select>
+
+    <select id="HA00_200S_STR" parameterType="map" resultType="map">
+        <choose>
+            <when test="userid == 'MOBILE'">
+                SELECT A.grpcd, IFNULL(B.grpnm,'') AS grpnm, A.pgmid, A.pgmnm, IFNULL(A.mpgmid, '') AS mpgmid
+                  FROM haaa800t_tbl A INNER JOIN haaa810t_tbl B
+                    ON A.upmucd  = B.upmucd
+                   AND A.grpcd   = B.grpcd
+                 WHERE A.upmucd  = #{upmucd}
+                   AND A.useyn   = 'Y'
+                   AND IFNULL(A.mpgmid,'') != ''
+                 ORDER BY B.dspord, A.dspord
+            </when>
+            <when test="cmpycd == userid">
+                <choose>
+                    <when test="cmpycd == 'COIT' and usergrp == '660'">
+                        SELECT A.grpcd, IFNULL(B.grpnm,'') AS grpnm, A.pgmid, A.pgmnm, IFNULL(A.mpgmid, '') AS mpgmid
+                          FROM haaa800t_tbl A INNER JOIN haaa810t_tbl B
+                            ON A.upmucd  = B.upmucd
+                           AND A.grpcd   = B.grpcd
+                         WHERE A.upmucd  = #{upmucd}
+                           AND A.useyn   = 'Y'
+                         ORDER BY B.dspord, A.dspord
+                    </when>
+                    <when test="cmpycd != 'COIT' and usergrp == '660'">
+                        SELECT A.grpcd, C.grpnm, A.pgmid, D.pgmnm, IFNULL(D.mpgmid, '') AS mpgmid
+                          FROM haba935t_tbl A INNER JOIN haaa810t_tbl C
+                            ON A.upmucd  = C.upmucd
+                           AND A.grpcd   = C.grpcd
+                           AND C.useyn   = 'Y'
+                               INNER JOIN haaa800t_tbl D
+                            ON A.pgmid   = D.pgmid
+                           AND D.useyn   = 'Y'
+                         WHERE A.cmpycd  = #{cmpycd}
+                           AND A.usergrp = #{usergrp}
+                           AND A.upmucd  = #{upmucd}
+                           AND A.useyn   = 'Y'
+                           AND A.pgmid NOT IN ('HAAA_800U','HAAA_810U')
+                         ORDER BY C.dspord, D.dspord, A.pgmid
+                    </when>
+                    <otherwise>
+                        SELECT A.grpcd, C.grpnm, A.pgmid, D.pgmnm, IFNULL(D.mpgmid,'') AS mpgmid
+                          FROM haba935t_tbl A INNER JOIN haaa810t_tbl C
+                            ON A.upmucd  = C.upmucd
+                           AND A.grpcd   = C.grpcd
+                           AND C.useyn   = 'Y'
+                               INNER JOIN haaa800t_tbl D
+                            ON A.pgmid   = D.pgmid
+                           AND D.useyn   = 'Y'
+                         WHERE A.cmpycd  = #{cmpycd}
+                           AND A.usergrp = #{usergrp}
+                           AND A.upmucd  = #{upmucd}
+                           AND A.useyn   = 'Y'
+                         ORDER BY C.dspord, D.dspord, A.pgmid
+                    </otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                SELECT A.grpcd, C.grpnm, A.pgmid, D.pgmnm, IFNULL(D.mpgmid,'') AS mpgmid
+                  FROM haba935t_tbl A INNER JOIN haaa810t_tbl C
+                    ON A.upmucd  = C.upmucd
+                   AND A.grpcd   = C.grpcd
+                   AND C.useyn   = 'Y'
+                       INNER JOIN haaa810t_tbl D
+                    ON A.pgmid   = D.pgmid
+                   AND D.useyn   = 'Y'
+                 WHERE A.cmpycd  = #{cmpycd}
+                   AND A.usergrp = #{usergrp}
+                   AND A.upmucd  = #{upmucd}
+                   AND A.useyn   = 'Y'
+                 ORDER BY C.dspord, D.dspord, A.pgmid
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="HABA_900U_STR" parameterType="map" resultType="map">
+        SELECT * FROM haba900t_tbl WHERE 1=1
+    </select>
+
+    <insert id="INSERT_LOGIN_HISTORY">
+        insert into haba970t_tbl (cmpycd, userid, addtime, iogbn, ip) values (#{cmpycd}, #{userid}, NOW(), #{iogbn}, #{ip})
+    </insert>
+    <delete id="DELETE_USER_CONN">
+        delete from haba980t_tbl where cmpycd = #{cmpycd} and userid = #{userid}
+    </delete>
+</mapper>

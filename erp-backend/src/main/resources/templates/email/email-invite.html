@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .container { font-family: 'Pretendard', sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden; }
+        .header { background: linear-gradient(135deg, #0d6efd 0%, #0046b5 100%); color: white; padding: 30px; text-align: center; }
+        .body { padding: 40px; line-height: 1.6; color: #333; }
+        .footer { background: #f8f9fa; color: #999; padding: 20px; text-align: center; font-size: 12px; }
+        .btn { display: inline-block; padding: 15px 40px; background-color: #0d6efd; color: white !important; text-decoration: none; border-radius: 30px; font-weight: bold; margin-top: 20px; box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3); }
+        .highlight { color: #0d6efd; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CRMBANK</h1>
+            <p>실시간 고객 상담실 초대장</p>
+        </div>
+        <div class="body">
+            <h3>안녕하세요, <span class="highlight" data-th-text="${custNm}">고객</span>님!</h3>
+            <p>요청하신 실시간 상담을 위해 온라인 상담실이 준비되었습니다.</p>
+            <p>아래 버튼을 누르시면 세련된 디자인의 <strong>모바일 전용 상담실</strong>로 즉시 입장하실 수 있습니다.</p>
+            <div style="text-align: center;">
+                <a data-th-href="${inviteUrl}" class="btn">상담실 입장하기</a>
+            </div>
+            <p style="margin-top: 30px; font-size: 14px; color: #666;">* 본 링크는 본인 확인을 위해 생성되었으며, 타인에게 공유하지 마시기 바랍니다.</p>
+        </div>
+        <div class="footer">
+            &copy; CRMBANK Co., Ltd. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

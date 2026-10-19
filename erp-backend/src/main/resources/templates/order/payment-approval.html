@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <title>지 출 결 의 서</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+    />
+    <style>
+        body {
+            font-size: 12px;
+            font-family: '맑은 고딕', 'Malgun Gothic', "apple sd", sans-serif;
+            margin: auto;
+            padding: 5mm
+        }
+
+        th, td {
+            padding: 8px;
+            vertical-align: middle;
+            border: 1px solid gray;
+            word-break: keep-all;
+            text-align: center;
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm;
+            padding: 5mm;
+            box-sizing: border-box;
+            margin: auto;
+            page-break-after: always;
+        }
+
+        @media print {
+            .page {
+                margin: 0;
+                page-break-after: always;
+            }
+
+            button { display: none !important; }
+        }
+    </style>
+  </head>
+  <body>
+    <div class="text-end mb-2">
+      <button class="btn btn-outline-dark" onclick="window.print()">
+        🖨️ Print
+      </button>
+    </div>
+    <div class="page" data-th-each="print : ${printList}">
+      <div class="d-flex">
+        <div class="fs-1 fw-bold d-flex justify-content-center align-items-center" style="width: 60%">
+          <span>지 출 결 의 서</span>
+        </div>
+        <table class="table" style="width: 40%">
+          <tr style="font-size: 12px">
+            <th class="p-0" style="height: 100px; width: 20px; writing-mode: vertical-lr;" rowspan="2">결재</th>
+            <th class="px-1" style="height: 10px; font-size: 10px" data-th-each="gline : ${gLines}">
+              <span data-th-text="${gline}"></span>
+            </th>
+          </tr>
+          <tr>
+            <td style="height: 70px; width: 70px;" data-th-each="gline : ${gLines}" ></td>
+          </tr>
+        </table>
+      </div>
+      <table class="table mb-4" style="table-layout: fixed;">
+        <colgroup>
+          <col style="width: 10%" />
+          <col />
+          <col style="width: 10%" />
+          <col />
+        </colgroup>
+        <tbody>
+        <tr>
+          <th>부서</th>
+          <td>
+            <span data-th-text="${print.mst['deptnm']}"></span>
+          </td>
+          <th>발의일자</th>
+          <td>
+            <span data-th-text="${print.mst['jsanymd']}"></span>
+          </td>
+        </tr>
+        <tr>
+          <th>거래처명</th>
+          <td>
+            <span data-th-text="${print.mst['custnm']}"></span>
+          </td>
+          <th>신청인</th>
+          <td>
+            <span data-th-text="${print.mst['usernm']}"></span>
+          </td>
+        </tr>
+        <tr>
+          <th>계약명</th>
+          <td>
+            <span data-th-text="${print.mst['contnm']}"></span>
+          </td>
+          <th>지급희망일</th>
+          <td>
+            <span data-th-text="${print.mst['jsanymd']}"></span>
+          </td>
+        </tr>
+        <tr>
+          <th>금액</th>
+          <td class="fw-bold text-end">
+            <span data-th-text="${#numbers.formatInteger(print.mst['totamt'], 0, 'COMMA')}"></span>
+          </td>
+          <th>지불조건</th>
+          <td class="align-items-center align-middle p-1">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <label class="d-flex align-items-center gap-1">
+                <input type="checkbox" value="현금" />
+                <span>현금</span>
+              </label>
+              <label class="d-flex align-items-center gap-1">
+                <input type="checkbox" value="어음" />
+                <span>어음</span>
+              </label>
+              <label class="d-flex align-items-center gap-1">
+                <input type="checkbox" value="상계" />
+                <span>상계</span>
+              </label>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <table class="table table-striped" style="table-layout: fixed; font-size: 12px;">
+        <colgroup>
+          <col />
+          <col />
+          <col style="width: 16%" />
+          <col style="width: 6%" />
+          <col style="width: 12%" />
+          <col style="width: 12%" />
+          <col style="width: 14%" />
+        </colgroup>
+        <thead>
+        <tr>
+          <th>매출거래처</th>
+          <th>품명</th>
+          <th>과금시작</th>
+          <th>수량</th>
+          <th>공급가액</th>
+          <th>부가세</th>
+          <th>합계</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="details: ${print.dtl}">
+          <td>
+            <span data-th-text="${details['sales_custnm']}"></span>
+          </td>
+          <td>
+            <span data-th-text="${details['itemnm']}"></span>
+          </td>
+          <td>
+            <span data-th-text="${details['startymd']}"></span>
+          </td>
+          <td class="text-end">
+            <span data-th-text="${#numbers.formatInteger(details['ioqty'], 0, 'COMMA')}"></span>
+          </td>
+          <td class="text-end">
+            <span data-th-text="${#numbers.formatInteger(details['ioamt'], 0, 'COMMA')}"></span>
+          </td>
+          <td class="text-end">
+            <span data-th-text="${#numbers.formatInteger(details['iovat'], 0, 'COMMA')}"></span>
+          </td>
+          <td class="text-end">
+            <span data-th-text="${#numbers.formatInteger(details['totamt'], 0, 'COMMA')}"></span>
+          </td>
+        </tr>
+        <tr data-th-if="${print.dtl.size() < 17}" data-th-each="tableRows : ${#numbers.sequence(1, 17 - print.dtl.size())}">
+          <td data-th-each="tableDatas : ${#numbers.sequence(1, 7)}" style="height: 32px;"></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+          <td colspan="3" class="fw-bold" style="height: 32px;">
+            <span>합계</span>
+          </td>
+          <td class="fw-bold text-end">
+            <span data-th-text="${#numbers.formatInteger(print.mst['sumQty'], 0, 'COMMA')}"></span>
+          </td>
+          <td class="fw-bold text-end">
+            <span data-th-text="${#numbers.formatInteger(print.mst['sumAmt'], 0, 'COMMA')}"></span>
+          </td>
+          <td class="fw-bold text-end">
+            <span data-th-text="${#numbers.formatInteger(print.mst['sumVat'], 0, 'COMMA')}"></span>
+          </td>
+          <td class="fw-bold text-end">
+            <span>₩ <span data-th-text="${#numbers.formatInteger(print.mst['totamt'], 0, 'COMMA')}"></span></span>
+          </td>
+        </tr>
+        </tfoot>
+      </table>
+      <table class="table table-striped" style="table-layout: fixed; font-size: 12px;">
+        <colgroup>
+          <col style="width: 18%;" />
+          <col />
+        </colgroup>
+        <tr>
+          <td class="align-items-center">
+            <div>특기사항(증감내역)</div>
+            <div>(출력물)</div>
+          </td>
+          <td class="align-items-center">
+            <div
+              class="d-flex align-items-center gap-2"
+            >
+              <label class="d-flex align-items-center gap-1">
+                <input type="checkbox" value="신규" />
+                <span>신규</span>
+              </label>
+              <label class="d-flex align-items-center gap-1">
+                <input type="checkbox" value="정지" />
+                <span>정지</span>
+              </label>
+              <label class="d-flex align-items-center gap-1">
+                <input type="checkbox" value="요금변경" />
+                <span>요금변경</span>
+              </label>
+              <label class="d-flex align-items-center gap-1">
+                <input type="checkbox" value="유지수수료" />
+                <span>유지수수료</span>
+              </label>
+              <label class="d-flex align-items-center gap-1">
+                <input type="checkbox" value="출동비" />
+                <span>출동비(이전설치비)</span>
+              </label>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div style="width: 300px;">
+        <table class="table">
+          <tr style="font-size: 12px">
+            <th class="p-0" style="height: 100px; width: 20px; writing-mode: vertical-lr;" rowspan="2">결재</th>
+            <th class="px-1" style="height: 10px; font-size: 10px;">출납</th>
+            <th class="px-1" style="height: 10px; font-size: 10px;">과장</th>
+            <th class="px-1" style="height: 10px; font-size: 10px;">부장</th>
+            <th class="px-1" style="height: 10px; font-size: 10px;">임원</th>
+          </tr>
+          <tr>
+            <td style="height: 70px; width: 70px;"></td>
+            <td style="height: 70px; width: 70px;"></td>
+            <td style="height: 70px; width: 70px;"></td>
+            <td style="height: 70px; width: 70px;"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

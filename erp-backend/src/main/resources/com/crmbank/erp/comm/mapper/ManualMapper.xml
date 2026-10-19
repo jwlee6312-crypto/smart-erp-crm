@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.comm.mapper.ManualMapper">
+
+    <select id="getManual" parameterType="string" resultType="map">
+        SELECT progid, prognm, content, upd_dt, upd_id
+        FROM COM_MANUAL
+        WHERE progid = #{progid}
+    </select>
+
+    <insert id="saveManual" parameterType="map">
+        INSERT INTO COM_MANUAL (progid, prognm, content, upd_dt, upd_id)
+        VALUES (#{progid}, #{prognm}, #{content}, NOW(), #{upd_id})
+        ON DUPLICATE KEY UPDATE content = #{content},
+                                upd_dt = NOW(),
+                                upd_id = #{upd_id}
+    </insert>
+
+</mapper>

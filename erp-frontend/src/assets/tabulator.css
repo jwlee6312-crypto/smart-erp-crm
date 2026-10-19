@@ -1,0 +1,70 @@
+/* tabulator 높이 화면 꽉차게 */
+.tabulator-ref {
+    overflow: auto;
+    height: 100%;
+}
+
+/* tabulator 그리드 배경색 */
+.tabulator {
+    background-color: #ffffff !important;
+    border: 1px solid #dee2e6;
+    margin: 0;
+}
+
+/* 헤더 배경색 */
+.tabulator-col-content {
+    background-color: rgba(189, 198, 210, 0.21) !important;
+    border-right: 1px solid rgb(216, 216, 216);
+    align-items: center; /* 헤더 텍스트 상하 중앙 정렬 */
+}
+
+/* tabulator 그리드 헤더 가운데 정렬 */
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+    text-align: center;
+    width: 100%;
+    display: block;
+}
+
+
+.tabulator .tabulator-row.tabulator-selected {
+    background-color: rgba(220, 224, 227, 0.65) !important;  /* 원하는 배경색으로 변경 */
+}
+
+.tabulator-sortable .tabulator-col-sorter-element {
+    background-color: rgba(189, 198, 210, 0.21) !important;
+}
+
+
+/* 그리드 제목행 크기 조정 */
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+    padding: 6.5px !important;
+}
+
+/* 그리드 데이터행 크기 조정 */
+.tabulator-row .tabulator-cell {
+    border-right: 1px solid rgb(216, 216, 216);
+    padding: 3px 4px !important;
+    font-size: 12px;
+
+    min-height: 24px !important;
+    box-sizing: border-box !important; /* 패딩이 높이에 영향을 주지 않도록 잠금 */
+    display: inline-flex;
+    align-items: center;               /* 플렉스 요소 세로 중앙 정렬 */
+    vertical-align: middle !important; /* 인라인 기준선 틀어짐 방지 (핵심) */
+}
+
+/* 행이 추가될 때 Tabulator 내부 컨테이너 높이가 튀는 현상 제어 */
+.tabulator-row {
+    min-height: 26px !important; /* 셀의 min-height와 동일하게 맞춰줍니다 */
+}
+
+/* tabulator 셀 숫자부분 버튼 삭제 */
+.tabulator-cell input[type='number']::-webkit-inner-spin-button,
+.tabulator-cell input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.tabulator-cell input[type='number'] {
+    -moz-appearance: textfield;
+}

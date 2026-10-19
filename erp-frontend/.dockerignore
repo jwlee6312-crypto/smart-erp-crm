@@ -1,0 +1,19 @@
+.env.local
+
+# VCS / IDE
+.git
+.gitignore
+.vscode
+.idea
+
+# 빌드 산출물 (서버 배포를 위해 주석 처리)
+# dist
+build
+out
+
+# 로컬 캐시/의존성
+node_modules
+npm-debug.log*
+
+# OS
+.DS_Store

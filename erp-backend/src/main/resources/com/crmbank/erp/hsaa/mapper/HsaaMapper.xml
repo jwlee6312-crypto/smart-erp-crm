@@ -1,0 +1,1057 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.hsaa.mapper.HsaaMapper">
+
+    <select id="getSalesUserList" resultType="com.crmbank.erp.hsaa.dto.SalesUserDto">
+        select a.userid, a.usernm, a.deptcd, a.deptnm, b.codenm as positionnm
+        from haba920t_tbl a
+        left outer join haba900t_tbl b on b.cdtype = '800' and a.positionoff = b.codecd
+        where a.cmpycd = #{cmpycd}
+          and a.useyn = 'y'
+          and a.salsyn = 'y'
+        order by a.deptcd, a.positionoff, a.usernm
+    </select>
+
+    <select id="selectSalesUser" resultType="com.crmbank.erp.hsaa.dto.SalesUserDto">
+        select a.userid, a.usernm, a.deptcd, a.deptnm, b.codenm as positionnm
+        from haba920t_tbl a
+        left outer join haba900t_tbl b on b.cdtype = '800' and a.positionoff = b.codecd
+        where a.cmpycd = #{cmpycd}
+          and a.userid = #{userid}
+    </select>
+
+    <select id="getSalesTargetList" resultType="com.crmbank.erp.hsaa.dto.Hsaa600tDto">
+        WITH RECURSIVE Months AS (
+            select '01' as mm union all
+            select lpad(cast(cast(mm as unsigned) + 1 as char), 2, '0') from Months where cast(mm as unsigned) &lt; 12
+        )
+        select
+            m.mm,
+            IFNULL(t.plan_amt, 0) as planamt,
+            IFNULL(t.contact_cnt, 0) as contactcnt,
+            IFNULL(t.consult_cnt, 0) as consultcnt,
+            IFNULL(t.salesid_cnt, 0) as salesidcnt,
+            CONCAT(#{yyyy}, m.mm) as yymm,
+            t.userid,
+            t.cmpycd,
+            t.deptcd
+        from Months m
+        left outer join hsaa600t_tbl t on t.cmpycd = #{cmpycd} and t.userid = #{userid} and t.yymm = CONCAT(#{yyyy}, m.mm)
+        order by m.mm
+    </select>
+
+    <select id="checkExists" resultType="int">
+        select count(*)
+        from hsaa600t_tbl
+        where cmpycd = #{cmpycd}
+          and yymm = #{yymm}
+          and userid = #{userid}
+    </select>
+
+    <update id="updateSalesTarget">
+        update hsaa600t_tbl set
+            contact_cnt = #{contactcnt},
+            consult_cnt = #{consultcnt},
+            salesid_cnt = #{salesidcnt},
+            plan_amt = #{planamt},
+            updtime = #{updtime},
+            updemp = #{updemp}
+        where cmpycd = #{cmpycd}
+          and yymm = #{yymm}
+          and userid = #{userid}
+    </update>
+
+    <insert id="insertSalesTarget">
+        insert into hsaa600t_tbl (
+            cmpycd, yymm, deptcd, userid, contact_cnt, consult_cnt, salesid_cnt, plan_amt, addtime, updtime, updemp
+        ) values (
+            #{cmpycd}, #{yymm}, #{deptcd}, #{userid}, #{contactcnt}, #{consultcnt}, #{salesidcnt}, #{planamt},
+            #{addtime}, #{updtime}, #{updemp}
+        )
+    </insert>
+
+    <!-- HSAA400S 기간별 영업상담 내역 -->
+    <select id="selectConsultationList" resultType="com.crmbank.erp.hsaa.dto.Hsaa300tDto">
+        select a.salesid, b.salestitle, b.state, a.userid, a.custid, g.name,
+               a.contdt, a.ser, a.channel, a.title, a.content, b.foredt,
+               IFNULL(b.foreamt, 0) as foreamt, b.realdt, IFNULL(b.realamt, 0) as realamt, c.custnm,
+               d.usernm, e.cdnm as statenm, DATE_FORMAT(a.addtime, '%Y-%m-%d') as regdt,
+               b.item, b.usecd, b.custcd, c.telno, g.hpno, f.cdnm as channelnm,
+               a.diary_content as diarycontent, a.reportyn, a.report_content as reportcontent,
+               a.coaching_readyn as coachingreadyn, a.sales_coaching as salescoaching
+        from hsaa300t_tbl a
+        left outer join hsaa200t_tbl b on a.cmpycd = b.cmpycd and a.salesid = b.salesid
+        left outer join haba020t_tbl c on b.cmpycd = c.cmpycd and b.custcd = c.custcd
+        left outer join haba920t_tbl d on a.cmpycd = d.cmpycd and a.userid = d.userid
+        left outer join hsaa100t_tbl g on a.cmpycd = g.cmpycd and a.custid = g.custid
+        left outer join hsba900t_tbl e on a.cmpycd = e.cmpycd and e.cdgbn = '700' and a.state = e.code
+        left outer join hsba900t_tbl f on a.cmpycd = f.cmpycd and f.cdgbn = '710' and a.channel = f.code
+        where a.cmpycd = #{cmpycd}
+          and a.contdt between #{sdate} and #{edate}
+          <if test="schcustnm != null and schcustnm != ''"> And c.custnm like CONCAT('%', #{schcustnm}, '%') </if>
+          <if test="userid != null and userid != ''"> AND a.userid = #{userid} </if>
+        order by a.contdt desc, a.ser desc
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countConsultationList" resultType="int">
+        select count(*)
+        from hsaa300t_tbl a
+        left outer join hsaa200t_tbl b on a.cmpycd = b.cmpycd and a.salesid = b.salesid
+        left outer join haba020t_tbl c on b.cmpycd = c.cmpycd and b.custcd = c.custcd
+        where a.cmpycd = #{cmpycd}
+          and a.contdt between #{sdate} and #{edate}
+          <if test="schcustnm != null and schcustnm != ''"> and c.custnm like CONCAT('%', #{schcustnm}, '%') </if>
+          <if test="userid != null and userid != ''"> and a.userid = #{userid} </if>
+    </select>
+
+    <update id="updateSalesCoaching" parameterType="map">
+        START TRANSACTION;
+        UPDATE HSAA200T_TBL SET
+            REPORTDT = #{reportdt},
+            UPDTIME = NOW(),
+            UPDEMP = #{updemp}
+        WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid};
+
+        UPDATE HSAA300T_TBL SET
+            COACHING_READYN = 'N',
+            SALES_COACHING = #{salescoaching},
+            UPDTIME = NOW(),
+            UPDEMP = #{updemp}
+        WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid} AND CONTDT = #{contdt} AND SER = #{ser};
+        COMMIT;
+    </update>
+
+    <update id="confirmCoachingRead" parameterType="map">
+        UPDATE HSAA300T_TBL SET
+            COACHING_READYN = 'Y',
+            UPDTIME = NOW(),
+            UPDEMP = #{updemp}
+        WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid} AND CONTDT = #{contdt} AND SER = #{ser}
+    </update>
+
+    <!-- HSAA390S 주간영업활동실적현황 -->
+    <select id="selectWeeklyActivityStatus" resultType="com.crmbank.erp.hsaa.dto.Hsaa390sDto">
+        SELECT tt.deptcd, tt.deptnm, tt.userid, tt.usernm,
+               sum(a01_cnt) as a01cnt, sum(a02_cnt) as a02cnt, sum(a03_cnt) as a03cnt,
+               sum(a400_1_cnt) as a4001cnt, sum(a400_2_cnt) as a4002cnt,
+               sum(a900_1_cnt) as a9001cnt, sum(a900_2_cnt) as a9002cnt,
+               sum(a910_cnt) as a910cnt, sum(a920_cnt) as a920cnt,
+               sum(b01_cnt) as b01cnt,
+               sum(b400_1_cnt) as b4001cnt, sum(b400_2_cnt) as b4002cnt,
+               sum(a900_3_cnt) as a9003cnt,
+               sum(b900_1_cnt) as b9001cnt, sum(b900_2_cnt) as b9002cnt,
+               sum(c990_cnt) as c990cnt, sum(c999_cnt) as c999cnt
+        FROM (
+            SELECT A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, 1 AS A01_CNT, 0 AS A02_CNT, 0 AS A03_CNT, 0 AS A400_1_CNT, 0 AS A400_2_CNT, 0 AS A900_1_CNT, 0 AS A900_2_CNT, 0 AS A900_3_CNT, 0 AS A910_CNT, 0 AS A920_CNT, 0 AS B01_CNT, 0 AS B400_1_CNT, 0 AS B400_2_CNT, 0 AS B900_1_CNT, 0 AS B900_2_CNT, 0 AS C990_CNT, 0 AS C999_CNT
+            FROM HSAA300T_TBL A JOIN HABA920T_TBL B ON A.CMPYCD=B.CMPYCD AND A.USERID=B.USERID
+            JOIN HABA120T_TBL C ON B.CMPYCD=C.CMPYCD AND B.DEPTCD=C.DEPTCD
+            JOIN HABA020T_TBL E ON A.CMPYCD=E.CMPYCD AND A.CUSTCD=E.CUSTCD
+            JOIN (SELECT CUSTCD, COUNT(*) AS CNT FROM HSAA300T_TBL WHERE CMPYCD=#{cmpycd} AND CHANNEL='010' GROUP BY CUSTCD) F ON A.CUSTCD=F.CUSTCD
+            WHERE A.CMPYCD=#{cmpycd} AND A.CHANNEL='010' AND F.CNT=1 AND IFNULL(E.ELCYN,'N') != 'Y'
+
+            UNION ALL
+            SELECT A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            FROM HSAA300T_TBL A JOIN HABA920T_TBL B ON A.CMPYCD=B.CMPYCD AND A.USERID=B.USERID
+            JOIN HABA120T_TBL C ON B.CMPYCD=C.CMPYCD AND B.DEPTCD=C.DEPTCD
+            JOIN HABA020T_TBL E ON A.CMPYCD=E.CMPYCD AND A.CUSTCD=E.CUSTCD
+            JOIN (SELECT CUSTCD, COUNT(*) AS CNT FROM HSAA300T_TBL WHERE CMPYCD=#{cmpycd} AND CHANNEL='010' GROUP BY CUSTCD) F ON A.CUSTCD=F.CUSTCD
+            WHERE A.CMPYCD=#{cmpycd} AND A.CHANNEL='010' AND F.CNT > 1 AND IFNULL(E.ELCYN,'N') != 'Y'
+
+            UNION ALL
+            SELECT A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            FROM HSAA300T_TBL A JOIN HABA920T_TBL B ON A.CMPYCD=B.CMPYCD AND A.USERID=B.USERID
+            JOIN HABA120T_TBL C ON B.CMPYCD=C.CMPYCD AND B.DEPTCD=C.DEPTCD
+            JOIN HABA020T_TBL E ON A.CMPYCD=E.CMPYCD AND A.CUSTCD=E.CUSTCD
+            WHERE A.CMPYCD=#{cmpycd} AND A.CHANNEL='010' AND E.ELCYN='Y'
+
+            UNION ALL
+            SELECT A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, 0, 0, 0,
+                   CASE WHEN E.STATE='400' AND F.CUSTGBN='010' THEN 1 ELSE 0 END,
+                   CASE WHEN E.STATE='400' AND F.CUSTGBN='020' THEN 1 ELSE 0 END,
+                   CASE WHEN A.STATE='900' AND F.CUSTGBN='010' THEN 1 ELSE 0 END,
+                   CASE WHEN A.STATE='900' AND F.CUSTGBN='020' THEN 1 ELSE 0 END,
+                   0,
+                   CASE WHEN A.STATE IN ('910','930') THEN 1 ELSE 0 END,
+                   CASE WHEN A.STATE='920' THEN 1 ELSE 0 END,
+                   0,0,0,0,0,0,0
+            FROM HSAA200T_TBL A JOIN HABA920T_TBL B ON A.CMPYCD=B.CMPYCD AND A.USERID=B.USERID
+            JOIN HABA120T_TBL C ON B.CMPYCD=C.CMPYCD AND B.DEPTCD=C.DEPTCD
+            JOIN HABA020T_TBL F ON A.CMPYCD=F.CMPYCD AND A.CUSTCD=F.CUSTCD
+            LEFT OUTER JOIN (
+                SELECT CMPYCD, CUSTCD, SALESID, MAX(FOREDELIVDT) AS CHNGDT, STATE FROM HSAA310T_TBL
+                WHERE STATE='400' GROUP BY CMPYCD, CUSTCD, SALESID, STATE
+            ) E ON A.CMPYCD=E.CMPYCD AND A.CUSTCD=E.CUSTCD AND A.SALESID=E.SALESID
+            WHERE A.CMPYCD=#{cmpycd}
+
+            UNION ALL
+            SELECT A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, 0,0,0,0,0,0,0,0,0,0, 1, 0,0,0,0,0,0
+            FROM HSAA300T_TBL A JOIN HABA920T_TBL B ON A.CMPYCD=B.CMPYCD AND A.USERID=B.USERID
+            JOIN HABA120T_TBL C ON B.CMPYCD=C.CMPYCD AND B.DEPTCD=C.DEPTCD
+            WHERE A.CMPYCD=#{cmpycd}
+
+            UNION ALL
+            SELECT A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, 0,0,0,0,0,0,0,
+                   1,
+                   0,0,0,
+                   CASE WHEN E.STATE='400' AND F.CUSTGBN='010' THEN 1 ELSE 0 END,
+                   CASE WHEN E.STATE='400' AND F.CUSTGBN='020' THEN 1 ELSE 0 END,
+                   CASE WHEN A.STATE='900' AND F.CUSTGBN='010' THEN 1 ELSE 0 END,
+                   CASE WHEN A.STATE='900' AND F.CUSTGBN='020' THEN 1 ELSE 0 END,
+                   0,0
+            FROM HSAA200T_TBL A JOIN HABA920T_TBL B ON A.CMPYCD=B.CMPYCD AND A.USERID=B.USERID
+            JOIN HABA120T_TBL C ON B.CMPYCD=C.CMPYCD AND B.DEPTCD=C.DEPTCD
+            JOIN HABA020T_TBL F ON A.CMPYCD=F.CMPYCD AND A.CUSTCD=F.CUSTCD
+            LEFT OUTER JOIN (
+                SELECT CMPYCD, CUSTCD, SALESID, MAX(FOREDELIVDT) AS CHNGDT, STATE FROM HSAA310T_TBL
+                WHERE STATE='400' GROUP BY CMPYCD, CUSTCD, SALESID, STATE
+            ) E ON A.CMPYCD=E.CMPYCD AND A.CUSTCD=E.CUSTCD AND A.SALESID=E.SALESID
+            WHERE A.CMPYCD=#{cmpycd}
+
+            UNION ALL
+            SELECT A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                   CASE WHEN F.CUSTGBN='010' THEN 1 ELSE 0 END,
+                   CASE WHEN F.CUSTGBN='020' THEN 1 ELSE 0 END
+            FROM HSAA200T_TBL A JOIN HABA920T_TBL B ON A.CMPYCD=B.CMPYCD AND A.USERID=B.USERID
+            JOIN HABA120T_TBL C ON B.CMPYCD=C.CMPYCD AND B.DEPTCD=C.DEPTCD
+            JOIN HABA020T_TBL F ON A.CMPYCD=F.CMPYCD AND A.CUSTCD=F.CUSTCD
+            WHERE A.CMPYCD=#{cmpycd} AND A.STATE='400' AND (A.REALDT='' OR A.REALDT IS NULL)
+        ) TT
+        <where>
+            <if test="deptcd != null and deptcd != '' and deptcd != '00000'">
+                AND TT.DEPTCD IN (SELECT DEPTCD FROM SELECT_DEPT_TBL WHERE SDEPTCD = #{deptcd})
+            </if>
+        </where>
+        GROUP BY TT.DEPTCD, TT.DEPTNM, TT.USERID, TT.USERNM
+        ORDER BY TT.DEPTCD, TT.USERNM
+    </select>
+
+    <!-- HSAA380S 주간 영업단계 현황 -->
+    <select id="selectWeeklyStageStatus" resultType="com.crmbank.erp.hsaa.dto.Hsaa380sDto">
+        SELECT TT.DEPTCD, TT.DEPTNM, TT.USERID, TT.USERNM, TT.CUSTGBN, TT.ITEMCD, KK.ITEMNM,
+               SUM(S100) AS s100, SUM(S200) AS s200, SUM(S300) AS s300, SUM(S400) AS s400,
+               SUM(S900) AS s900, SUM(S910) AS s910, SUM(S920) AS s920, SUM(S930) AS s930,
+               SUM(N400) AS n400, SUM(N900) AS n900, SUM(N999) AS n999
+        FROM (
+            SELECT A.CMPYCD, A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, D.CUSTGBN, K.ITEMCD,
+                   SUM(CASE WHEN A.STATE='100' THEN 1 ELSE 0 END) AS S100,
+                   SUM(CASE WHEN A.STATE='200' THEN 1 ELSE 0 END) AS S200,
+                   SUM(CASE WHEN A.STATE='300' THEN 1 ELSE 0 END) AS S300,
+                   SUM(CASE WHEN A.STATE='400' THEN 1 ELSE 0 END) AS S400,
+                   SUM(CASE WHEN A.STATE='900' THEN 1 ELSE 0 END) AS S900,
+                   SUM(CASE WHEN A.STATE='910' THEN 1 ELSE 0 END) AS S910,
+                   SUM(CASE WHEN A.STATE='920' THEN 1 ELSE 0 END) AS S920,
+                   SUM(CASE WHEN A.STATE='930' THEN 1 ELSE 0 END) AS S930,
+                   0 AS N400, 0 AS N900, 0 AS N999
+            FROM HSAA200T_TBL A JOIN HSAA810T_TBL K ON A.CMPYCD=K.CMPYCD AND A.CUSTCD=K.CUSTCD AND A.SALESID=K.SALESID
+            JOIN HABA920T_TBL B ON A.CMPYCD=B.CMPYCD AND A.USERID=B.USERID
+            JOIN HABA120T_TBL C ON B.CMPYCD=C.CMPYCD AND B.DEPTCD=C.DEPTCD
+            JOIN HABA020T_TBL D ON A.CMPYCD=D.CMPYCD AND A.CUSTCD=D.CUSTCD
+            WHERE A.CMPYCD=#{cmpycd}
+            GROUP BY A.CMPYCD, A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, D.CUSTGBN, K.ITEMCD
+
+            UNION ALL
+            SELECT A.CMPYCD, A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, D.CUSTGBN, K.ITEMCD, 0,0,0,0,0,0,0,0, 1, 0, 0
+            FROM HSAA200T_TBL A JOIN HSAA810T_TBL K ON A.CMPYCD=K.CMPYCD AND A.CUSTCD=K.CUSTCD AND A.SALESID=K.SALESID
+            JOIN HABA920T_TBL B ON A.CMPYCD=B.CMPYCD AND A.USERID=B.USERID
+            JOIN HABA120T_TBL C ON B.CMPYCD=C.CMPYCD AND B.DEPTCD=C.DEPTCD
+            JOIN HABA020T_TBL D ON A.CMPYCD=D.CMPYCD AND A.CUSTCD=D.CUSTCD
+            WHERE A.CMPYCD=#{cmpycd}
+
+            UNION ALL
+            SELECT A.CMPYCD, A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, D.CUSTGBN, K.ITEMCD, 0,0,0,0,0,0,0,0, 0, 1, 0
+            FROM HSAA200T_TBL A JOIN HSAA810T_TBL K ON A.CMPYCD=K.CMPYCD AND A.CUSTCD=K.CUSTCD AND A.SALESID=K.SALESID
+            JOIN HABA920T_TBL B ON A.CMPYCD=B.CMPYCD AND A.USERID=B.USERID
+            JOIN HABA120T_TBL C ON B.CMPYCD=C.CMPYCD AND B.DEPTCD=C.DEPTCD
+            JOIN HABA020T_TBL D ON A.CMPYCD=D.CMPYCD AND A.CUSTCD=D.CUSTCD
+            WHERE A.CMPYCD=#{cmpycd}
+
+            UNION ALL
+            SELECT A.CMPYCD, A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM, D.CUSTGBN, K.ITEMCD, 0,0,0,0,0,0,0,0, 0, 0, 1
+            FROM HSAA200T_TBL A JOIN HSAA810T_TBL K ON A.CMPYCD=K.CMPYCD AND A.CUSTCD=K.CUSTCD AND A.SALESID=K.SALESID
+            JOIN HABA920T_TBL B ON A.CMPYCD=B.CMPYCD AND A.USERID=B.USERID
+            JOIN HABA120T_TBL C ON B.CMPYCD=C.CMPYCD AND B.DEPTCD=C.DEPTCD
+            JOIN HABA020T_TBL D ON A.CMPYCD=D.CMPYCD AND A.CUSTCD=D.CUSTCD
+            WHERE A.CMPYCD=#{cmpycd} AND A.STATE='400' AND (A.REALDT='' OR A.REALDT IS NULL)
+        ) TT JOIN HSBA010T_TBL KK ON TT.CMPYCD=KK.CMPYCD AND TT.ITEMCD=KK.ITEMCD
+        <where>
+            <if test="deptcd != null and deptcd != '' and deptcd != '00000'">
+                AND TT.DEPTCD IN (SELECT DEPTCD FROM SELECT_DEPT_TBL WHERE SDEPTCD = #{deptcd})
+            </if>
+        </where>
+        GROUP BY TT.DEPTCD, TT.DEPTNM, TT.USERID, TT.USERNM, TT.CUSTGBN, TT.ITEMCD, KK.ITEMNM
+        ORDER BY TT.DEPTNM, TT.USERNM
+    </select>
+
+    <!-- HSAA370S 성공실패원인분석 -->
+    <select id="selectCauseAnalysis" resultType="com.crmbank.erp.hsaa.dto.Hsaa370sDto">
+        select tt.deptcd, tt.deptnm, tt.userid, tt.usernm,
+               sum(tt.tot_cnt) as totcnt,
+               sum(tt.wincd_cnt) as wincdcnt,
+               sum(tt.failcd_cnt) as failcdcnt,
+               sum(tt.hold_cnt) as holdcnt
+        FROM (
+            select a.deptcd, c.deptnm, a.userid, b.usernm, count(*) as tot_cnt, 0 as wincd_cnt, 0 as failcd_cnt, 0 as hold_cnt
+            from hsaa200t_tbl a
+            left outer join haba920t_tbl b on a.cmpycd = b.cmpycd and a.userid = b.userid
+            left outer join haba120t_tbl c on a.cmpycd = c.cmpycd and a.deptcd = c.deptcd
+            where a.cmpycd = #{cmpycd}
+              and left(a.addtime, 10) between #{sdate} and #{edate}
+              <if test="deptcd != null and deptcd != '' and deptcd != '00000'"> AND A.DEPTCD = #{deptcd} </if>
+              <if test="item != null and item != '' and item != '000'"> AND A.ITEM = #{item} </if>
+            GROUP BY A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM
+
+            UNION ALL
+            select a.deptcd, c.deptnm, a.userid, b.usernm, 0 as tot_cnt, count(*) as wincd_cnt, 0 as failcd_cnt, 0 as hold_cnt
+            from hsaa200t_tbl a
+            left outer join haba920t_tbl b on a.cmpycd = b.cmpycd and a.userid = b.userid
+            left outer join haba120t_tbl c on a.cmpycd = c.cmpycd and a.deptcd = c.deptcd
+            where a.cmpycd = #{cmpycd} and a.state = '900'
+              and left(a.realdt, 10) between #{sdate} and #{edate}
+              <if test="deptcd != null and deptcd != '' and deptcd != '00000'"> AND A.DEPTCD = #{deptcd} </if>
+              <if test="item != null and item != '' and item != '000'"> AND A.ITEM = #{item} </if>
+            GROUP BY A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM
+
+            UNION ALL
+            select a.deptcd, c.deptnm, a.userid, b.usernm, 0 as tot_cnt, 0 as wincd_cnt, count(*) as failcd_cnt, 0 as hold_cnt
+            from hsaa200t_tbl a
+            left outer join haba920t_tbl b on a.cmpycd = b.cmpycd and a.userid = b.userid
+            left outer join haba120t_tbl c on a.cmpycd = c.cmpycd and a.deptcd = c.deptcd
+            where a.cmpycd = #{cmpycd} and a.state in ('910','930')
+              and left(a.faildt, 10) between #{sdate} and #{edate}
+              <if test="deptcd != null and deptcd != '' and deptcd != '00000'"> AND A.DEPTCD = #{deptcd} </if>
+              <if test="item != null and item != '' and item != '000'"> AND A.ITEM = #{item} </if>
+            GROUP BY A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM
+
+            UNION ALL
+            select a.deptcd, c.deptnm, a.userid, b.usernm, 0 as tot_cnt, 0 as wincd_cnt, 0 as failcd_cnt, count(*) as hold_cnt
+            from hsaa200t_tbl a
+            left outer join haba920t_tbl b on a.cmpycd = b.cmpycd and a.userid = b.userid
+            left outer join haba120t_tbl c on a.cmpycd = c.cmpycd and a.deptcd = c.deptcd
+            where a.cmpycd = #{cmpycd} and a.state = '920'
+              and left(a.faildt, 10) between #{sdate} and #{edate}
+              <if test="deptcd != null and deptcd != '' and deptcd != '00000'"> AND A.DEPTCD = #{deptcd} </if>
+              <if test="item != null and item != '' and item != '000'"> AND A.ITEM = #{item} </if>
+            GROUP BY A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM
+        ) TT
+        GROUP BY TT.DEPTCD, TT.DEPTNM, TT.USERID, TT.USERNM
+        ORDER BY TT.DEPTNM, TT.USERNM
+    </select>
+
+    <!-- HSAA340S 영업단계별 진행현황 -->
+    <select id="selectStageProgressStatus" resultType="com.crmbank.erp.hsaa.dto.Hsaa340sDto">
+        select a.deptcd, c.deptnm, a.userid, b.usernm,
+               sum(case when a.state='100' and left(a.addtime, 10) between #{sdate} and #{edate} then 1 else 0 end) as s100,
+               sum(case when e.state='200' and left(e.chngdt, 10) between #{sdate} and #{edate} then 1 else 0 end) as s200,
+               sum(case when e.state='300' and left(e.chngdt, 10) between #{sdate} and #{edate} then 1 else 0 end) as s300,
+               sum(case when f.state='400' and left(f.foredelivdt, 10) between #{sdate} and #{edate} then 1 else 0 end) as s400,
+               sum(case when a.state='900' and left(a.realdt, 10) between #{sdate} and #{edate} then 1 else 0 end) as s900,
+               sum(case when a.state='910' and left(a.faildt, 10) between #{sdate} and #{edate} then 1 else 0 end) as s910,
+               sum(case when a.state='920' and left(a.faildt, 10) between #{sdate} and #{edate} then 1 else 0 end) as s920,
+               sum(case when a.state='930' and left(a.faildt, 10) between #{sdate} and #{edate} then 1 else 0 end) as s930
+        from hsaa200t_tbl a
+        left outer join haba920t_tbl b on a.cmpycd = b.cmpycd and a.userid = b.userid
+        left outer join haba120t_tbl c on a.cmpycd = c.cmpycd and a.deptcd = c.deptcd
+        left outer join (
+            select cmpycd, custcd, salesid, state, max(chngdt) as chngdt
+            from hsaa310t_tbl
+            where state in ('200','300')
+            group by cmpycd, custcd, salesid, state
+        ) e on a.cmpycd = e.cmpycd and a.custcd = e.custcd and a.salesid = e.salesid
+        left outer join (
+            select cmpycd, custcd, salesid, state, max(foredelivdt) as foredelivdt
+            from hsaa310t_tbl
+            where state in ('400')
+            group by cmpycd, custcd, salesid, state
+        ) f on a.cmpycd = f.cmpycd and a.custcd = f.custcd and a.salesid = f.salesid
+        where a.cmpycd = #{cmpycd}
+        <if test="deptcd != null and deptcd != '' and deptcd != '00000'">
+            AND A.DEPTCD IN (SELECT DEPTCD FROM SELECT_DEPT_TBL WHERE SDEPTCD = #{deptcd})
+        </if>
+        GROUP BY A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM
+        ORDER BY C.DEPTNM, B.USERNM
+    </select>
+
+    <!-- HSAA310S 신규계약현황 -->
+    <select id="selectContractStatus" resultType="com.crmbank.erp.hsaa.dto.Hsaa310sDto">
+        select a.deptcd, c.deptnm, a.userid, b.usernm,
+               sum(case when substring(a.realdt,5,2)='01' and d.custgbn = '010' then 1 else 0 end) as m01,
+               sum(case when substring(a.realdt,5,2)='02' and d.custgbn = '010' then 1 else 0 end) as m02,
+               sum(case when substring(a.realdt,5,2)='03' and d.custgbn = '010' then 1 else 0 end) as m03,
+               sum(case when substring(a.realdt,5,2)='04' and d.custgbn = '010' then 1 else 0 end) as m04,
+               sum(case when substring(a.realdt,5,2)='05' and d.custgbn = '010' then 1 else 0 end) as m05,
+               sum(case when substring(a.realdt,5,2)='06' and d.custgbn = '010' then 1 else 0 end) as m06,
+               sum(case when substring(a.realdt,5,2)='07' and d.custgbn = '010' then 1 else 0 end) as m07,
+               sum(case when substring(a.realdt,5,2)='08' and d.custgbn = '010' then 1 else 0 end) as m08,
+               sum(case when substring(a.realdt,5,2)='09' and d.custgbn = '010' then 1 else 0 end) as m09,
+               sum(case when substring(a.realdt,5,2)='10' and d.custgbn = '010' then 1 else 0 end) as m10,
+               sum(case when substring(a.realdt,5,2)='11' and d.custgbn = '010' then 1 else 0 end) as m11,
+               sum(case when substring(a.realdt,5,2)='12' and d.custgbn = '010' then 1 else 0 end) as m12,
+               sum(case when d.custgbn = '010' then 1 else 0 end) as mtotcnt,
+               sum(case when substring(a.realdt,5,2)='01' and d.custgbn = '020' then 1 else 0 end) as s01,
+               sum(case when substring(a.realdt,5,2)='02' and d.custgbn = '020' then 1 else 0 end) as s02,
+               sum(case when substring(a.realdt,5,2)='03' and d.custgbn = '020' then 1 else 0 end) as s03,
+               sum(case when substring(a.realdt,5,2)='04' and d.custgbn = '020' then 1 else 0 end) as s04,
+               sum(case when substring(a.realdt,5,2)='05' and d.custgbn = '020' then 1 else 0 end) as s05,
+               sum(case when substring(a.realdt,5,2)='06' and d.custgbn = '020' then 1 else 0 end) as s06,
+               sum(case when substring(a.realdt,5,2)='07' and d.custgbn = '020' then 1 else 0 end) as s07,
+               sum(case when substring(a.realdt,5,2)='08' and d.custgbn = '020' then 1 else 0 end) as s08,
+               sum(case when substring(a.realdt,5,2)='09' and d.custgbn = '020' then 1 else 0 end) as s09,
+               sum(case when substring(a.realdt,5,2)='10' and d.custgbn = '020' then 1 else 0 end) as s10,
+               sum(case when substring(a.realdt,5,2)='11' and d.custgbn = '020' then 1 else 0 end) as s11,
+               sum(case when substring(a.realdt,5,2)='12' and d.custgbn = '020' then 1 else 0 end) as s12,
+               sum(case when d.custgbn = '020' then 1 else 0 end) as stotcnt,
+               count(*) as totcnt
+        from hsaa200t_tbl a
+        left outer join haba920t_tbl b on a.cmpycd = b.cmpycd and a.userid = b.userid
+        left outer join haba120t_tbl c on a.cmpycd = c.cmpycd and a.deptcd = c.deptcd
+        left outer join haba020t_tbl d on a.cmpycd = d.cmpycd and a.custcd = d.custcd
+        where a.cmpycd = #{cmpycd}
+          and left(a.realdt, 4) = #{yyyy}
+          and a.state in ('500', '900')
+          <if test="deptcd != null and deptcd != '' and deptcd != '00000'"> AND A.DEPTCD = #{deptcd} </if>
+          <if test="item != null and item != '' and item != '000'"> AND A.ITEM = #{item} </if>
+        GROUP BY A.DEPTCD, C.DEPTNM, A.USERID, B.USERNM
+        ORDER BY C.DEPTNM, B.USERNM
+    </select>
+
+    <!-- HSAA200S 영업종합현황 (Dashboard) -->
+    <select id="selectDashboardStats" resultType="com.crmbank.erp.hsaa.dto.HsaaStatDto">
+        /* G0: 영업단계별 보유건수 */
+        SELECT 'G0' AS gubun, STATE AS code, '000' AS code1, '000' AS code2, CAST(COUNT(*) AS DECIMAL(18,2)) AS val
+        FROM HSAA200T_TBL
+        WHERE CMPYCD = #{cmpycd} AND STATE BETWEEN '100' AND '500'
+        <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+        AND LEFT(ADDTIME, 6) &lt;= #{yymm}
+        GROUP BY STATE
+
+        UNION ALL
+        /* G9: 당월 영업단계 발생건수 */
+        SELECT 'G9' AS gubun, A.STATE AS code, '000' AS code1, '000' AS code2, CAST(COUNT(*) AS DECIMAL(18,2)) AS val
+        FROM HSAA310T_TBL A JOIN HSAA200T_TBL B ON A.CMPYCD = B.CMPYCD AND A.CUSTCD = B.CUSTCD AND A.SALESID = B.SALESID
+        WHERE A.CMPYCD = #{cmpycd} AND A.STATE BETWEEN '100' AND '400' AND LEFT(A.CHNGDT, 6) = #{yymm}
+        <if test="userid != null and userid != '' and userid != '000'"> AND B.USERID = #{userid} </if>
+        GROUP BY A.STATE
+
+        UNION ALL
+        /* G1: 영업단계별/중요도별 건수 */
+        SELECT 'G1' AS gubun, STATE AS code, IMPORT AS code1, '000' AS code2, CAST(COUNT(*) AS DECIMAL(18,2)) AS val
+        FROM HSAA200T_TBL
+        WHERE CMPYCD = #{cmpycd} AND STATE BETWEEN '100' AND '500'
+        <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+        AND LEFT(ADDTIME, 6) &lt;= #{yymm}
+        GROUP BY STATE, IMPORT
+
+        UNION ALL
+        /* G2: 단계변동무 (day1일 이상) */
+        SELECT 'G2' AS gubun, A.STATE AS code, A.IMPORT AS code1, 'EQU' AS code2, CAST(COUNT(*) AS DECIMAL(18,2)) AS val
+        FROM HSAA200T_TBL A JOIN (
+            SELECT CMPYCD, CUSTCD, SALESID, MAX(CHNGDT) AS CHNGDT FROM HSAA310T_TBL GROUP BY CMPYCD, CUSTCD, SALESID
+        ) B ON A.CMPYCD = B.CMPYCD AND A.CUSTCD = B.CUSTCD AND A.SALESID = B.SALESID
+        WHERE A.CMPYCD = #{cmpycd} AND A.STATE BETWEEN '100' AND '400'
+        <if test="userid != null and userid != '' and userid != '000'"> AND A.USERID = #{userid} </if>
+        AND B.CHNGDT &lt; DATE_FORMAT(DATE_SUB(NOW(), INTERVAL CAST(IFNULL(#{day1}, '30') AS SIGNED) DAY), '%Y%m%d')
+        GROUP BY A.STATE, A.IMPORT
+
+        UNION ALL
+        /* G3: 고객접촉무 (day2일 이상) */
+        SELECT 'G3' AS gubun, A.STATE AS code, A.IMPORT AS code1, 'EQU' AS code2, CAST(COUNT(*) AS DECIMAL(18,2)) AS val
+        FROM HSAA200T_TBL A JOIN (
+            SELECT CMPYCD, CUSTCD, SALESID, MAX(CONTDT) AS CONTDT FROM HSAA300T_TBL GROUP BY CMPYCD, CUSTCD, SALESID
+        ) B ON A.CMPYCD = B.CMPYCD AND A.CUSTCD = B.CUSTCD AND A.SALESID = B.SALESID
+        WHERE A.CMPYCD = #{cmpycd} AND A.STATE BETWEEN '100' AND '400'
+        <if test="userid != null and userid != '' and userid != '000'"> AND A.USERID = #{userid} </if>
+        AND B.CONTDT &lt; DATE_FORMAT(DATE_SUB(NOW(), INTERVAL CAST(IFNULL(#{day2}, '30') AS SIGNED) DAY), '%Y%m%d')
+        GROUP BY A.STATE, A.IMPORT
+
+        UNION ALL
+        /* G4: 성공/실패/보류/포기 */
+        SELECT gubun, code, code1, code2, CAST(COUNT(*) AS DECIMAL(18,2)) AS val
+        FROM (
+            SELECT 'G4' AS gubun, STATE AS code,
+                   CASE WHEN STATE='920' AND LEFT(IFNULL(HOLDONDT,''), 6) &lt;= #{yymm} THEN '100' ELSE '000' END AS code1,
+                   '000' AS code2
+            FROM HSAA200T_TBL
+            WHERE CMPYCD = #{cmpycd}
+            <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+            AND (
+                (STATE='900' AND LEFT(REALDT, 6) = #{yymm}) OR
+                (STATE IN ('910','930') AND LEFT(FAILDT, 6) = #{yymm}) OR
+                (STATE='920' AND LEFT(ADDTIME, 6) &lt;= #{yymm})
+            )
+        ) T
+        GROUP BY gubun, code, code1, code2
+
+        UNION ALL
+        /* G5: 계약/방문/선정 실적 */
+        SELECT 'G5' AS gubun, '100' AS code, '000' AS code1, '000' AS code2, CAST(COUNT(*) AS DECIMAL(18,2)) AS val FROM HSAA200T_TBL WHERE CMPYCD=#{cmpycd} AND STATE='900' AND LEFT(REALDT, 6) = #{yymm} <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+        UNION ALL
+        SELECT 'G5' AS gubun, '200' AS code, '000' AS code1, '000' AS code2, CAST(COUNT(*) AS DECIMAL(18,2)) AS val FROM HSAA300T_TBL WHERE CMPYCD=#{cmpycd} AND CHANNEL='010' AND LEFT(CONTDT, 6) = #{yymm} <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+        UNION ALL
+        SELECT 'G5' AS gubun, '600' AS code, '000' AS code1, '000' AS code2, CAST(COUNT(*) AS DECIMAL(18,2)) AS val FROM HSAA200T_TBL WHERE CMPYCD=#{cmpycd} AND LEFT(ADDTIME, 6) = #{yymm} <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+        UNION ALL
+        /* G5: 목표 */
+        SELECT 'G5' AS gubun, '300' AS code, '000' AS code1, '000' AS code2, CAST(IFNULL(SUM(CONTACT_CNT), 0) AS DECIMAL(18,2)) FROM HSAA600T_TBL WHERE CMPYCD=#{cmpycd} AND YYMM=#{yymm} <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+        UNION ALL
+        SELECT 'G5' AS gubun, '400' AS code, '000' AS code1, '000' AS code2, CAST(IFNULL(SUM(CONSULT_CNT), 0) AS DECIMAL(18,2)) FROM HSAA600T_TBL WHERE CMPYCD=#{cmpycd} AND YYMM=#{yymm} <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+        UNION ALL
+        SELECT 'G5' AS gubun, '500' AS code, '000' AS code1, '000' AS code2, CAST(IFNULL(SUM(SALESID_CNT), 0) AS DECIMAL(18,2)) FROM HSAA600T_TBL WHERE CMPYCD=#{cmpycd} AND YYMM=#{yymm} <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+
+        UNION ALL
+        /* G6: 수주예상/실적/매출목표 */
+        SELECT 'G6' AS gubun, '100' AS code, '000' AS code1, '000' AS code2, CAST(IFNULL(SUM(FOREAMT * SUCCRATE/100.0), 0) AS DECIMAL(18,2)) FROM HSAA200T_TBL WHERE CMPYCD=#{cmpycd} AND STATE IN ('400','500') AND LEFT(FOREDT, 6) = #{yymm} <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+        UNION ALL
+        SELECT 'G6' AS gubun, '200' AS code, '000' AS code1, '000' AS code2, CAST(IFNULL(SUM(REALAMT), 0) AS DECIMAL(18,2)) FROM HSAA200T_TBL WHERE CMPYCD=#{cmpycd} AND STATE='900' AND LEFT(REALDT, 6) = #{yymm} <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+        UNION ALL
+        SELECT 'G6' AS gubun, '300' AS code, '000' AS code1, '000' AS code2, CAST(IFNULL(SUM(PLAN_AMT), 0) AS DECIMAL(18,2)) FROM HSAA600T_TBL WHERE CMPYCD=#{cmpycd} AND YYMM=#{yymm} <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+
+        UNION ALL
+        /* G7: 누계매출목표/누계수주실적 */
+        SELECT 'G7' AS gubun, '200' AS code, '000' AS code1, '000' AS code2, CAST(IFNULL(SUM(PLAN_AMT), 0) AS DECIMAL(18,2)) FROM HSAA600T_TBL WHERE CMPYCD=#{cmpycd} AND LEFT(YYMM, 4) = LEFT(#{yymm}, 4) AND YYMM &lt;= #{yymm} <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+        UNION ALL
+        SELECT 'G7' AS gubun, '300' AS code, '000' AS code1, '000' AS code2, CAST(IFNULL(SUM(REALAMT), 0) AS DECIMAL(18,2)) FROM HSAA200T_TBL WHERE CMPYCD=#{cmpycd} AND STATE='900' AND LEFT(REALDT, 4) = LEFT(#{yymm}, 4) AND REALDT &lt;= CONCAT(#{yymm}, '31') <if test="userid != null and userid != '' and userid != '000'"> AND USERID = #{userid} </if>
+
+        UNION ALL
+        /* G10: 유치경로별 현황 */
+        SELECT 'G10' AS gubun, RTNCD AS code, STATE AS code1, '000' AS code2, CAST(COUNT(*) AS DECIMAL(18,2)) AS val
+        FROM HSAA200T_TBL
+        WHERE CMPYCD = #{cmpycd}
+          AND LEFT(ADDTIME, 6) = #{yymm}
+        GROUP BY RTNCD, STATE
+
+        UNION ALL
+        /* G320: 영업상담 실적 (월간) */
+        SELECT 'G320' AS gubun, USERID AS code, SUBSTRING(CONTDT, 5, 2) AS code1, CHANNEL AS code2, CAST(COUNT(*) AS DECIMAL(18,2)) AS val
+        FROM HSAA300T_TBL
+        WHERE CMPYCD = #{cmpycd}
+          AND LEFT(CONTDT, 4) = LEFT(#{yymm}, 4)
+        GROUP BY USERID, SUBSTRING(CONTDT, 5, 2), CHANNEL
+    </select>
+
+    <select id="selectDashboardDetailList" resultType="com.crmbank.erp.hsaa.dto.Hsaa200tDto">
+        SELECT A.cmpycd, A.salesid, A.salestitle, A.state, A.addtime, A.custcd, A.userid, A.deptcd,
+               A.foreamt, A.realamt, A.foredt, A.succrate, A.rtncd, A.usecd, A.foredelivdt, A.conditions,
+               A.lastmtdt, A.realdt, A.faildt, A.holdondt, A.sales_remark as salesremark, A.choice, A.import AS importrank, A.svc_no as svcno,
+               A.trancd, A.postno, A.address, A.d_address,
+               b.custnm, b.bossnm, b.telno, b.faxno, c.usernm, d.deptnm, e.cdnm as statenm
+        FROM HSAA200T_TBL A
+        LEFT OUTER JOIN HABA020T_TBL B ON A.CMPYCD = B.CMPYCD AND A.CUSTCD = B.CUSTCD
+        LEFT OUTER JOIN HABA920T_TBL C ON A.CMPYCD = C.CMPYCD AND A.USERID = C.USERID
+        LEFT OUTER JOIN HABA120T_TBL D ON A.CMPYCD = D.CMPYCD AND A.DEPTCD = D.DEPTCD
+        LEFT OUTER JOIN HSBA900T_TBL E ON A.CMPYCD = E.CMPYCD AND E.CDGBN = '700' AND A.STATE = E.CODE
+        <where>
+            A.CMPYCD = #{cmpycd}
+            <if test="userid != null and userid != '' and userid != '000'"> AND A.USERID = #{userid} </if>
+
+            <if test="gubun == 'G0'"> AND A.STATE = #{code} AND LEFT(A.ADDTIME, 6) &lt;= #{yymm} </if>
+            <if test="gubun == 'G9'"> AND LEFT(A.CHNGDT, 6) = #{yymm} AND A.STATE = #{code} </if>
+            <if test="gubun == 'G1'"> AND A.STATE = #{code} AND A.IMPORT = #{code1} AND LEFT(A.ADDTIME, 6) &lt;= #{yymm} </if>
+
+            <if test="gubun == 'G2'">
+                AND A.STATE = #{code} AND A.IMPORT = #{code1}
+                AND EXISTS (
+                    SELECT 1 FROM HSAA310T_TBL X
+                    WHERE X.CMPYCD=A.CMPYCD AND X.CUSTCD=A.CUSTCD AND X.SALESID=A.SALESID
+                    HAVING MAX(X.CHNGDT) &lt; DATE_FORMAT(DATE_SUB(NOW(), INTERVAL CAST(IFNULL(#{day1}, '30') AS SIGNED) DAY), '%Y%m%d')
+                )
+            </if>
+
+            <if test="gubun == 'G3'">
+                AND A.STATE = #{code} AND A.IMPORT = #{code1}
+                AND EXISTS (
+                    SELECT 1 FROM HSAA300T_TBL X
+                    WHERE X.CMPYCD=A.CMPYCD AND X.CUSTCD=A.CUSTCD AND X.SALESID=A.SALESID
+                    HAVING MAX(X.CONTDT) &lt; DATE_FORMAT(DATE_SUB(NOW(), INTERVAL CAST(IFNULL(#{day2}, '30') AS SIGNED) DAY), '%Y%m%d')
+                )
+            </if>
+
+            <if test="gubun == 'G4'">
+                <if test="code == '900'"> AND A.STATE = '900' AND LEFT(A.REALDT, 6) = #{yymm} </if>
+                <if test="code == '910' or code == '930'"> AND A.STATE = #{code} AND LEFT(A.FAILDT, 6) = #{yymm} </if>
+                <if test="code == '920'">
+                    AND A.STATE = '920' AND LEFT(A.ADDTIME, 6) &lt;= #{yymm}
+                    <if test="code1 == '100'"> AND LEFT(A.HOLDONDT, 6) &lt;= #{yymm} </if>
+                </if>
+            </if>
+
+            <if test="gubun == 'G5'">
+                <if test="code == '100'"> AND A.STATE = '900' AND LEFT(A.REALDT, 6) = #{yymm} </if>
+                <if test="code == '600'"> AND LEFT(A.ADDTIME, 6) = #{yymm} </if>
+            </if>
+
+            <if test="gubun == 'G6'">
+                <if test="code == '100'"> AND A.STATE IN ('400','500') AND LEFT(A.FOREDT, 6) = #{yymm} </if>
+                <if test="code == '200'"> AND A.STATE = '900' AND LEFT(A.REALDT, 6) = #{yymm} </if>
+            </if>
+
+            <if test="gubun == 'G7'">
+                <if test="code == '300'"> AND A.STATE = '900' AND LEFT(A.REALDT, 4) = LEFT(#{yymm}, 4) AND A.REALDT &lt;= CONCAT(#{yymm}, '31') </if>
+            </if>
+
+            <if test="gubun == 'K1' or gubun == 'K11'">
+                AND A.STATE IN ('500', '900')
+                AND LEFT(A.REALDT, 6) = #{yymm}
+                <if test="gubun == 'K1'"> AND B.CUSTGBN = '010' </if>
+                <if test="gubun == 'K11'"> AND B.CUSTGBN = '020' </if>
+                <if test="deptcd != null and deptcd != '' and deptcd != '00000'"> AND A.DEPTCD = #{deptcd} </if>
+                <if test="item != null and item != '' and item != '000'"> AND A.ITEM = #{item} </if>
+            </if>
+
+            <if test="gubun == 'K2'">
+                AND A.STATE = #{code}
+                <if test="code == '100'"> AND LEFT(A.ADDTIME, 10) BETWEEN #{sdate} AND #{edate} </if>
+                <if test="code == '200' or code == '300'">
+                    AND EXISTS (
+                        SELECT 1 FROM HSAA310T_TBL X
+                        WHERE X.CMPYCD=A.CMPYCD AND X.CUSTCD=A.CUSTCD AND X.SALESID=A.SALESID AND X.STATE=A.STATE
+                        AND LEFT(X.CHNGDT, 10) BETWEEN #{sdate} AND #{edate}
+                    )
+                </if>
+                <if test="code == '400'">
+                    AND EXISTS (
+                        SELECT 1 FROM HSAA310T_TBL X
+                        WHERE X.CMPYCD=A.CMPYCD AND X.CUSTCD=A.CUSTCD AND X.SALESID=A.SALESID AND X.STATE=A.STATE
+                        AND LEFT(X.FOREDELIVDT, 10) BETWEEN #{sdate} AND #{edate}
+                    )
+                </if>
+                <if test="code == '900'"> AND LEFT(A.REALDT, 10) BETWEEN #{sdate} AND #{edate} </if>
+                <if test="code == '910' or code == '920' or code == '930'"> AND LEFT(A.FAILDT, 10) BETWEEN #{sdate} AND #{edate} </if>
+                <if test="deptcd != null and deptcd != '' and deptcd != '00000'"> AND A.DEPTCD = #{deptcd} </if>
+            </if>
+
+            <if test="gubun == 'K4'">
+                AND A.STATE = #{code}
+                <if test="code == '900'"> AND LEFT(A.REALDT, 10) BETWEEN #{sdate} AND #{edate} </if>
+                <if test="code == '910' or code == '920' or code == '930'"> AND LEFT(A.FAILDT, 10) BETWEEN #{sdate} AND #{edate} </if>
+                <if test="deptcd != null and deptcd != '' and deptcd != '00000'"> AND A.DEPTCD = #{deptcd} </if>
+                <if test="item != null and item != '' and item != '000'"> AND A.ITEM = #{item} </if>
+            </if>
+
+            <if test="gubun == 'PRE'">
+                <if test="channelkind == 'A4001' or channelkind == 'A4002'">
+                    AND EXISTS (SELECT 1 FROM HSAA310T_TBL X WHERE X.CMPYCD=A.CMPYCD AND X.CUSTCD=A.CUSTCD AND X.SALESID=A.SALESID AND X.STATE='400' AND X.FOREDELIVDT BETWEEN #{sdate} AND #{edate})
+                    <if test="channelkind == 'A4001'"> AND B.CUSTGBN = '010' </if>
+                    <if test="channelkind == 'A4002'"> AND B.CUSTGBN = '020' </if>
+                </if>
+                <if test="channelkind == 'A9001' or channelkind == 'A9002'">
+                    AND A.STATE = '900' AND A.REALDT BETWEEN #{sdate} AND #{edate}
+                    <if test="channelkind == 'A9001'"> AND B.CUSTGBN = '010' </if>
+                    <if test="channelkind == 'A9002'"> AND B.CUSTGBN = '020' </if>
+                </if>
+                <if test="channelkind == 'A910'"> AND A.STATE IN ('910','930') AND A.FAILDT BETWEEN #{sdate} AND #{edate} </if>
+                <if test="channelkind == 'A920'"> AND A.STATE = '920' AND A.FAILDT BETWEEN #{sdate} AND #{edate} </if>
+            </if>
+
+            <if test="gubun == 'CUR'">
+                <if test="channelkind == 'B4001' or channelkind == 'B4002'">
+                    AND EXISTS (SELECT 1 FROM HSAA310T_TBL X WHERE X.CMPYCD=A.CMPYCD AND X.CUSTCD=A.CUSTCD AND X.SALESID=A.SALESID AND X.STATE='400' AND X.FOREDELIVDT BETWEEN #{sdate} AND #{edate})
+                    <if test="channelkind == 'B4001'"> AND B.CUSTGBN = '010' </if>
+                    <if test="channelkind == 'B4002'"> AND B.CUSTGBN = '020' </if>
+                </if>
+                <if test="channelkind == 'B9001' or channelkind == 'B9002'">
+                    AND A.STATE = '900' AND A.REALDT BETWEEN #{sdate} AND #{edate}
+                    <if test="channelkind == 'B9001'"> AND B.CUSTGBN = '010' </if>
+                    <if test="channelkind == 'B9002'"> AND B.CUSTGBN = '020' </if>
+                </if>
+                <if test="channelkind == 'A9003'"> AND A.STATE = '400' AND A.FOREDT BETWEEN #{sdate} AND #{edate} </if>
+            </if>
+
+            <if test="gubun == 'INS'">
+                AND A.STATE = '400' AND (A.REALDT = '' OR A.REALDT IS NULL)
+                <if test="channelkind == 'C990'"> AND B.CUSTGBN = '010' AND A.FOREDELIVDT &lt; #{sdate} </if>
+                <if test="channelkind == 'C999'"> AND B.CUSTGBN = '020' AND A.FOREDELIVDT &lt; #{sdate} </if>
+            </if>
+
+            <if test="gubun == 'K7'">
+                <if test="code == '000'"> AND LEFT(A.ADDTIME, 10) BETWEEN #{sdate} AND #{edate} </if>
+                <if test="code == '100' or code == '200' or code == '300' or code == '400'"> AND A.STATE = #{code} </if>
+                <if test="code == '900'"> AND A.STATE = '900' AND LEFT(A.REALDT, 10) BETWEEN #{sdate} AND #{edate} </if>
+                <if test="code == '910' or code == '920' or code == '930'"> AND A.STATE = #{code} AND LEFT(A.FAILDT, 10) BETWEEN #{sdate} AND #{edate} </if>
+                <if test="rtncd != null and rtncd != ''"> AND A.RTNCD = #{rtncd} </if>
+            </if>
+        </where>
+        ORDER BY A.ADDTIME DESC
+    </select>
+
+    <!-- 1. 영업마스터 (HSAA200T) -->
+    <select id="selectSalesMasterList" resultType="com.crmbank.erp.hsaa.dto.Hsaa200tDto">
+        select a.cmpycd, a.salesid, a.salestitle, a.state, a.addtime, a.custcd, a.userid, a.deptcd,
+               a.foreamt, a.realamt, a.foredt, a.succrate, a.rtncd, a.usecd, a.foredelivdt, a.conditions,
+               a.lastmtdt, a.realdt, a.faildt, a.holdondt, a.wincd, a.failcd, a.holdcd, a.sales_remark as salesremark, a.choice, a.import as importrank, a.svc_no as svcno,
+               a.trancd, a.postno, a.address, a.d_address,
+               b.custnm, b.bossnm, b.telno, b.faxno,
+               c.usernm, d.deptnm, e.cdnm as statenm
+        from hsaa200t_tbl a
+        left outer join haba020t_tbl b on a.cmpycd = b.cmpycd and a.custcd = b.custcd
+        left outer join haba920t_tbl c on a.cmpycd = c.cmpycd and a.userid = c.userid
+        left outer join haba120t_tbl d on a.cmpycd = d.cmpycd and a.deptcd = d.deptcd
+        left outer join hsba900t_tbl e on a.cmpycd = e.cmpycd and e.cdgbn = '700' and a.state = e.code
+        where a.cmpycd = #{cmpycd}
+          and a.addtime between #{fromdt} and #{todt}
+        <if test="schcustnm != null and schcustnm != ''">
+          AND (B.CUSTNM LIKE CONCAT('%', #{schcustnm}, '%') OR A.SALESTITLE LIKE CONCAT('%', #{schcustnm}, '%'))
+        </if>
+        <if test="userid != null and userid != '' and userid != '000'">
+          AND A.USERID = #{userid}
+        </if>
+        ORDER BY A.ADDTIME DESC, A.SALESID DESC
+    </select>
+
+    <select id="selectSalesMaster" resultType="com.crmbank.erp.hsaa.dto.Hsaa200tDto">
+        select a.cmpycd, a.salesid, a.salestitle, a.state, a.addtime, a.custcd, a.userid, a.deptcd,
+               a.foreamt, a.realamt, a.foredt, a.succrate, a.rtncd, a.usecd, a.foredelivdt, a.conditions,
+               a.lastmtdt, a.realdt, a.faildt, a.holdondt, a.wincd, a.failcd, a.holdcd, a.sales_remark as salesremark, a.choice, a.import as importrank, a.svc_no as svcno,
+               a.trancd, a.postno, a.address, a.d_address,
+               b.custnm, b.bossnm, b.telno, b.faxno,
+               c.usernm, d.deptnm
+        from hsaa200t_tbl a
+        left outer join haba020t_tbl b on a.cmpycd = b.cmpycd and a.custcd = b.custcd
+        left outer join haba920t_tbl c on a.cmpycd = c.cmpycd and a.userid = c.userid
+        left outer join haba120t_tbl d on a.cmpycd = d.cmpycd and a.deptcd = d.deptcd
+        where a.cmpycd = #{cmpycd} and a.salesid = #{salesid}
+    </select>
+
+    <select id="generateSalesId" resultType="string">
+        SELECT CONCAT(#{yymm}, LPAD(IFNULL(MAX(CAST(RIGHT(SALESID, 4) AS SIGNED)), 0) + 1, 4, '0'))
+        FROM HSAA200T_TBL
+        WHERE CMPYCD = #{cmpycd}
+          AND SALESID LIKE CONCAT(#{yymm}, '%')
+    </select>
+
+
+    <insert id="insertSalesMaster">
+        INSERT INTO HSAA200T_TBL (
+            CMPYCD, SALESID, SALESTITLE, STATE, ADDTIME, CUSTCD, USERID, DEPTCD,
+            FOREAMT, REALAMT, FOREDT, SUCCRATE, RTNCD, USECD, FOREDELIVDT, CONDITIONS,
+            LASTMTDT, REALDT, FAILDT, HOLDONDT, WINCD, FAILCD, HOLDCD, SALES_REMARK, CHOICE, IMPORT, SVC_NO, UPDTIME, UPDEMP,
+            TRANCD, POSTNO, ADDRESS, D_ADDRESS
+        ) VALUES (
+            #{cmpycd}, #{salesid}, #{salestitle}, #{state}, #{addtime}, #{custcd}, #{userid}, #{deptcd},
+            #{foreamt}, #{realamt}, #{foredt}, #{succrate}, #{rtncd}, #{usecd}, #{foredelivdt}, #{conditions},
+            #{lastmtdt}, #{realdt}, #{faildt}, #{holdondt}, #{wincd}, #{failcd}, #{holdcd}, #{salesremark}, #{choice}, #{importrank}, #{svcno}, #{updtime}, #{updemp},
+            #{trancd}, #{postno}, #{address}, #{d_address}
+        )
+    </insert>
+
+    <update id="updateSalesMaster">
+        UPDATE HSAA200T_TBL SET
+            SALESTITLE = IFNULL(#{salestitle, jdbcType=VARCHAR}, SALESTITLE),
+            STATE = IFNULL(#{state, jdbcType=VARCHAR}, STATE),
+            USERID = IFNULL(#{userid, jdbcType=VARCHAR}, USERID),
+            DEPTCD = IFNULL(#{deptcd, jdbcType=VARCHAR}, DEPTCD),
+            FOREAMT = IFNULL(#{foreamt, jdbcType=DECIMAL}, FOREAMT),
+            REALAMT = IFNULL(#{realamt, jdbcType=DECIMAL}, REALAMT),
+            FOREDT = IFNULL(#{foredt, jdbcType=VARCHAR}, FOREDT),
+            SUCCRATE = IFNULL(#{succrate, jdbcType=INTEGER}, SUCCRATE),
+            RTNCD = IFNULL(#{rtncd, jdbcType=VARCHAR}, RTNCD),
+            USECD = IFNULL(#{usecd, jdbcType=VARCHAR}, USECD),
+            FOREDELIVDT = IFNULL(#{foredelivdt, jdbcType=VARCHAR}, FOREDELIVDT),
+            CONDITIONS = IFNULL(#{conditions, jdbcType=VARCHAR}, CONDITIONS),
+            WINCD = IFNULL(#{wincd, jdbcType=VARCHAR}, WINCD),
+            FAILCD = IFNULL(#{failcd, jdbcType=VARCHAR}, FAILCD),
+            HOLDCD = IFNULL(#{holdcd, jdbcType=VARCHAR}, HOLDCD),
+            SALES_REMARK = IFNULL(#{salesremark, jdbcType=VARCHAR}, SALES_REMARK),
+            CHOICE = IFNULL(#{choice, jdbcType=VARCHAR}, CHOICE),
+            LASTMTDT = IFNULL(#{lastmtdt, jdbcType=VARCHAR}, LASTMTDT),
+            REALDT = IFNULL(#{realdt, jdbcType=VARCHAR}, REALDT),
+            FAILDT = IFNULL(#{faildt, jdbcType=VARCHAR}, FAILDT),
+            HOLDONDT = IFNULL(#{holdondt, jdbcType=VARCHAR}, HOLDONDT),
+            IMPORT = IFNULL(#{importrank, jdbcType=VARCHAR}, IMPORT),
+            SVC_NO = IFNULL(#{svcno, jdbcType=VARCHAR}, SVC_NO),
+            TRANCD = IFNULL(#{trancd, jdbcType=VARCHAR}, TRANCD),
+            POSTNO = IFNULL(#{postno, jdbcType=VARCHAR}, POSTNO),
+            ADDRESS = IFNULL(#{address, jdbcType=VARCHAR}, ADDRESS),
+            D_ADDRESS = IFNULL(#{d_address, jdbcType=VARCHAR}, D_ADDRESS),
+            UPDTIME = IFNULL(#{updtime, jdbcType=VARCHAR}, DATE_FORMAT(NOW(), '%Y%m%d')),
+            UPDEMP = IFNULL(#{updemp, jdbcType=VARCHAR}, UPDEMP)
+        WHERE CMPYCD = #{cmpycd, jdbcType=VARCHAR} AND SALESID = #{salesid, jdbcType=VARCHAR}
+    </update>
+
+
+    <delete id="deleteSalesMaster">
+        START TRANSACTION;
+        DELETE FROM HSAA810T_TBL WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid};
+        DELETE FROM HSAA320T_TBL WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid};
+        DELETE FROM HSAA310T_TBL WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid};
+        DELETE FROM HSAA300T_TBL WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid};
+        DELETE FROM HSAA200T_TBL WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid};
+        COMMIT;
+    </delete>
+
+    <!-- 2. 상담일지 (HSAA300T) -->
+    <select id="selectDiaryList" resultType="com.crmbank.erp.hsaa.dto.Hsaa300tDto">
+        SELECT A.cmpycd, A.salesid, A.ser, A.contdt, A.conthh, A.contmm, A.channel, A.channel_kind as channelkind, A.custid,
+        A.content, A.state, C.cdnm as statenm, A.chngdt, D.sales_remark, A.reportyn, A.report_content as reportcontent,
+        A.startdate, A.diary_content as diarycontent, A.coaching_readyn as coachingreadyn, A.sales_coaching as salescoaching,
+        D.wincd, D.failcd, D.holdondt, D.holdcd, D.realamt, D.realdt, D.reportdt, A.addtime, A.updtime, A.updemp,
+        b.name as custnm, e.cdnm as channelnm
+        FROM HSAA300T_TBL A
+        LEFT OUTER JOIN HSAA100T_TBL B ON A.CMPYCD = B.CMPYCD AND A.CUSTID = B.CUSTID
+        LEFT OUTER JOIN HSAA200T_TBL D ON A.CMPYCD = D.CMPYCD AND A.SALESID = B.SALESID
+        LEFT OUTER JOIN HSBA900T_TBL C ON A.CMPYCD = C.CMPYCD AND C.CDGBN = '700' AND A.state = C.CODE
+        LEFT OUTER JOIN HSBA900T_TBL E ON A.CMPYCD = E.CMPYCD AND E.CDGBN = '710' AND A.CHANNEL = E.CODE
+        WHERE A.CMPYCD = #{cmpycd} AND A.SALESID = #{salesid}
+        ORDER BY A.SER DESC
+    </select>
+
+    <select id="nextDiarySer" resultType="int">
+        SELECT IFNULL(MAX(SER), 0) + 1
+        FROM HSAA300T_TBL
+        WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid}
+    </select>
+
+    <insert id="insertDiary">
+        INSERT INTO HSAA300T_TBL (
+            CMPYCD, DEPTCD, USERID, CUSTCD, SALESID, SER, CONTDT, CONTHH, CONTMM, CHANNEL, CHANNEL_KIND, CUSTID,
+            CONTENT, STATE, CHNGDT, REPORTYN, REPORT_CONTENT, STARTDATE, DIARY_CONTENT,
+            ADDTIME, UPDTIME, UPDEMP
+        ) VALUES (
+            #{cmpycd, jdbcType=VARCHAR}, #{deptcd, jdbcType=VARCHAR}, #{userid, jdbcType=VARCHAR}, #{custcd, jdbcType=VARCHAR},
+            #{salesid, jdbcType=VARCHAR}, #{ser, jdbcType=VARCHAR}, #{contdt, jdbcType=VARCHAR}, #{conthh, jdbcType=INTEGER},
+            #{contmm, jdbcType=INTEGER}, #{channel, jdbcType=VARCHAR}, #{channelkind, jdbcType=VARCHAR}, #{custid, jdbcType=VARCHAR},
+            #{content, jdbcType=VARCHAR}, #{tostate, jdbcType=VARCHAR}, #{chngdt, jdbcType=VARCHAR}, #{reportyn, jdbcType=VARCHAR} ,
+            #{reportcontent, jdbcType=VARCHAR}, #{startdate, jdbcType=VARCHAR}, #{diarycontent, jdbcType=VARCHAR},
+            #{addtime, jdbcType=VARCHAR}, #{updtime, jdbcType=VARCHAR}, #{updemp, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateDiary">
+        UPDATE HSAA300T_TBL SET
+            DEPTCD = #{deptcd, jdbcType=VARCHAR}, USERID = #{userid, jdbcType=VARCHAR}, CUSTCD = #{custcd, jdbcType=VARCHAR},
+            CONTDT = #{contdt, jdbcType=VARCHAR}, CONTHH = #{conthh, jdbcType=INTEGER}, CONTMM = #{contmm, jdbcType=INTEGER},
+            CHANNEL = #{channel, jdbcType=VARCHAR}, CHANNEL_KIND = #{channelkind, jdbcType=VARCHAR}, CUSTID = #{custid, jdbcType=VARCHAR},
+            CONTENT = #{content, jdbcType=VARCHAR}, STATE = #{tostate, jdbcType=VARCHAR}, CHNGDT = #{chngdt, jdbcType=VARCHAR},
+            REPORTYN = #{reportyn, jdbcType=VARCHAR}, REPORT_CONTENT = #{reportcontent, jdbcType=VARCHAR},
+            STARTDATE = #{startdate, jdbcType=VARCHAR}, DIARY_CONTENT = #{diarycontent, jdbcType=VARCHAR},
+            UPDTIME = #{updtime, jdbcType=VARCHAR}, UPDEMP = #{updemp, jdbcType=VARCHAR}
+        WHERE CMPYCD = #{cmpycd, jdbcType=VARCHAR} AND SALESID = #{salesid, jdbcType=VARCHAR} AND SER = #{ser, jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteDiary">
+        DELETE FROM HSAA300T_TBL WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid} AND SER = #{ser, jdbcType=VARCHAR}
+    </delete>
+
+    <!-- 3. 단계변동 (HSAA310T) -->
+    <select id="selectStageList" resultType="com.crmbank.erp.hsaa.dto.Hsaa310tDto">
+        SELECT A.cmpycd, A.salesid,  A.chngdt, A.ser, A.state, A.wincd, A.failcd, A.holdcd,
+               A.remark, A.addtime, A.updtime, A.updemp, B.CDNM AS statenm
+          FROM HSAA310T_TBL A
+               LEFT OUTER JOIN HSBA900T_TBL B
+            ON A.CMPYCD = B.CMPYCD
+           AND B.CDGBN = '700'
+           AND A.STATE = B.CODE
+         WHERE A.CMPYCD = #{cmpycd}
+           AND A.SALESID = #{salesid}
+         ORDER BY A.SER DESC
+    </select>
+
+    <delete id="deleteStage">
+        DELETE FROM HSAA310T_TBL WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid} AND SER = #{ser, jdbcType=VARCHAR}
+    </delete>
+
+    <select id="nextStageSer" resultType="int">
+        SELECT IFNULL(MAX(SER), 0) + 1
+        FROM HSAA310T_TBL
+        WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid}
+    </select>
+
+    <insert id="insertStage">
+        INSERT INTO HSAA310T_TBL (
+            CMPYCD, CUSTCD, SALESID, SER, CHNGDT, STATE, BFSTATE, WINCD, FAILCD, HOLDCD, REMARK, ADDTIME, UPDTIME, UPDEMP
+        ) VALUES (
+            #{cmpycd, jdbcType=VARCHAR}, #{custcd, jdbcType=VARCHAR}, #{salesid, jdbcType=VARCHAR}, #{ser, jdbcType=VARCHAR}, #{chngdt, jdbcType=VARCHAR}, #{state, jdbcType=VARCHAR}, #{bfstate, jdbcType=VARCHAR},
+            #{wincd, jdbcType=VARCHAR}, #{failcd, jdbcType=VARCHAR}, #{holdcd, jdbcType=VARCHAR}, #{remark, jdbcType=VARCHAR},
+            #{addtime, jdbcType=VARCHAR}, #{updtime, jdbcType=VARCHAR}, #{updemp, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 4. Keyman (HSAA100T) -->
+    <select id="selectKeymanList" resultType="com.crmbank.erp.hsaa.dto.Hsaa100tDto">
+        SELECT A.cmpycd, A.custcd, A.salesid, A.custid, A.name, A.hpno, A.custdept, A.jikch, A.mail, A.mail2, A.custtel,
+               A.in_number as innumber, A.birthday, A.birgb, A.keyman, A.level, A.favor, A.trancd, A.postno, A.address, A.d_address, A.remark,
+               A.addtime, A.updtime, A.updemp,
+               b.cdnm as keymannm,
+               c.cdnm as favornm
+        FROM HSAA100T_TBL A
+        LEFT OUTER JOIN HSBA900T_TBL B ON B.CMPYCD = A.CMPYCD AND B.CDGBN = '790' AND A.KEYMAN = B.CODE
+        LEFT OUTER JOIN HSBA900T_TBL C ON C.CMPYCD = A.CMPYCD AND C.CDGBN = '720' AND A.FAVOR = C.CODE
+        WHERE A.CMPYCD = #{cmpycd} AND A.CUSTCD = #{custcd}
+        ORDER BY A.NAME
+    </select>
+
+    <select id="generateKeymanId" resultType="string">
+        SELECT CONCAT('K', LPAD(IFNULL(MAX(CAST(RIGHT(CUSTID, 5) AS SIGNED)), 0) + 1, 5, '0'))
+        FROM HSAA100T_TBL
+        WHERE CMPYCD = #{cmpycd}
+    </select>
+
+    <insert id="insertKeyman">
+        INSERT INTO HSAA100T_TBL (
+            CMPYCD, CUSTCD, SALESID, CUSTID, NAME, HPNO, CUSTDEPT, JIKCH, MAIL, MAIL2, CUSTTEL,
+            IN_NUMBER, BIRTHDAY, BIRGB, KEYMAN, LEVEL, FAVOR, TRANCD, POSTNO, ADDRESS, D_ADDRESS, REMARK, ADDTIME, UPDTIME, UPDEMP
+        ) VALUES (
+            #{cmpycd, jdbcType=VARCHAR}, #{custcd, jdbcType=VARCHAR}, #{salesid, jdbcType=VARCHAR}, #{custid, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR}, #{hpno, jdbcType=VARCHAR}, #{custdept, jdbcType=VARCHAR}, #{jikch, jdbcType=VARCHAR}, #{mail, jdbcType=VARCHAR}, #{mail2, jdbcType=VARCHAR}, #{custtel, jdbcType=VARCHAR},
+            #{innumber, jdbcType=VARCHAR}, #{birthday, jdbcType=VARCHAR}, #{birgb, jdbcType=VARCHAR}, #{keyman, jdbcType=VARCHAR}, #{level, jdbcType=VARCHAR}, #{favor, jdbcType=VARCHAR}, #{trancd, jdbcType=VARCHAR}, #{postno, jdbcType=VARCHAR}, #{address, jdbcType=VARCHAR}, #{d_address, jdbcType=VARCHAR}, #{remark, jdbcType=VARCHAR},
+            NOW(), NOW(), #{updemp, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateKeyman">
+        UPDATE HSAA100T_TBL SET
+            NAME = #{name}, SALESID = #{salesid}, HPNO = #{hpno}, CUSTDEPT = #{custdept}, JIKCH = #{jikch},
+            MAIL = #{mail}, MAIL2 = #{mail2}, CUSTTEL = #{custtel}, IN_NUMBER = #{innumber},
+            BIRTHDAY = #{birthday}, BIRGB = #{birgb}, KEYMAN = #{keyman}, LEVEL = #{level},
+            FAVOR = #{favor}, TRANCD = #{trancd}, POSTNO = #{postno}, ADDRESS = #{address}, D_ADDRESS = #{d_address}, REMARK = #{remark},
+            UPDTIME = NOW(), UPDEMP = #{updemp}
+        WHERE CMPYCD = #{cmpycd} AND CUSTID = #{custid}
+    </update>
+
+    <delete id="deleteKeyman">
+        DELETE FROM HSAA100T_TBL WHERE CMPYCD = #{cmpycd} AND CUSTID = #{custid}
+    </delete>
+
+    <!-- 5. 문서관리 (HSAA320T) -->
+    <select id="selectDocsList" resultType="com.crmbank.erp.hsaa.dto.Hsaa320tDto">
+        SELECT A.cmpycd, A.custcd, A.salesid, A.ser, A.docgb, B.CDNM AS docgbnm,
+               A.title, A.filename, A.regdt, A.addtime, A.updtime, A.updemp
+          FROM HSAA320T_TBL A LEFT OUTER JOIN HSBA900T_TBL B
+            ON A.CMPYCD = B.CMPYCD
+           AND B.CDGBN = '780'
+           AND A.DOCGB = B.CODE
+         WHERE A.CMPYCD = #{cmpycd}
+           AND A.SALESID = #{salesid}
+         ORDER BY A.SER DESC
+    </select>
+
+    <insert id="insertDoc">
+        INSERT INTO HSAA320T_TBL (
+            CMPYCD, CUSTCD, SALESID, SER, DOCGB, TITLE, FILENAME, REGDT, ADDTIME, UPDTIME, UPDEMP
+        ) VALUES (
+            #{cmpycd, jdbcType=VARCHAR}, #{custcd, jdbcType=VARCHAR}, #{salesid, jdbcType=VARCHAR}, #{ser, jdbcType=VARCHAR}, #{docgb, jdbcType=VARCHAR}, #{title, jdbcType=VARCHAR}, #{filename, jdbcType=VARCHAR},
+            #{regdt, jdbcType=VARCHAR}, #{addtime, jdbcType=VARCHAR}, #{updtime, jdbcType=VARCHAR}, #{updemp, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <select id="nextDocSer" resultType="int">
+        SELECT IFNULL(MAX(SER), 0) + 1
+        FROM HSAA320T_TBL
+        WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid}
+    </select>
+
+    <delete id="deleteDoc">
+        DELETE FROM HSAA320T_TBL WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid} AND SER = #{ser, jdbcType=VARCHAR}
+    </delete>
+
+    <!-- 7. HSAA200U 영업상담이관 -->
+    <select id="selectCallMstList" resultType="com.crmbank.erp.hsaa.dto.CallMstDto">
+        SELECT A.svcno, A.custcd, b.custnm, A.svcymd, A.trb_ment as trbment, A.ans_ment as ansment, A.ai_summary as aisummary, A.start_time as starttime, A.end_time as endtime, A.consultid, C.USERNM AS consultnm, A.rec_file as recfile,
+        A.escalation_no as escalationno, A.esc_memo as escmemo, A.call_telno as calltelno, A.call_usernm as callusernm, A.call_email as callemail, E.feedback_user as feedbackuser, IFNULL(D.USERNM,'') AS feedbackusernm
+        FROM call_mst_tbl A LEFT OUTER JOIN HABA020T_TBL B ON A.CMPYCD = B.CMPYCD AND A.CUSTCD = B.CUSTCD
+        LEFT OUTER JOIN HABA920T_TBL C ON A.CMPYCD = C.CMPYCD AND A.CONSULTID = C.USERID
+        LEFT OUTER JOIN cti_escalation_tbl E on A.escalation_no = E.escalation_no
+        LEFT OUTER JOIN HABA920T_TBL D ON A.CMPYCD = D.CMPYCD AND E.feedback_user = D.USERID
+        WHERE A.CMPYCD = #{cmpycd}
+          and escalation_yn = 'Y'
+          and svcymd  BETWEEN #{sdate} AND #{edate}
+        <if test="userid != null and userid != ''">
+            AND E.feedback_user = #{userid}
+        </if>
+        ORDER BY A.ADDTIME DESC
+    </select>
+
+    <update id="updateCallMstTransfer">
+        UPDATE cti_escalation_tbl SET
+            feedback_user = #{feedbackuser},
+            UPDTIME = NOW(),
+            UPDEMP = #{updemp}
+        WHERE CMPYCD = #{cmpycd} AND escalation_no = #{escalationno}
+    </update>
+
+    <!-- HSAA300U 영업담당자 변경 -->
+    <select id="selectSalesForTransfer" resultType="com.crmbank.erp.hsaa.dto.Hsaa200tDto">
+        select a.salesid, a.salestitle, a.state, IFNULL(e.cdnm,'') as statenm,  a.custcd, b.custnm, a.userid, c.usernm,
+               a.deptcd, d.deptnm, DATE_FORMAT(a.addtime, '%Y-%m-%d') as addtime
+        from hsaa200t_tbl a
+        left outer join haba020t_tbl b on a.cmpycd = b.cmpycd and a.custcd = b.custcd
+        left outer join haba920t_tbl c on a.cmpycd = c.cmpycd and a.userid = c.userid
+        left outer join haba120t_tbl d on a.cmpycd = d.cmpycd and a.deptcd = d.deptcd
+        left outer join hsba900t_tbl e on a.cmpycd = e.cmpycd and e.cdgbn = '700' and a.state = e.code
+        where a.cmpycd = #{cmpycd}
+          and a.userid = #{userid}
+        order by a.addtime desc
+    </select>
+
+    <insert id="insertHsaa210t">
+        INSERT INTO HSAA210T_TBL (
+            CMPYCD, SALESID, SER, FROM_USERID, FROM_DEPTCD, TO_USERID, TO_DEPTCD, CHNG_REASON, ADDTIME, UPDTIME, UPDEMP
+        ) VALUES (
+            #{cmpycd, jdbcType=VARCHAR}, #{salesid, jdbcType=VARCHAR}, #{ser, jdbcType=VARCHAR}, #{fromuserid, jdbcType=VARCHAR}, #{fromdeptcd, jdbcType=VARCHAR}, #{touserid, jdbcType=VARCHAR}, #{todeptcd, jdbcType=VARCHAR}, #{chngreason, jdbcType=VARCHAR},
+            NOW(), NOW(), #{updemp, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <select id="nextHsaa210tSer" resultType="int">
+        SELECT IFNULL(MAX(SER), 0) + 1
+        FROM HSAA210T_TBL
+        WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid}
+    </select>
+
+    <update id="updateHsaa200tManager">
+        UPDATE HSAA200T_TBL SET
+            USERID = #{userid},
+            DEPTCD = #{deptcd},
+            UPDTIME = NOW(),
+            UPDEMP = #{updemp}
+        WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid}
+    </update>
+
+    <!-- 6. 품목관리 (HSAA810T) -->
+    <select id="selectItemList" resultType="com.crmbank.erp.hsaa.dto.Hsaa810tDto">
+        SELECT cmpycd, custcd, salesid, ser, itemnm, qty, unit_price as unitprice, amt, addtime, updtime, updemp
+        FROM HSAA810T_TBL
+        WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid}
+        ORDER BY SER
+    </select>
+
+    <insert id="insertItem">
+        INSERT INTO HSAA810T_TBL (CMPYCD, CUSTCD, SALESID, SER, ITEMNM, QTY, UNIT_PRICE, AMT, ADDTIME, UPDTIME, UPDEMP)
+        VALUES (#{cmpycd, jdbcType=VARCHAR}, #{custcd, jdbcType=VARCHAR}, #{salesid, jdbcType=VARCHAR}, #{ser, jdbcType=VARCHAR}, #{itemnm, jdbcType=VARCHAR}, #{qty, jdbcType=DECIMAL}, #{unitprice, jdbcType=DECIMAL}, #{amt, jdbcType=DECIMAL},
+        NOW(), NOW(), #{updemp, jdbcType=VARCHAR})
+    </insert>
+
+    <delete id="deleteItemsBySalesId">
+        DELETE FROM HSAA810T_TBL WHERE CMPYCD = #{cmpycd} AND SALESID = #{salesid}
+    </delete>
+
+    <!-- 통합 주소록 동기화 (HSBA130T_TBL) -->
+    <update id="syncHsba130t">
+        INSERT INTO HSBA130T_TBL (CMPYCD, CUSTCD, TRANCD, ADDRESS, DAMDANG, TELNO, EMAIL, ADDTIME, UPDTIME, UPDEMP, USEYN)
+        VALUES (#{cmpycd}, #{custcd}, IFNULL((SELECT TRANCD FROM (SELECT TRANCD FROM HSBA130T_TBL WHERE CMPYCD = #{cmpycd} AND CUSTCD = #{custcd} ORDER BY TRANCD DESC LIMIT 1) x), '01'), #{address}, #{name}, #{hpno}, #{mail}, NOW(), NOW(), #{updemp}, 'Y')
+        ON DUPLICATE KEY UPDATE
+            TELNO = #{hpno},
+            EMAIL = #{mail},
+            ADDRESS = #{address},
+            UPDTIME = NOW(),
+            UPDEMP = #{updemp}
+    </update>
+
+    <!-- 전화번호부 동기화 (phone_number_map) -->
+    <update id="syncPhoneNumberMap">
+        INSERT INTO phone_number_map (phoneno, phonetype, custcd, repyn, name, useyn, ADDTIME, UPDTIME, UPDEMP)
+        VALUES (#{phoneno}, #{phonetype}, #{custcd}, 'N', #{name}, 'Y', NOW(), NOW(), #{updemp})
+        ON DUPLICATE KEY UPDATE
+            name = #{name},
+            custcd = #{custcd},
+            phonetype = #{phonetype},
+            UPDTIME = NOW(),
+            UPDEMP = #{updemp}
+    </update>
+
+    <select id="selectHsbaCodes" resultType="map">
+        SELECT CODE AS codecd, CDNM AS codenm
+        FROM HSBA900T_TBL
+        WHERE CMPYCD = #{cmpycd} AND CDGBN = #{cdgbn}
+        ORDER BY DSPORD
+    </select>
+
+</mapper>

@@ -1,0 +1,311 @@
+@charset "utf-8";
+
+/* 💎 하이온 ERP 프리미엄 전역 표준 디자인 프레임워크 (V12 - 최종 안정화) */
+
+/* 🚀 브라우저 기본 환경 고정 (스크롤 발생 원인 제거) */
+html, body, #app {
+    height: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important; /* 브라우저 자체 스크롤 절대 금지 */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* 🏢 [표준] 업무 화면 전용 컨테이너 */
+.erp-container {
+    height: 100% !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background-color: #fff !important;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    text-align: start;
+}
+
+/* 🚀 [표준] 모든 업무화면 내 입력 필드/선택창 */
+.erp-container .form-control,
+.erp-container .form-select {
+    font-size: 12px !important;
+    height: 28px !important;
+    padding: 0 8px !important;
+    border-radius: 4px !important;
+    border: 1px solid #cbd5e1 !important;
+    line-height: 26px !important;
+    background-color: #fff !important;
+    box-shadow: none !important;
+}
+
+/* 💡 [표준] 인풋 그룹(돋보기 버튼 등) 높이 및 정렬 완벽 동기화 */
+.erp-container .input-group {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    height: 28px !important;
+}
+
+.erp-container .input-group > .btn,
+.erp-container .input-group > .form-control,
+.erp-container .input-group > .form-select {
+    margin: 0 !important;
+    height: 100% !important;
+    font-size: 12px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 0 !important;
+}
+
+.erp-container .input-group > :first-child {
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+}
+.erp-container .input-group > :last-child {
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+}
+.erp-container .input-group > :not(:first-child) {
+    border-left: none !important;
+}
+
+.erp-container .input-group > .btn {
+    padding: 0 10px !important;
+    background-color: #f8f9fa !important;
+    color: #475569 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* 🏷️ [표준] 검색 영역 라벨 (줄바꿈/겹침 절대 금지) */
+.erp-label {
+    font-weight: 700 !important;
+    font-size: 12px !important;
+    color: #475569 !important;
+    white-space: nowrap !important;
+    width: 80px !important;
+    min-width: 80px !important;
+    max-width: 80px !important;
+    flex-shrink: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center;
+    margin-right: 8px !important;
+}
+
+/* 💎 [표준] 버튼 스타일 */
+.btn-erp {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    height: 28px !important;
+    padding: 0 14px !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 4px !important;
+    border: none;
+    transition: all 0.2s;
+}
+.btn-init { background-color: #fff !important; color: #4b5563 !important; border: 1px solid #d1d5db !important; }
+.btn-search { background-color: #374151 !important; color: #fff !important; }
+.btn-save { background-color: #005a9f !important; color: #fff !important; }
+.btn-danger, .btn-delete { background-color: #dc3545 !important; color: #fff !important; }
+
+/* ✨ [표준] 행추가 버튼 아이콘 자동 생성 */
+.btn-grid-row-add::before {
+    content: "\F4FE"; /* bi-plus-circle */
+    font-family: "bootstrap-icons" !important;
+    margin-right: 5px;
+    font-size: 14px;
+}
+
+/* 📊 [표준] 테이블(입력폼) 고밀도 레이아웃 */
+.erp-table-full {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+    border: 1px solid #dee2e6 !important;
+}
+.erp-table-full th {
+    background-color: #f8fafc !important;
+    border: 1px solid #dee2e6 !important;
+    text-align: center;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 6px 10px !important;
+    white-space: nowrap;
+}
+.erp-table-full td {
+    border: 1px solid #dee2e6 !important;
+    padding: 4px 8px !important;
+    vertical-align: middle;
+    background-color: #fff !important;
+}
+.erp-table-full .required::after { content: ' *'; color: #ef4444; }
+
+/* 💎 [표준] Tabulator 전역 디자인 및 'X' 숨김 */
+.tabulator { border: none !important; font-size: 12px !important; }
+.tabulator-header { background-color: #f1f5f9 !important; border-bottom: 2px solid #dee2e6 !important; }
+.tabulator-col-title { font-weight: 800 !important; color: #334155 !important; }
+.tabulator-cell .tabulator-tick-cross .tabulator-tick-cross-cross { display: none !important; }
+
+/* 🚫 [표준] 하단 요약바 전역 숨김 */
+.erp-footer, .hs-footer { display: none !important; }
+
+/* jwlee 추가 영역 보정 */
+
+/* DefaultLayout.vue 설정 */
+.default-css {
+    width: 100% !important;
+    height: 100% !important;
+    background: rgb(255, 255, 255);
+    overflow: hidden !important;
+}
+
+.main-page {
+    /* 💡 헤더 높이(65px)를 제외한 100%로 보정하여 전체 스크롤 방지 */
+    height: calc(100% - 65px) !important;
+    overflow: hidden !important;
+}
+
+/* MainContent.vue 설정 */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 1280px;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+/* SideMenu.vue 사이드바 설정 (중요: 높이 고정 및 내부 스크롤) */
+.side-bar {
+    background: #ffffff;
+    width: 230px;
+    height: 100% !important; /* 💡 부모 높이를 넘지 않도록 고정 */
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto !important; /* 💡 메뉴가 길면 여기서만 스크롤 */
+    overflow-x: hidden;
+    border-right: 1px solid #dcdfe6;
+}
+
+.side-bar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+/* 탭 오른쪽 전체닫기, <,  > 버튼 */
+.btn-outline-custom {
+    border-radius: 7px;
+    color: #fff;
+    background: rgba(0, 90, 159, 0.85);
+    font-size: 14px;
+}
+
+.btn-outline-custom:hover {
+    background-color: #ffffff;
+    color: #524f4f;
+}
+
+/* 초기화 조회 저장 등 버튼 */
+.btn-line {
+    margin-left: auto;
+    display: flex;
+}
+
+/* 초기화 조회 저장 등 버튼 */
+.btn-line-side {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.right-btn {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-line-side button, .btn-line-side a, .btn-line button, .row-btn-line > button {
+    background: #ffffff;
+    border-radius: 7px;
+    padding: 5px 20px;
+    box-shadow: var(--bs-box-shadow-sm) !important;
+    font-size: 15px;
+    border: rgb(216, 216, 216) 1px solid;
+}
+
+.btn-line button:hover, .row-btn-line > button:hover {
+    background: #244b69;
+    color: #ffffff;
+}
+
+/* 그리드 두개 레이아웃 3: 7 비율 */
+.two-grid {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+.two-grid > div:first-child { width: 25%; height: 100%; overflow: hidden; }
+.two-grid > div:last-child { width: 74%; height: 100%; overflow: hidden; display: flex; flex-direction: column; }
+
+.required-label::after { content: " *"; color: red; }
+.manual-btn { margin-left: 5px; margin-right: 5px; color: #005a9f; cursor: pointer; }
+.radio-margin { margin-right: 8px; }
+
+/* 🚀 자동 스크롤 레이아웃 엔진 (기존 코드 유지하며 추가) */
+.main-content-wrapper {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    min-height: 0 !important;
+}
+
+.card.flex-grow-1 {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    min-height: 0 !important;
+}
+
+.card.flex-grow-1 .card-body {
+    flex: 1 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.tabulator-instance {
+    flex: 1 !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+/* 🚀 [표준] HSOD100U 패턴의 촘촘한 테이블 스타일 */
+.erp-table-dense {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+}
+.erp-table-dense th {
+    background-color: #f8fafc !important;
+    border: 1px solid #dee2e6 !important;
+    text-align: center;
+    font-weight: 700;
+    font-size: 11px;
+    height: 32px !important;
+}
+.erp-table-dense td {
+    border: 1px solid #dee2e6 !important;
+    padding: 4px 8px !important;
+    vertical-align: middle;
+    height: 32px !important;
+}
