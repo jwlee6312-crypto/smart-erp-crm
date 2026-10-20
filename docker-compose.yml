@@ -6,7 +6,7 @@ services:
       - MYSQL_ROOT_PASSWORD=Crmbank123!
       - MYSQL_DATABASE=asterisk
       - TZ=Asia/Seoul
-    command: ["mysqld", "--lower-case-table-names=1"]
+
     ports: ["3308:3306"]
     volumes:
       - /data/smart-erp-crm/mysql:/var/lib/mysql

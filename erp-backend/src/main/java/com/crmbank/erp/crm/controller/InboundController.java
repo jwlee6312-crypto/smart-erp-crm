@@ -148,4 +148,22 @@ public class InboundController {
         inboundMapper.updateCallbackResult(payload);
         return ResponseEntity.ok(Map.of("success", true));
     }
+
+    @GetMapping("/item-list")
+    public List<Map<String, Object>> getItemList(@RequestParam String custcd, HttpSession session) {
+        UserSession user = (UserSession) session.getAttribute("user_session");
+        Map<String, Object> params = new HashMap<>();
+        params.put("cmpycd", user != null ? user.getCmpycd() : "");
+        params.put("custcd", custcd);
+        return inboundMapper.selectItemList(params);
+    }
+
+    @GetMapping("/call-history")
+    public List<Map<String, Object>> getCallHistory(@RequestParam String custcd, HttpSession session) {
+        UserSession user = (UserSession) session.getAttribute("user_session");
+        Map<String, Object> params = new HashMap<>();
+        params.put("cmpycd", user != null ? user.getCmpycd() : "");
+        params.put("custcd", custcd);
+        return inboundMapper.selectCallHistory(params);
+    }
 }
