@@ -152,7 +152,7 @@ const { resetForm } = useFormReset()
 
 const searchForm = reactive({ deptnm_s: '' })
 const formData = reactive({
-	actkind: 'S0', cmpycd: authstore.cmpycd, deptcd: '', deptnm: '', updept: '', updeptnm: '', useyn: 'Y', deptopn: new Date().toISOString().substring(0, 10)
+	actkind: 'S0', cmpycd: authstore.cmpycd, deptcd: '', deptnm: '', updept: '', updeptnm: '', useyn: 'Y', deptopn: new Date().toISOString().substring(0, 10), deptcld: '', deptsnm: '', deptenm: '', deptdum: '', deptemp: '', taxunit: '', costgbn: '', dspord: '0'
 })
 
 const allDepts = ref<any[]>([])

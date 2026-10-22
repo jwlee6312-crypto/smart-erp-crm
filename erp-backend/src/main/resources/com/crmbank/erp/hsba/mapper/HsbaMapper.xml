@@ -2,99 +2,93 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.crmbank.erp.hsba.mapper.HsbaMapper">
 
-    <select id="HSBA_010U_STR" parameterType="map" resultType="map">
-        <choose>
-            <when test="actkind == 'S0'">
-                SELECT A.ITEMCD, A.ITSIZE, A.UNIT,   A.ITEMNM, A.ITEMENM, A.INUNIT, A.INUNITNM,A.ICQTY,A.OUTUNIT,A.OUTUNITNM,
-                       A.OCQTY,  A.SETYN,  A.ASTKIND,A.AGRPCD, B.AGRPNM,  A.BGRPCD,  B.BGRPNM,
-                       A.IMPRICE,A.OMPRICE,A.STOCK,  A.QTYPNT, A.VATYN,  A.SOTAXYN, A.REMARK, A.USEYN, A.AUTOYN,
-                       A.UDOGYN, A.BARCODE,A.HSCODE, A.IN_CUSTCD, C.CUSTNM AS IN_CUSTNM
-                  FROM HSBA010T_TBL A LEFT OUTER JOIN HSBA030T_TBL B
-                    ON A.CMPYCD   = B.CMPYCD
-                   AND A.ASTKIND  = B.ASTKIND
-                   AND A.AGRPCD   = B.AGRPCD
-                   AND A.BGRPCD   = B.BGRPCD
-                       LEFT OUTER JOIN HABA020T_TBL C
-                    ON A.CMPYCD    = C.CMPYCD
-                   AND A.IN_CUSTCD = C.CUSTCD
-                 WHERE A.CMPYCD    = #{cmpycd}
-                   AND A.ASTKIND   = #{astkind}
-                   <if test="itemnm != null and itemnm != ''">
-                     AND A.ITEMNM LIKE CONCAT('%', #{itemnm}, '%')
-                   </if>
-                 ORDER BY A.ITEMCD
-            </when>
-            <when test="actkind == 'A0'">
-                INSERT INTO HSBA010T_TBL
-                (CMPYCD, ITEMCD, ITEMNM, ITEMENM, ITSIZE, UNIT, UNITNM, INUNIT, INUNITNM, ICQTY, OUTUNIT, OUTUNITNM, OCQTY, SETYN,
-                 ASTKIND, AGRPCD, BGRPCD, IMPRICE, OMPRICE, STOCK, QTYPNT, VATYN, SOTAXYN, UDOGYN, BARCODE, HSCODE, REMARK, USEYN, IN_CUSTCD, AUTOYN, ADDTIME, UPDTIME, UPDEMP)
-                VALUES
-                (#{cmpycd},
-                 COALESCE(NULLIF(#{itemcd}, ''), CONCAT(
-                    CASE #{astkind}
-                        WHEN '100' THEN 'R'
-                        WHEN '110' THEN 'A'
-                        WHEN '111' THEN 'B'
-                        WHEN '120' THEN 'G'
-                        WHEN '200' THEN 'P'
-                        WHEN '210' THEN 'W'
-                        WHEN '900' THEN 'S'
-                        WHEN '910' THEN 'S'
-                        ELSE 'G'
-                    END,
-                    LPAD(IFNULL((SELECT MAX(CAST(SUBSTRING(x.ITEMCD, 2, 6) AS UNSIGNED)) FROM HSBA010T_TBL x WHERE x.CMPYCD = #{cmpycd} AND SUBSTRING(x.ITEMCD, 1, 1) = CASE #{astkind} WHEN '100' THEN 'R' WHEN '110' THEN 'A' WHEN '111' THEN 'B' WHEN '120' THEN 'G' WHEN '200' THEN 'P' WHEN '210' THEN 'W' WHEN '900' THEN 'S' WHEN '910' THEN 'S' ELSE 'G' END), 0) + 1, 6, '0')
-                 )),
-                 #{itemnm}, #{itemenm}, #{itsize}, #{unit},
-                 (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{unit}),
-                 #{inunit},
-                 (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{inunit}),
-                 IFNULL(#{icqty}, 0), #{outunit},
-                 (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{outunit}),
-                 IFNULL(#{ocqty}, 0), #{setyn}, #{astkind}, #{agrpcd}, #{bgrpcd}, IFNULL(#{imprice}, 0), IFNULL(#{omprice}, 0), IFNULL(#{stock}, 0), IFNULL(#{qtypnt}, 0), IFNULL(#{vatyn}, 'N'), IFNULL(#{sotaxyn}, 'N'), IFNULL(#{udogyn}, 'N'), #{barcode}, #{hscode}, #{remark}, #{useyn}, #{in_custcd}, IFNULL(#{autoyn}, 'N'), NOW(), NOW(), #{updemp});
-
-                SELECT 'OK' AS RESULT, '' AS MSG;
-            </when>
-            <when test="actkind == 'U0'">
-                UPDATE HSBA010T_TBL
-                   SET ITEMNM    = #{itemnm},
-                       ITEMENM   = #{itemenm},
-                       ITSIZE    = #{itsize},
-                       UNIT      = #{unit},
-                       UNITNM    = (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{unit}),
-                       INUNIT    = #{inunit},
-                       INUNITNM  = (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{inunit}),
-                       ICQTY     = #{icqty},
-                       OUTUNIT   = #{outunit},
-                       OUTUNITNM = (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{outunit}),
-                       OCQTY     = #{ocqty},
-                       SETYN     = #{setyn},
-                       ASTKIND   = #{astkind},
-                       AGRPCD    = #{agrpcd},
-                       BGRPCD    = #{bgrpcd},
-                       IMPRICE   = #{imprice},
-                       OMPRICE   = #{omprice},
-                       STOCK     = #{stock},
-                       QTYPNT    = #{qtypnt},
-                       VATYN     = #{vatyn},
-                       SOTAXYN   = #{sotaxyn},
-                       UDOGYN    = #{udogyn},
-                       BARCODE   = #{barcode},
-                       HSCODE    = #{hscode},
-                       REMARK    = #{remark},
-                       USEYN     = #{useyn},
-                       IN_CUSTCD = #{in_custcd},
-                       AUTOYN    = #{autoyn},
-                       UPDTIME   = NOW(),
-                       UPDEMP    = #{updemp}
-                 WHERE CMPYCD    = #{cmpycd}
-                   AND ITEMCD    = #{itemcd};
-
-                SELECT 'OK' AS RESULT, '' AS MSG;
-            </when>
-        </choose>
+    <select id="HSBA_010U_SELECT" parameterType="map" resultType="map">
+        SELECT A.ITEMCD, A.ITSIZE, A.UNIT,   A.ITEMNM, A.ITEMENM, A.INUNIT, A.INUNITNM,A.ICQTY,A.OUTUNIT,A.OUTUNITNM,
+               A.OCQTY,  A.SETYN,  A.ASTKIND,A.AGRPCD, B.AGRPNM,  A.BGRPCD,  B.BGRPNM,
+               A.IMPRICE,A.OMPRICE,A.STOCK,  A.QTYPNT, A.VATYN,  A.SOTAXYN, A.REMARK, A.USEYN, A.AUTOYN,
+               A.UDOGYN, A.BARCODE,A.HSCODE, A.IN_CUSTCD, C.CUSTNM AS IN_CUSTNM
+          FROM HSBA010T_TBL A LEFT OUTER JOIN HSBA030T_TBL B
+            ON A.CMPYCD   = B.CMPYCD
+           AND A.ASTKIND  = B.ASTKIND
+           AND A.AGRPCD   = B.AGRPCD
+           AND A.BGRPCD   = B.BGRPCD
+               LEFT OUTER JOIN HABA020T_TBL C
+            ON A.CMPYCD    = C.CMPYCD
+           AND A.IN_CUSTCD = C.CUSTCD
+         WHERE A.CMPYCD    = #{cmpycd}
+           AND A.ASTKIND   = #{astkind}
+           <if test="itemnm != null and itemnm != ''">
+             AND A.ITEMNM LIKE CONCAT('%', #{itemnm}, '%')
+           </if>
+         ORDER BY A.ITEMCD
     </select>
 
-    <select id="HSBA_070U_STR" parameterType="map" resultType="map">
+    <insert id="HSBA_010U_INSERT" parameterType="map">
+        INSERT INTO HSBA010T_TBL
+        (CMPYCD, ITEMCD, ITEMNM, ITEMENM, ITSIZE, UNIT, UNITNM, INUNIT, INUNITNM, ICQTY, OUTUNIT, OUTUNITNM, OCQTY, SETYN,
+         ASTKIND, AGRPCD, BGRPCD, IMPRICE, OMPRICE, STOCK, QTYPNT, VATYN, SOTAXYN, UDOGYN, BARCODE, HSCODE, REMARK, USEYN, IN_CUSTCD, AUTOYN, ADDTIME, UPDTIME, UPDEMP)
+        VALUES
+        (#{cmpycd},
+         COALESCE(NULLIF(#{itemcd}, ''), CONCAT(
+            CASE #{astkind}
+                WHEN '100' THEN 'R'
+                WHEN '110' THEN 'A'
+                WHEN '111' THEN 'B'
+                WHEN '120' THEN 'G'
+                WHEN '200' THEN 'P'
+                WHEN '210' THEN 'W'
+                WHEN '900' THEN 'S'
+                WHEN '910' THEN 'S'
+                ELSE 'G'
+            END,
+            LPAD(IFNULL((SELECT MAX(CAST(SUBSTRING(x.ITEMCD, 2, 6) AS UNSIGNED)) FROM HSBA010T_TBL x WHERE x.CMPYCD = #{cmpycd} AND SUBSTRING(x.ITEMCD, 1, 1) = CASE #{astkind} WHEN '100' THEN 'R' WHEN '110' THEN 'A' WHEN '111' THEN 'B' WHEN '120' THEN 'G' WHEN '200' THEN 'P' WHEN '210' THEN 'W' WHEN '900' THEN 'S' WHEN '910' THEN 'S' ELSE 'G' END), 0) + 1, 6, '0')
+         )),
+         #{itemnm}, #{itemenm}, #{itsize}, #{unit},
+         (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{unit}),
+         #{inunit},
+         (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{inunit}),
+         IFNULL(#{icqty}, 0), #{outunit},
+         (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{outunit}),
+         IFNULL(#{ocqty}, 0), #{setyn}, #{astkind}, #{agrpcd}, #{bgrpcd}, IFNULL(#{imprice}, 0), IFNULL(#{omprice}, 0), IFNULL(#{stock}, 0), IFNULL(#{qtypnt}, 0), IFNULL(#{vatyn}, 'N'), IFNULL(#{sotaxyn}, 'N'), IFNULL(#{udogyn}, 'N'), #{barcode}, #{hscode}, #{remark}, #{useyn}, #{in_custcd}, IFNULL(#{autoyn}, 'N'), NOW(), NOW(), #{updemp})
+    </insert>
+
+    <update id="HSBA_010U_UPDATE" parameterType="map">
+        UPDATE HSBA010T_TBL
+           SET ITEMNM    = #{itemnm},
+               ITEMENM   = #{itemenm},
+               ITSIZE    = #{itsize},
+               UNIT      = #{unit},
+               UNITNM    = (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{unit}),
+               INUNIT    = #{inunit},
+               INUNITNM  = (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{inunit}),
+               ICQTY     = #{icqty},
+               OUTUNIT   = #{outunit},
+               OUTUNITNM = (SELECT UNITNM FROM HSBA040T_TBL WHERE CMPYCD = #{cmpycd} AND UNIT = #{outunit}),
+               OCQTY     = #{ocqty},
+               SETYN     = #{setyn},
+               ASTKIND   = #{astkind},
+               AGRPCD    = #{agrpcd},
+               BGRPCD    = #{bgrpcd},
+               IMPRICE   = #{imprice},
+               OMPRICE   = #{omprice},
+               STOCK     = #{stock},
+               QTYPNT    = #{qtypnt},
+               VATYN     = #{vatyn},
+               SOTAXYN   = #{sotaxyn},
+               UDOGYN    = #{udogyn},
+               BARCODE   = #{barcode},
+               HSCODE    = #{hscode},
+               REMARK    = #{remark},
+               USEYN     = #{useyn},
+               IN_CUSTCD = #{in_custcd},
+               AUTOYN    = #{autoyn},
+               UPDTIME   = NOW(),
+               UPDEMP    = #{updemp}
+         WHERE CMPYCD    = #{cmpycd}
+           AND ITEMCD    = #{itemcd}
+    </update>
+
+    <select id="HSBA_070U_SELECT" parameterType="map" resultType="map">
         <choose>
             <when test="actkind == 'S0'">
                 <choose>
@@ -252,91 +246,88 @@
                    AND A.STATUS   in ('010','020','030')
                  ORDER BY A.CUSTCD
             </when>
-            <when test="actkind == 'U0'">
-                UPDATE HABA020T_TBL
-                   SET CUSTNO   = #{custno},   CUSTNM   = #{custnm},
-                       CUSTGBN  = #{custgbn},  BOSSNM   = #{bossnm},   LEGALNO = #{legalno},
-                       CUSTKIND = #{custkind}, CUSTTYPE = #{custtype}, TELNO   = #{telno},
-                       FAXNO    = #{faxno},    POSTNO   = #{postno},   ADDRESS = #{address}, D_ADDRESS = #{d_address},
-                       STATUS   = #{status},   IOGBN    = #{iogbn},    FNDYMD  = #{fndymd},
-                       STDYMD   = #{stdymd},   CLSYMD   = #{clsymd},   SINGRD  = #{singrd},  ELCYN = #{elcyn},
-                       USEYN    = #{useyn},    BANKNM   = #{banknm},   GUJOA   = #{gujoa},
-                       UPDTIME  = NOW(),       UPDEMP   = #{updemp},   GIGBCD   = #{gigbcd}, OUTCUSTCD = #{outcustcd}
-                 WHERE CMPYCD  = #{cmpycd}
-                   AND CUSTCD  = #{custcd};
-
-                INSERT INTO HSBA100T_TBL (CMPYCD, CUSTCD, INPRCGBN, OUTPRCGBN, HDAMT, RCVDD, AGRPCD, BGRPCD, CGRPCD, AREA, DAMDANG, TELNO, EMAIL, REMARK, USEYN, ADDTIME, UPDTIME, UPDEMP)
-                VALUES (#{cmpycd}, #{custcd}, #{inprcgbn}, #{outprcgbn}, IFNULL(#{hdamt}, 0), IFNULL(#{rcvdd}, 0), #{agrpcd}, #{bgrpcd}, #{cgrpcd}, #{area}, #{cdamdang}, #{ctelno}, #{cemail}, #{remark}, #{useyn}, NOW(), NOW(), #{updemp})
-                ON DUPLICATE KEY UPDATE
-                INPRCGBN = VALUES(INPRCGBN), OUTPRCGBN = VALUES(OUTPRCGBN), RCVDD = VALUES(RCVDD),
-                AGRPCD = VALUES(AGRPCD), BGRPCD = VALUES(BGRPCD), CGRPCD = VALUES(CGRPCD), AREA = VALUES(AREA),
-                DAMDANG = VALUES(DAMDANG), TELNO = VALUES(TELNO), EMAIL = VALUES(EMAIL), REMARK = VALUES(REMARK),
-                USEYN = VALUES(USEYN), UPDTIME = NOW(), UPDEMP = VALUES(UPDEMP);
-
-                SELECT 'N' AS RESULT, '정상으로 작업이 되었습니다.' AS MSG;
-            </when>
-            <when test="actkind == 'I0'">
-                INSERT INTO HABA020T_TBL
-                (CMPYCD, CUSTCD, CUSTNO, CUSTNM,  CUSTGBN, BOSSNM, JUMINNO,  LEGALNO, CUSTKIND, CUSTTYPE,
-                 TELNO,  FAXNO,  POSTNO, ADDRESS, D_ADDRESS, IOGBN,   FNDYMD, STDYMD,   CLSYMD,  SINGRD,   STATUS,
-                 GUJOA,  BANKNM, ELCYN,  USEYN,  ADDTIME, UPDTIME, UPDEMP,   GIGBCD, OUTCUSTCD)
-                VALUES
-                (#{cmpycd},
-                 COALESCE(NULLIF(#{custcd}, ''), CONCAT(#{custcd}, LPAD(IFNULL(MAX(CAST(x.CUSTCD AS UNSIGNED)), 0) + 2, 7, '0'))),
-                 #{custno}, #{custnm},  #{custgbn}, #{bossnm}, #{juminno}, #{legalno}, #{custkind}, #{custtype},
-                 #{telno},  #{faxno},  #{postno}, #{address}, #{d_address}, #{iogbn},  #{fndymd}, #{stdymd},  #{clsymd},  #{singrd},   #{status},
-                 #{gujoa},  #{banknm}, #{elcyn},  #{useyn},
-                 NOW(), NOW(), #{updemp}, #{gigbcd}, #{outcustcd});
-
-                INSERT INTO HSBA100T_TBL
-                (CMPYCD, CUSTCD, INPRCGBN, OUTPRCGBN, HDAMT, RCVDD, AGRPCD, BGRPCD, CGRPCD, AREA, DAMDANG, TELNO, EMAIL, REMARK, USEYN, ADDTIME, UPDTIME, UPDEMP)
-                VALUES (#{cmpycd}, #{custcd}, #{inprcgbn}, #{outprcgbn}, IFNULL(#{hdamt}, 0), IFNULL(#{rcvdd}, 0), #{agrpcd}, #{bgrpcd}, #{cgrpcd}, #{area}, #{cdamdang}, #{ctelno}, #{cemail}, #{remark}, #{useyn}, NOW(), NOW(), #{updemp});
-
-                SELECT 'N' AS RESULT, '정상으로 작업이 되었습니다.' AS MSG;
-            </when>
         </choose>
     </select>
 
-    <select id="HSBA_900U_STR" parameterType="map" resultType="map">
-        <choose>
-            <when test="actkind == 'S0'">
-                SELECT CODE, CDNM, REMARK, DSPORD, USEYN
-                  FROM HSBA900T_TBL
-                 WHERE CMPYCD = #{cmpycd}
-                   AND CDGBN  = #{cdgbn}
-                 ORDER BY DSPORD
-            </when>
-            <when test="actkind == 'S1'">
-                SELECT CODE, CDNM, REMARK, DSPORD, USEYN
-                  FROM HSBA900T_TBL
-                 WHERE CMPYCD = #{cmpycd}
-                   AND CDGBN  = #{cdgbn}
-                   AND USEYN  = 'Y'
-                 ORDER BY DSPORD
-            </when>
-            <when test="actkind == 'A0'">
-                INSERT INTO HSBA900T_TBL (CMPYCD, CDGBN, CODE, CDNM, REMARK, DSPORD, USEYN, ADDTIME, UPDTIME, UPDEMP)
-                VALUES (#{cmpycd}, #{cdgbn}, #{code}, #{cdnm}, #{remark}, CAST(IFNULL(NULLIF(#{dspord}, ''), '0') AS SIGNED), #{useyn}, NOW(), NOW(), #{updemp})
-                ON DUPLICATE KEY UPDATE
-                CDNM = VALUES(CDNM), REMARK = VALUES(REMARK), DSPORD = VALUES(DSPORD), USEYN = VALUES(USEYN), UPDTIME = NOW(), UPDEMP = VALUES(UPDEMP);
+    <update id="HSBA_070U_UPDATE_CUST" parameterType="map">
+        UPDATE HABA020T_TBL
+           SET CUSTNO   = #{custno},   CUSTNM   = #{custnm},
+               CUSTGBN  = #{custgbn},  BOSSNM   = #{bossnm},   LEGALNO = #{legalno},
+               CUSTKIND = #{custkind}, CUSTTYPE = #{custtype}, TELNO   = #{telno},
+               FAXNO    = #{faxno},    POSTNO   = #{postno},   ADDRESS = #{address}, D_ADDRESS = #{d_address},
+               STATUS   = #{status},   IOGBN    = #{iogbn},    FNDYMD  = #{fndymd},
+               STDYMD   = #{stdymd},   CLSYMD   = #{clsymd},   SINGRD  = #{singrd},  ELCYN = #{elcyn},
+               USEYN    = #{useyn},    BANKNM   = #{banknm},   GUJOA   = #{gujoa},
+               UPDTIME  = NOW(),       UPDEMP   = #{updemp},   GIGBCD   = #{gigbcd}, OUTCUSTCD = #{outcustcd}
+         WHERE CMPYCD  = #{cmpycd}
+           AND CUSTCD  = #{custcd}
+    </update>
 
-                SELECT 'OK' AS RESULT, '' AS MSG;
-            </when>
-            <when test="actkind == 'U0'">
-                UPDATE HSBA900T_TBL
-                   SET CDNM    = #{cdnm},
-                       REMARK  = #{remark},
-                       DSPORD  = CAST(IFNULL(NULLIF(#{dspord}, ''), '0') AS SIGNED),
-                       USEYN   = #{useyn},
-                       UPDTIME = NOW(),
-                       UPDEMP  = #{updemp}
-                 WHERE CMPYCD    = #{cmpycd}
-                   AND CDGBN     = #{cdgbn}
-                   AND CODE      = #{code};
+    <insert id="HSBA_070U_UPSERT_SUB" parameterType="map">
+        INSERT INTO HSBA100T_TBL (CMPYCD, CUSTCD, INPRCGBN, OUTPRCGBN, HDAMT, RCVDD, AGRPCD, BGRPCD, CGRPCD, AREA, DAMDANG, TELNO, EMAIL, REMARK, USEYN, ADDTIME, UPDTIME, UPDEMP)
+        VALUES (#{cmpycd}, #{custcd}, #{inprcgbn}, #{outprcgbn}, IFNULL(#{hdamt}, 0), IFNULL(#{rcvdd}, 0), #{agrpcd}, #{bgrpcd}, #{cgrpcd}, #{area}, #{cdamdang}, #{ctelno}, #{cemail}, #{remark}, #{useyn}, NOW(), NOW(), #{updemp})
+        ON DUPLICATE KEY UPDATE
+        INPRCGBN = VALUES(INPRCGBN), OUTPRCGBN = VALUES(OUTPRCGBN), RCVDD = VALUES(RCVDD),
+        AGRPCD = VALUES(AGRPCD), BGRPCD = VALUES(BGRPCD), CGRPCD = VALUES(CGRPCD), AREA = VALUES(AREA),
+        DAMDANG = VALUES(DAMDANG), TELNO = VALUES(TELNO), EMAIL = VALUES(EMAIL), REMARK = VALUES(REMARK),
+        USEYN = VALUES(USEYN), UPDTIME = NOW(), UPDEMP = VALUES(UPDEMP)
+    </insert>
 
-                SELECT 'OK' AS RESULT, '' AS MSG;
-            </when>
-        </choose>
+    <insert id="HSBA_070U_INSERT_CUST" parameterType="map">
+        INSERT INTO HABA020T_TBL
+        (CMPYCD, CUSTCD, CUSTNO, CUSTNM,  CUSTGBN, BOSSNM, JUMINNO,  LEGALNO, CUSTKIND, CUSTTYPE,
+         TELNO,  FAXNO,  POSTNO, ADDRESS, D_ADDRESS, IOGBN,   FNDYMD, STDYMD,   CLSYMD,  SINGRD,   STATUS,
+         GUJOA,  BANKNM, ELCYN,  USEYN,  ADDTIME, UPDTIME, UPDEMP,   GIGBCD, OUTCUSTCD)
+        VALUES
+        (#{cmpycd},
+         COALESCE(NULLIF(#{custcd}, ''), CONCAT(#{custcd}, LPAD(IFNULL(MAX(CAST(x.CUSTCD AS UNSIGNED)), 0) + 2, 7, '0'))),
+         #{custno}, #{custnm},  #{custgbn}, #{bossnm}, #{juminno}, #{legalno}, #{custkind}, #{custtype},
+         #{telno},  #{faxno},  #{postno}, #{address}, #{d_address}, #{iogbn},  #{fndymd}, #{stdymd},  #{clsymd},  #{singrd},   #{status},
+         #{gujoa},  #{banknm}, #{elcyn},  #{useyn},
+         NOW(), NOW(), #{updemp}, #{gigbcd}, #{outcustcd})
+    </insert>
+
+    <insert id="HSBA_070U_INSERT_SUB" parameterType="map">
+        INSERT INTO HSBA100T_TBL
+        (CMPYCD, CUSTCD, INPRCGBN, OUTPRCGBN, HDAMT, RCVDD, AGRPCD, BGRPCD, CGRPCD, AREA, DAMDANG, TELNO, EMAIL, REMARK, USEYN, ADDTIME, UPDTIME, UPDEMP)
+        VALUES (#{cmpycd}, #{custcd}, #{inprcgbn}, #{outprcgbn}, IFNULL(#{hdamt}, 0), IFNULL(#{rcvdd}, 0), #{agrpcd}, #{bgrpcd}, #{cgrpcd}, #{area}, #{cdamdang}, #{ctelno}, #{cemail}, #{remark}, #{useyn}, NOW(), NOW(), #{updemp})
+    </insert>
+
+    <select id="HSBA_900U_SELECT_CODES" parameterType="map" resultType="map">
+        SELECT CODE, CDNM, REMARK, DSPORD, USEYN
+          FROM HSBA900T_TBL
+         WHERE CMPYCD = #{cmpycd}
+           AND CDGBN  = #{cdgbn}
+         ORDER BY DSPORD
     </select>
+
+    <select id="HSBA_900U_SELECT_GROUPS" parameterType="map" resultType="map">
+        SELECT CODE, CDNM, REMARK, DSPORD, USEYN
+          FROM HSBA900T_TBL
+         WHERE CMPYCD = #{cmpycd}
+           AND CDGBN  = #{cdgbn}
+           AND USEYN  = 'Y'
+         ORDER BY DSPORD
+    </select>
+
+    <insert id="HSBA_900U_UPSERT" parameterType="map">
+        INSERT INTO HSBA900T_TBL (CMPYCD, CDGBN, CODE, CDNM, REMARK, DSPORD, USEYN, ADDTIME, UPDTIME, UPDEMP)
+        VALUES (#{cmpycd}, #{cdgbn}, #{code}, #{cdnm}, #{remark}, CAST(IFNULL(NULLIF(#{dspord}, ''), '0') AS SIGNED), #{useyn}, NOW(), NOW(), #{updemp})
+        ON DUPLICATE KEY UPDATE
+        CDNM = VALUES(CDNM), REMARK = VALUES(REMARK), DSPORD = VALUES(DSPORD), USEYN = VALUES(USEYN), UPDTIME = NOW(), UPDEMP = VALUES(UPDEMP)
+    </insert>
+
+    <update id="HSBA_900U_UPDATE" parameterType="map">
+        UPDATE HSBA900T_TBL
+           SET CDNM    = #{cdnm},
+               REMARK  = #{remark},
+               DSPORD  = CAST(IFNULL(NULLIF(#{dspord}, ''), '0') AS SIGNED),
+               USEYN   = #{useyn},
+               UPDTIME = NOW(),
+               UPDEMP  = #{updemp}
+         WHERE CMPYCD    = #{cmpycd}
+           AND CDGBN     = #{cdgbn}
+           AND CODE      = #{code}
+    </update>
 
 </mapper>

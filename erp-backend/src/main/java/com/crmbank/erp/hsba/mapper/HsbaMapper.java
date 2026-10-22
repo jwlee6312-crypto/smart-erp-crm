@@ -7,6 +7,9 @@ import java.util.Map;
 @Mapper
 public interface HsbaMapper {
     List<Map<String, Object>> HSBA_010U_STR(Map<String, Object> params);
+    List<Map<String, Object>> HSBA_010U_SELECT(Map<String, Object> params);
+    int HSBA_010U_INSERT(Map<String, Object> params);
+    int HSBA_010U_UPDATE(Map<String, Object> params);
     List<Map<String, Object>> HSBA_020U_STR(Map<String, Object> params);
     List<Map<String, Object>> HSBA_030U_STR(Map<String, Object> params);
     List<Map<String, Object>> HSBA_040U_STR(Map<String, Object> params);
@@ -16,6 +19,11 @@ public interface HsbaMapper {
     List<Map<String, Object>> HSBA_065U_STR(Map<String, Object> params);
     List<Map<String, Object>> HSBA_090U_STR(Map<String, Object> params);
     List<Map<String, Object>> HSBA_070U_STR(Map<String, Object> params);
+    List<Map<String, Object>> HSBA_070U_SELECT(Map<String, Object> params);
+    int HSBA_070U_UPDATE_CUST(Map<String, Object> params);
+    int HSBA_070U_UPSERT_SUB(Map<String, Object> params);
+    int HSBA_070U_INSERT_CUST(Map<String, Object> params);
+    int HSBA_070U_INSERT_SUB(Map<String, Object> params);
     List<Map<String, Object>> HSBA_130U_STR(Map<String, Object> params);
 
     List<Map<String, Object>> HSBA_140U_STR(Map<String, Object> params);
@@ -41,6 +49,10 @@ public interface HsbaMapper {
     List<Map<String, Object>> HSBA_830U_STR(Map<String, Object> params);
 
     List<Map<String, Object>> HSBA_900U_STR(Map<String, Object> params);
+    List<Map<String, Object>> HSBA_900U_SELECT_CODES(Map<String, Object> params);
+    List<Map<String, Object>> HSBA_900U_SELECT_GROUPS(Map<String, Object> params);
+    int HSBA_900U_UPSERT(Map<String, Object> params);
+    int HSBA_900U_UPDATE(Map<String, Object> params);
 
 
 }

@@ -128,7 +128,7 @@ let groupgrid: Tabulator | null = null; let listgrid: Tabulator | null = null
 
 async function search() {
 	try {
-		const res = await api.post('/haaa/HAAA_010U_STR', { actkind: 'S2', cdtype: '000', cmpycd: authstore.cmpycd })
+		const res = await api.post('/haaa/HAAA_010U_STR', { actkind: 'S1', cdtype: '000', cmpycd: authstore.cmpycd })
 		const processed = res.data || [];
 		groupoptions.value = processed; groupgrid?.setData(processed)
 		if (processed.length > 0 && !formdata.cdtype) {

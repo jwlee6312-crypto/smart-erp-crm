@@ -53,6 +53,8 @@ public class AsteriskService implements ManagerEventListener {
             handleBridgeEnter((BridgeEnterEvent) event);
         } else if (event instanceof HangupEvent) {
             handleHangup((HangupEvent) event);
+        } else if (event instanceof SoftHangupRequestEvent) {
+            handleHangupEventCommon(((SoftHangupRequestEvent) event).getChannel());
         } else if (event instanceof NewChannelEvent) {
             handleNewChannel((NewChannelEvent) event);
         }
@@ -91,7 +93,6 @@ public class AsteriskService implements ManagerEventListener {
         String agentExt = extractNumberOnly(e.getInterface());
         if (agentExt != null) {
             String cleanExt = agentExt.trim();
-            if (exten_caller_channel.containsKey(cleanExt)) return;
             log.info("📢 [POPUP] 큐 대기열 신호 수신: {} <- {}", cleanExt, e.getCallerIdNum());
             exten_caller_channel.put(cleanExt, e.getChannel());
             exten_linked_id.put(cleanExt, e.getLinkedId());
@@ -107,14 +108,27 @@ public class AsteriskService implements ManagerEventListener {
     }
 
     private void handleHangup(HangupEvent e) {
-        String exten = extractNumberOnly(e.getChannel());
-        if (exten != null) {
-            String cleanExt = exten.trim();
+        handleHangupEventCommon(e.getChannel());
+    }
+
+    private void handleHangupEventCommon(String channel) {
+        if (channel == null) return;
+        String exten = extractNumberOnly(channel);
+        List<String> extensToRemove = new ArrayList<>();
+        exten_caller_channel.forEach((ext, ch) -> {
+            if (ch != null && ch.equals(channel)) {
+                extensToRemove.add(ext);
+            }
+        });
+        if (exten != null) extensToRemove.add(exten.trim());
+
+        for (String cleanExt : extensToRemove) {
             String recFile = exten_linked_id.get(cleanExt);
-            sendCtiEvent(cleanExt, "CALL_HANGUP", e.getChannel(), recFile);
+            sendCtiEvent(cleanExt, "CALL_HANGUP", channel, recFile);
             exten_channel_map.remove(cleanExt);
             exten_caller_channel.remove(cleanExt);
             exten_linked_id.remove(cleanExt);
+            log.info("🏠 [HANGUP CLEANUP] 내선 [{}] 채널 상태 정리 완료", cleanExt);
         }
     }
 

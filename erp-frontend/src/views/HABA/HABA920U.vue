@@ -271,8 +271,18 @@ async function save() {
 
 		if (isSuccess) {
 			vAlert('✅ 성공적으로 저장되었습니다.')
-			// 💡 성공 메시지를 사용자가 볼 수 있도록 약간의 시차를 두거나 조회 시 메시지 중복 방지
-			setTimeout(() => { fetchList() }, 500)
+			setTimeout(async () => {
+				await fetchList()
+				const updatedUser = mainGrid?.getData().find((u: any) => u.userid === formData.userid)
+				if (updatedUser) {
+					Object.assign(formData, updatedUser)
+					originalPw.value = updatedUser.pw || updatedUser.passwd || ''
+					formData.pw = ''
+					formData.pw_c = ''
+					formData.actkind = 'U0'
+					localImagePreview.value = ''
+				}
+			}, 500)
 		} else {
 			const errorMsg = result.msg || result.message || '저장 중 오류가 발생했습니다.'
 			vAlertError('❌ 저장 실패: ' + errorMsg)
@@ -325,8 +335,22 @@ async function handleImageUpload(e: any) {
 
 		if (res.data?.filepath) {
 			formData.photo_path = res.data.filepath
-			console.log('📸 업로드 성공. DB 저장 대기 중:', formData.photo_path)
-			vAlert('✅ 사진 업로드 성공! 반드시 하단의 [저장] 버튼을 눌러야 최종 반영됩니다.')
+			console.log('📸 업로드 성공. DB 자동 저장 중:', formData.photo_path)
+
+			// 🚀 [자동 저장] 사진 업로드 성공 즉시 사용자 정보(photo_path)를 DB에 자동 반영
+			const isUpdate = formData.actkind === 'U0'
+			if (isUpdate) {
+				const payload = { ...formData, pw_edit_yn: 'N', pw: originalPw.value }
+				const saveRes = await api.post('/haba/HABA_920U_STR', { ...payload, actkind: 'U1', updemp: authStore.userid })
+				if (saveRes.status === 200) {
+					vAlert('✅ 프로필 사진이 업로드 및 자동 저장되었습니다.')
+					await fetchList()
+				} else {
+					vAlertError('❌ 사진은 업로드되었으나 DB 자동 저장에 실패했습니다.')
+				}
+			} else {
+				vAlert('✅ 사진 업로드 성공! [저장] 버튼을 눌러 완료하세요.')
+			}
 		} else {
 			throw new Error('응답 데이터에 파일 경로가 없습니다.')
 		}

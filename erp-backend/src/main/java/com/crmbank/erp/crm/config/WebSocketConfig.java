@@ -25,7 +25,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         // 💡 모든 도메인 허용 및 인터셉터 간소화로 연결 무조건 성공 보장
-        registry.addHandler(ctiWebSocketHandler, "/ws/cti")
+        registry.addHandler(ctiWebSocketHandler, "/api/ws/cti")
                 .setAllowedOrigins("*")
                 .addInterceptors(new HttpSessionHandshakeInterceptor() {
                     @Override

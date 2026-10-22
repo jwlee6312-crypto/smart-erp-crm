@@ -40,13 +40,14 @@ public class FileUploadController {
             String fileName = "profile_" + userid + "_" + UUID.randomUUID().toString().substring(0, 8) + extension;
             
             // 💡 정책 변경: storage/{cmpycd}/profile/
-            String subPath = cmpycd + "/profile";
+            String safeCmpycd = (cmpycd != null && !cmpycd.isBlank()) ? cmpycd.toUpperCase() : "COIT";
+            String subPath = safeCmpycd + "/profile";
             fileStorageService.saveFileToPath(file, subPath, fileName);
 
-            log.info("📸 [프로필 업로드 성공] 회사: {}, ID: {}, Path: {}", cmpycd, userid, fileName);
+            log.info("📸 [프로필 업로드 성공] 회사: {}, ID: {}, Path: {}", safeCmpycd, userid, fileName);
             return ResponseEntity.ok(Map.of("filepath", fileName));
         } catch (Exception e) {
-            log.error("❌ [프로필 업로드 에러]: {}", e.getMessage());
+            log.error("❌ [프로필 업로드 에러]: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }

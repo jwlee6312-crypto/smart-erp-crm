@@ -11,9 +11,9 @@
     </select>
 
     <select id="HA00_00P_STR" parameterType="map" resultType="map">
-        SELECT codecd as code, codenm as remark
+        SELECT codecd as codecd, codecd as code, codenm as codenm, codenm as remark, dspord, useyn
         FROM haba900t_tbl
-        WHERE cmpycd = #{cmpycd}
+        WHERE 1=1
         <if test="gbncd != null and gbncd != ''">
             AND cdtype = #{gbncd}
         </if>
@@ -26,12 +26,22 @@
     <select id="HA00_010S_STR" parameterType="map" resultType="map">
         SELECT cdtype, codecd, codenm, remark, dspord, useyn
         FROM haba900t_tbl
-        WHERE cmpycd = #{cmpycd}
+        WHERE 1=1
         <if test="cdkind != null and cdkind != ''">
             AND cdtype = #{cdkind}
         </if>
         <if test="code != null and code != ''">
             AND codecd = #{code}
+        </if>
+        ORDER BY dspord
+    </select>
+
+    <select id="HA00_MENU_GROUP_STR" parameterType="map" resultType="map">
+        SELECT grpcd as grpcd, grpcd as code, grpnm as grpnm, grpnm as remark, dspord, useyn
+        FROM haaa810t_tbl
+        WHERE 1=1
+        <if test="gbncd != null and gbncd != ''">
+            AND upmucd = #{gbncd}
         </if>
         ORDER BY dspord
     </select>

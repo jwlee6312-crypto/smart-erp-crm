@@ -36,16 +36,50 @@ public class InboundController {
     @Value("${asterisk.recording.path}")
     private String recordingPath;
 
+    private File findRecordingFile(File baseDir, String fileName) {
+        if (!baseDir.exists() || !baseDir.isDirectory()) return null;
+        File target = new File(baseDir, fileName);
+        if (target.exists() && target.isFile()) return target;
+
+        File[] children = baseDir.listFiles();
+        if (children != null) {
+            for (File child : children) {
+                if (child.isDirectory()) {
+                    File found = findRecordingFile(child, fileName);
+                    if (found != null && found.exists()) return found;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void collectWavFiles(File dir, List<File> fileList) {
+        if (dir == null || !dir.exists()) return;
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    collectWavFiles(f, fileList);
+                } else if (f.isFile() && f.getName().endsWith(".wav")) {
+                    fileList.add(f);
+                }
+            }
+        }
+    }
+
     @GetMapping("/play-recording")
     public ResponseEntity<ResourceRegion> playRecording(@RequestHeader HttpHeaders headers, @RequestParam(value = "file", required = false) String file) throws IOException {
         if (file == null || file.trim().isEmpty()) return ResponseEntity.notFound().build();
         
-        // 🚀 [정밀 복구] 경로 탈취를 막고 오직 파일 이름만 떼어내어 지정된 soundsPath에서만 찾습니다.
         String fileNameOnly = new File(file.contains("?") ? file.substring(0, file.indexOf("?")) : file).getName();
         File targetFile = new File(soundsPath, fileNameOnly);
         
-        // 🚀 [원본 로직] soundsPath에 없으면 recordingPath에서도 한 번 더 찾습니다. (상담원님 한 달 전 원본)
-        if (!targetFile.exists()) targetFile = new File(recordingPath, fileNameOnly);
+        if (!targetFile.exists()) {
+            targetFile = findRecordingFile(new File(recordingPath), fileNameOnly);
+            if (targetFile == null || !targetFile.exists()) {
+                targetFile = new File(recordingPath, file);
+            }
+        }
 
         if (!targetFile.exists()) {
             log.error("❌ [음원 파일 없음] 최종 탐색 경로: {}", targetFile.getAbsolutePath());
@@ -87,14 +121,16 @@ public class InboundController {
     @PostMapping("/recording-list-pop")
     public ResponseEntity<List<Map<String, Object>>> getRecordingListPop(@RequestBody Map<String, Object> params) {
         File dir = new File(recordingPath);
-        File[] files = dir.listFiles((d, name) -> name.endsWith(".wav"));
+        List<File> fileList = new ArrayList<>();
+        collectWavFiles(dir, fileList);
         List<Map<String, Object>> result = new ArrayList<>();
-        if (files != null) {
-            Arrays.sort(files, Comparator.comparingLong(File::lastModified).reversed());
-            for (int i = 0; i < Math.min(files.length, 20); i++) {
+        if (!fileList.isEmpty()) {
+            fileList.sort(Comparator.comparingLong(File::lastModified).reversed());
+            for (int i = 0; i < Math.min(fileList.size(), 20); i++) {
+                File f = fileList.get(i);
                 Map<String, Object> map = new HashMap<>();
-                map.put("filename", files[i].getName());
-                map.put("mtime", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(files[i].lastModified()), java.time.ZoneId.of("Asia/Seoul"))));
+                map.put("filename", f.getName());
+                map.put("mtime", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(f.lastModified()), java.time.ZoneId.of("Asia/Seoul"))));
                 result.add(map);
             }
         }
@@ -106,7 +142,10 @@ public class InboundController {
         if (file == null || file.isEmpty()) return ResponseEntity.notFound().build();
         UserSession user = (UserSession) session.getAttribute("user_session");
         String customerPhone = (user != null) ? user.getHpno() : "";
-        return ResponseEntity.ok(geminiAiService.analyzeAudio(new File(recordingPath, file).getAbsolutePath(), customerPhone));
+        String fileNameOnly = new File(file).getName();
+        File target = findRecordingFile(new File(recordingPath), fileNameOnly);
+        if (target == null || !target.exists()) target = new File(recordingPath, file);
+        return ResponseEntity.ok(geminiAiService.analyzeAudio(target.getAbsolutePath(), customerPhone));
     }
 
     @GetMapping("/status-list")
@@ -150,20 +189,32 @@ public class InboundController {
     }
 
     @GetMapping("/item-list")
-    public List<Map<String, Object>> getItemList(@RequestParam String custcd, HttpSession session) {
-        UserSession user = (UserSession) session.getAttribute("user_session");
-        Map<String, Object> params = new HashMap<>();
-        params.put("cmpycd", user != null ? user.getCmpycd() : "");
-        params.put("custcd", custcd);
-        return inboundMapper.selectItemList(params);
+    public ResponseEntity<List<Map<String, Object>>> getItemList(@RequestParam String custcd, HttpSession session) {
+        try {
+            UserSession user = (UserSession) session.getAttribute("user_session");
+            Map<String, Object> params = new HashMap<>();
+            params.put("cmpycd", user != null ? user.getCmpycd() : "");
+            params.put("custcd", custcd);
+            List<Map<String, Object>> list = inboundMapper.selectItemList(params);
+            return ResponseEntity.ok(list != null ? list : Collections.emptyList());
+        } catch (Exception e) {
+            log.warn("⚠️ [Inbound] getItemList 예외 발생 (빈 리스트 반환): {}", e.getMessage());
+            return ResponseEntity.ok(Collections.emptyList());
+        }
     }
 
     @GetMapping("/call-history")
-    public List<Map<String, Object>> getCallHistory(@RequestParam String custcd, HttpSession session) {
-        UserSession user = (UserSession) session.getAttribute("user_session");
-        Map<String, Object> params = new HashMap<>();
-        params.put("cmpycd", user != null ? user.getCmpycd() : "");
-        params.put("custcd", custcd);
-        return inboundMapper.selectCallHistory(params);
+    public ResponseEntity<List<Map<String, Object>>> getCallHistory(@RequestParam String custcd, HttpSession session) {
+        try {
+            UserSession user = (UserSession) session.getAttribute("user_session");
+            Map<String, Object> params = new HashMap<>();
+            params.put("cmpycd", user != null ? user.getCmpycd() : "");
+            params.put("custcd", custcd);
+            List<Map<String, Object>> list = inboundMapper.selectCallHistory(params);
+            return ResponseEntity.ok(list != null ? list : Collections.emptyList());
+        } catch (Exception e) {
+            log.warn("⚠️ [Inbound] getCallHistory 예외 발생 (빈 리스트 반환): {}", e.getMessage());
+            return ResponseEntity.ok(Collections.emptyList());
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.crmbank.erp.comm.service;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,14 +14,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
+@Slf4j
 @Service
 public class FileStorageService {
 
-    @Value("${STORAGE_PATH:/data/storage/common}")
-    private String storageDirectory;
+    private final String storageDirectory = "/app/storage";
 
     @PostConstruct
     public void init() {
+        log.info("📁 [FileStorageService] storageDirectory initialized as: {}", storageDirectory);
         File directory = new File(storageDirectory);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -43,10 +44,9 @@ public class FileStorageService {
 
         Path root = Paths.get(storageDirectory);
         Path targetDir = root.resolve(subPath);
+        log.info("📁 [FileStorageService] Saving file to root: {}, targetDir: {}, fileName: {}", root.toAbsolutePath(), targetDir.toAbsolutePath(), fileName);
         
-        if (!targetDir.toFile().exists()) {
-            targetDir.toFile().mkdirs();
-        }
+        Files.createDirectories(targetDir);
 
         Path targetPath = targetDir.resolve(fileName);
 

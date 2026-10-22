@@ -161,21 +161,26 @@
 
     <!-- [7. 이력 조회] -->
     <select id="selectItemList" parameterType="map" resultType="map">
-        select a.salsymd, b.itemnm, a.iono, a.itemcd
-        from hsio102t_tbl a left outer join hsba010t_tbl b
-        on a.cmpycd = b.cmpycd and a.itemcd = b.itemcd
-        WHERE A.CMPYCD = #{cmpycd, jdbcType=VARCHAR} AND A.CUSTCD = #{custcd, jdbcType=VARCHAR} AND A.IOGBN = '200' AND A.CFMYN = 'Y'
-        ORDER BY A.SALSYMD DESC
+        select a.realdt AS salsymd, ifnull(c.itemnm, '') as itemnm, ifnull(a.salesid,'') as iono, b.itemcd, b.qty, b.unit_price, b.amt
+          from hsaa200t_tbl a left outer join  hsaa810t_tbl b
+            on a.cmpycd = b.cmpycd
+           and a.salesid = b.salesid
+               left outer join hsba010t_tbl c
+            on b.cmpycd = c.cmpycd
+           and b.itemcd = c.itemcd
+         where a.cmpycd = #{cmpycd, jdbcType=VARCHAR}
+           and a.state = '900'
+         order by a.realdt desc, b.salesid
     </select>
 
     <select id="selectCallHistory" parameterType="map" resultType="map">
-        select a.svcno, DATE_FORMAT(a.start_time, '%Y-%m-%d %H:%i') as start_time,
+        select a.svcno, date_format(a.start_time, '%y-%m-%d %h:%i') as start_time,
         a.ai_summary, a.trb_ment, a.ans_ment, b.usernm as consultnm, a.rec_file,
         a.call_telno as hpno, a.call_usernm, a.call_email
         from call_mst_tbl a
         left outer join haba920t_tbl b on a.cmpycd = b.cmpycd and a.consultid = b.userid
-        WHERE A.CMPYCD = #{cmpycd, jdbcType=VARCHAR} AND A.CUSTCD = #{custcd, jdbcType=VARCHAR}
-        ORDER BY A.START_TIME DESC
+        where a.cmpycd = #{cmpycd, jdbcType=VARCHAR} and a.custcd = #{custcd, jdbcType=VARCHAR}
+        order by a.start_time desc
     </select>
 
     <!-- [8. 이관 데이터 관리] -->

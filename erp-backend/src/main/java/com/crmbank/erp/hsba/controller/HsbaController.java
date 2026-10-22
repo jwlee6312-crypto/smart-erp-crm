@@ -34,64 +34,54 @@ public class HsbaController {
     @PostMapping("/HSBA_010U_STR")
     public ResponseEntity<?> callHSBA_010U_STR(@RequestBody Map<String, Object> params, HttpSession session) {
         injectSession(params, session);
-        fillMissingParameters("HSBA_010U_STR", params);
-        log.info("🏢 [Master SQL]: {}", buildPositionalSql("HSBA_010U_STR", params));
-
         String actkind = String.valueOf(params.getOrDefault("actkind", "S0")).toUpperCase();
-        List<Map<String, Object>> raw = hsbaMapper.HSBA_010U_STR(params);
 
-        if ( "S0".equals(actkind) ) return ResponseEntity.ok(convertToLowerCaseKeys(raw));
-
-        if (raw == null || raw.isEmpty()) throw new RuntimeException("마스터 처리 결과가 없습니다.");
-
-        Map<String, Object> resultRow = mapToAlias(raw.getFirst(), "result", "msg");
-        String code = String.valueOf(resultRow.get("result")).trim();
-        if (!"OK".equals(code)) {
-            throw new RuntimeException(String.valueOf(resultRow.get("msg")));
+        if ("S0".equals(actkind)) {
+            List<Map<String, Object>> raw = hsbaMapper.HSBA_010U_SELECT(params);
+            return ResponseEntity.ok(convertToLowerCaseKeys(raw));
+        } else if ("A0".equals(actkind)) {
+            hsbaMapper.HSBA_010U_INSERT(params);
+        } else if ("U0".equals(actkind)) {
+            hsbaMapper.HSBA_010U_UPDATE(params);
         }
-        return ResponseEntity.ok(List.of(resultRow));
+        return ResponseEntity.ok(List.of(Map.of("result", "OK", "msg", "성공")));
     }
 
     @PostMapping("/HSBA_070U_STR")
     public ResponseEntity<?> callHSBA_070U_STR(@RequestBody Map<String, Object> params, HttpSession session) {
         injectSession(params, session);
-        fillMissingParameters("HSBA_070U_STR", params);
-        log.info("🏢 [Master SQL]: {}", buildPositionalSql("HSBA_070U_STR", params));
-
         String actkind = String.valueOf(params.getOrDefault("actkind", "S0")).toUpperCase();
-        List<Map<String, Object>> raw = hsbaMapper.HSBA_070U_STR(params);
 
-        if ( "S0".equals(actkind) ) return ResponseEntity.ok(convertToLowerCaseKeys(raw));
-
-        if (raw == null || raw.isEmpty()) throw new RuntimeException("마스터 처리 결과가 없습니다.");
-
-        Map<String, Object> resultRow = mapToAlias(raw.getFirst(), "result", "msg");
-        String code = String.valueOf(resultRow.get("result")).trim();
-        if (!"OK".equals(code)) {
-            throw new RuntimeException(String.valueOf(resultRow.get("msg")));
+        if ("S0".equals(actkind) || "S1".equals(actkind)) {
+            List<Map<String, Object>> raw = hsbaMapper.HSBA_070U_SELECT(params);
+            return ResponseEntity.ok(convertToLowerCaseKeys(raw));
+        } else if ("U0".equals(actkind)) {
+            hsbaMapper.HSBA_070U_UPDATE_CUST(params);
+            hsbaMapper.HSBA_070U_UPSERT_SUB(params);
+        } else if ("I0".equals(actkind)) {
+            hsbaMapper.HSBA_070U_INSERT_CUST(params);
+            hsbaMapper.HSBA_070U_INSERT_SUB(params);
         }
-        return ResponseEntity.ok(List.of(resultRow));
+        return ResponseEntity.ok(List.of(Map.of("result", "OK", "msg", "성공")));
     }
 
     @PostMapping("/HSBA_900U_STR")
     public ResponseEntity<?> callHSBA_900U_STR(@RequestBody Map<String, Object> params, HttpSession session) {
         injectSession(params, session);
-        fillMissingParameters("HSBA_900U_STR", params);
-        log.info("🏢 [Master SQL]: {}", buildPositionalSql("HSBA_900U_STR", params));
-
         String actkind = String.valueOf(params.getOrDefault("actkind", "S0")).toUpperCase();
-        List<Map<String, Object>> raw = hsbaMapper.HSBA_900U_STR(params);
 
-        if ("S0".equals(actkind) || "S1".equals(actkind) ) return ResponseEntity.ok(convertToLowerCaseKeys(raw));
-
-        if (raw == null || raw.isEmpty()) throw new RuntimeException("마스터 처리 결과가 없습니다.");
-
-        Map<String, Object> resultRow = mapToAlias(raw.getFirst(), "result", "msg");
-        String code = String.valueOf(resultRow.get("result")).trim();
-        if (!"OK".equals(code)) {
-            throw new RuntimeException(String.valueOf(resultRow.get("msg")));
+        if ("S0".equals(actkind)) {
+            List<Map<String, Object>> raw = hsbaMapper.HSBA_900U_SELECT_CODES(params);
+            return ResponseEntity.ok(convertToLowerCaseKeys(raw));
+        } else if ("S1".equals(actkind)) {
+            List<Map<String, Object>> raw = hsbaMapper.HSBA_900U_SELECT_GROUPS(params);
+            return ResponseEntity.ok(convertToLowerCaseKeys(raw));
+        } else if ("A0".equals(actkind)) {
+            hsbaMapper.HSBA_900U_UPSERT(params);
+        } else if ("U0".equals(actkind)) {
+            hsbaMapper.HSBA_900U_UPDATE(params);
         }
-        return ResponseEntity.ok(List.of(resultRow));
+        return ResponseEntity.ok(List.of(Map.of("result", "OK", "msg", "성공")));
     }
 
 //    @PostMapping("/HSBA_020U_STR")

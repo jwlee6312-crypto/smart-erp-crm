@@ -38,7 +38,12 @@ public class Ha00Controller {
                 params.putIfAbsent("gbncd", "");
                 params.putIfAbsent("code", "");
                 params.putIfAbsent("remark", "");
-                result = ha00Mapper.HA00_00P_STR(params);
+                String gubun = (String) params.get("gubun");
+                if ("sc".equals(gubun)) {
+                    result = ha00Mapper.HA00_MENU_GROUP_STR(params);
+                } else {
+                    result = ha00Mapper.HA00_00P_STR(params);
+                }
             } else if ("HA00_010S_STR".equals(proc)) {
                 params.putIfAbsent("cdkind", "");
                 params.putIfAbsent("cdgbn", "");

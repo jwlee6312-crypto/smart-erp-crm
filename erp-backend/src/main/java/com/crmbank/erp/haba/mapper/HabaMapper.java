@@ -15,6 +15,10 @@ public interface HabaMapper {
     List<Map<String, Object>> HABA_040U_STR(Map<String, Object> params);
     List<Map<String, Object>> HABA_050U_STR(Map<String, Object> params);
     List<Map<String, Object>> HABA_060U_STR(Map<String, Object> params);
+    List<Map<String, Object>> HABA_060U_SELECT(Map<String, Object> params);
+    int HABA_060U_INSERT(Map<String, Object> params);
+    int HABA_060U_UPDATE(Map<String, Object> params);
+    int HABA_060U_DELETE(Map<String, Object> params);
     List<Map<String, Object>> HABA_070U_STR(Map<String, Object> params);
     List<Map<String, Object>> HABA_071U_STR(Map<String, Object> params);
     List<Map<String, Object>> HABA_080U_STR(Map<String, Object> params);
@@ -38,6 +42,16 @@ public interface HabaMapper {
     List<Map<String, Object>> HABA_510U_STR(Map<String, Object> params);
     List<Map<String, Object>> HABA_900U_STR(Map<String, Object> params);
     List<Map<String, Object>> HABA_910U_STR(Map<String, Object> params);
+    List<Map<String, Object>> HABA_910U_SELECT(Map<String, Object> params);
+    int HABA_910U_UPDATE(Map<String, Object> params);
     List<Map<String, Object>> HABA_920U_STR(Map<String, Object> params);
+    List<Map<String, Object>> HABA_920U_SELECT(Map<String, Object> params);
+    int HABA_920U_INSERT(Map<String, Object> params);
+    int HABA_920U_UPDATE(Map<String, Object> params);
+    int HABA_920U_DELETE(Map<String, Object> params);
     List<Map<String, Object>> HABA_935U_STR(Map<String, Object> params);
+    List<Map<String, Object>> HABA_935U_SELECT_PERM(Map<String, Object> params);
+    List<Map<String, Object>> HABA_935U_SELECT_TREE(Map<String, Object> params);
+    int HABA_935U_UPSERT(Map<String, Object> params);
+    int HABA_935U_DELETE(Map<String, Object> params);
 }

@@ -275,22 +275,19 @@ public class HabaController {
     @PostMapping("/HABA_060U_STR")
     public ResponseEntity<?> callHABA_060U_STR(@RequestBody Map<String, Object> params, HttpSession session) {
         injectSession(params, session);
-        fillMissingParameters("HABA_060U_STR", params);
-        log.info("🏢 [Master SQL]: {}", buildPositionalSql("HABA_060U_STR", params));
-
         String actkind = String.valueOf(params.getOrDefault("actkind", "S0")).toUpperCase();
-        List<Map<String, Object>> raw = habaMapper.HABA_060U_STR(params);
 
-        if ( "S0".equals(actkind) ) return ResponseEntity.ok(convertToLowerCaseKeys(raw));
-
-        if (raw == null || raw.isEmpty()) throw new RuntimeException("마스터 처리 결과가 없습니다.");
-
-        Map<String, Object> resultRow = mapToAlias(raw.getFirst(), "result", "msg");
-        String code = String.valueOf(resultRow.get("result")).trim();
-        if (!"OK".equals(code)) {
-            throw new RuntimeException(String.valueOf(resultRow.get("msg")));
+        if ("S0".equals(actkind)) {
+            List<Map<String, Object>> raw = habaMapper.HABA_060U_SELECT(params);
+            return ResponseEntity.ok(convertToLowerCaseKeys(raw));
+        } else if ("A0".equals(actkind)) {
+            habaMapper.HABA_060U_INSERT(params);
+        } else if ("U0".equals(actkind)) {
+            habaMapper.HABA_060U_UPDATE(params);
+        } else if ("D0".equals(actkind)) {
+            habaMapper.HABA_060U_DELETE(params);
         }
-        return ResponseEntity.ok(List.of(resultRow));
+        return ResponseEntity.ok(List.of(Map.of("result", "OK", "msg", "성공")));
     }
 
     /*
@@ -787,64 +784,61 @@ public class HabaController {
     @PostMapping("/HABA_910U_STR")
     public ResponseEntity<?> callHABA_910U_STR(@RequestBody Map<String, Object> params, HttpSession session) {
         injectSession(params, session);
-        fillMissingParameters("HABA_910U_STR", params);
-        log.info("🏢 [Master SQL]: {}", buildPositionalSql("HABA_910U_STR", params));
-
         String actkind = String.valueOf(params.getOrDefault("actkind", "S0")).toUpperCase();
-        List<Map<String, Object>> raw = habaMapper.HABA_910U_STR(params);
 
-        if ("S".equals(actkind) || "S0".equals(actkind) || "S1".equals(actkind) || "L".equals(actkind)) return ResponseEntity.ok(convertToLowerCaseKeys(raw));
-
-        if (raw == null || raw.isEmpty()) throw new RuntimeException("마스터 처리 결과가 없습니다.");
-
-        Map<String, Object> resultRow = mapToAlias(raw.getFirst(), "result", "msg");
-        String code = String.valueOf(resultRow.get("result")).trim();
-        if (!"OK".equals(code)) {
-            throw new RuntimeException(String.valueOf(resultRow.get("msg")));
+        if ("S".equals(actkind) || "S0".equals(actkind) || "S1".equals(actkind) || "L".equals(actkind)) {
+            List<Map<String, Object>> raw = habaMapper.HABA_910U_SELECT(params);
+            return ResponseEntity.ok(convertToLowerCaseKeys(raw));
+        } else if ("U1".equals(actkind) || "U0".equals(actkind) || "A0".equals(actkind)) {
+            habaMapper.HABA_910U_UPDATE(params);
         }
-        return ResponseEntity.ok(List.of(resultRow));
+        return ResponseEntity.ok(List.of(Map.of("result", "OK", "msg", "성공")));
     }
 
     @PostMapping("/HABA_920U_STR")
     public ResponseEntity<?> callHABA_920U_STR(@RequestBody Map<String, Object> params, HttpSession session) {
         injectSession(params, session);
-        fillMissingParameters("HABA_920U_STR", params);
-        log.info("🏢 [Master SQL]: {}", buildPositionalSql("HABA_920U_STR", params));
-
         String actkind = String.valueOf(params.getOrDefault("actkind", "S1")).toUpperCase();
-        List<Map<String, Object>> raw = habaMapper.HABA_920U_STR(params);
 
-        if ("S1".equals(actkind) || "S2".equals(actkind) ) return ResponseEntity.ok(convertToLowerCaseKeys(raw));
-
-        if (raw == null || raw.isEmpty()) throw new RuntimeException("마스터 처리 결과가 없습니다.");
-
-        Map<String, Object> resultRow = mapToAlias(raw.getFirst(), "result", "msg");
-        String code = String.valueOf(resultRow.get("result")).trim();
-        if (!"OK".equals(code)) {
-            throw new RuntimeException(String.valueOf(resultRow.get("msg")));
+        if ("S1".equals(actkind) || "S2".equals(actkind)) {
+            fillMissingParameters("HABA_920U_SELECT", params);
+            List<Map<String, Object>> raw = habaMapper.HABA_920U_SELECT(params);
+            return ResponseEntity.ok(convertToLowerCaseKeys(raw));
+        } else if ("I1".equals(actkind)) {
+            fillMissingParameters("HABA_920U_INSERT", params);
+            habaMapper.HABA_920U_INSERT(params);
+        } else if ("U1".equals(actkind)) {
+            fillMissingParameters("HABA_920U_UPDATE", params);
+            habaMapper.HABA_920U_UPDATE(params);
+        } else if ("D0".equals(actkind)) {
+            fillMissingParameters("HABA_920U_DELETE", params);
+            habaMapper.HABA_920U_DELETE(params);
         }
-        return ResponseEntity.ok(List.of(resultRow));
+        return ResponseEntity.ok(List.of(Map.of("result", "OK", "msg", "성공")));
     }
 
     @PostMapping("/HABA_935U_STR")
     public ResponseEntity<?> callHABA_935U_STR(@RequestBody Map<String, Object> params, HttpSession session) {
         injectSession(params, session);
-        fillMissingParameters("HABA_935U_STR", params);
-        log.info("🏢 [Master SQL]: {}", buildPositionalSql("HABA_935U_STR", params));
-
         String actkind = String.valueOf(params.getOrDefault("actkind", "S0")).toUpperCase();
-        List<Map<String, Object>> raw = habaMapper.HABA_935U_STR(params);
 
-        if ( "S0".equals(actkind) || "S1".equals(actkind) ) return ResponseEntity.ok(convertToLowerCaseKeys(raw));
-
-        if (raw == null || raw.isEmpty()) throw new RuntimeException("마스터 처리 결과가 없습니다.");
-
-        Map<String, Object> resultRow = mapToAlias(raw.getFirst(), "result", "msg");
-        String code = String.valueOf(resultRow.get("result")).trim();
-        if (!"OK".equals(code)) {
-            throw new RuntimeException(String.valueOf(resultRow.get("msg")));
+        if ("S0".equals(actkind)) {
+            List<Map<String, Object>> raw = habaMapper.HABA_935U_SELECT_PERM(params);
+            return ResponseEntity.ok(convertToLowerCaseKeys(raw));
+        } else if ("S1".equals(actkind)) {
+            List<Map<String, Object>> raw = habaMapper.HABA_935U_SELECT_TREE(params);
+            return ResponseEntity.ok(convertToLowerCaseKeys(raw));
+        } else if ("A0".equals(actkind) || "U0".equals(actkind)) {
+            String useyn = String.valueOf(params.getOrDefault("useyn", "Y"));
+            if ("N".equalsIgnoreCase(useyn)) {
+                habaMapper.HABA_935U_DELETE(params);
+            } else {
+                habaMapper.HABA_935U_UPSERT(params);
+            }
+        } else if ("D0".equals(actkind)) {
+            habaMapper.HABA_935U_DELETE(params);
         }
-        return ResponseEntity.ok(List.of(resultRow));
+        return ResponseEntity.ok(List.of(Map.of("result", "OK", "msg", "성공")));
     }
 
     // ==========================================

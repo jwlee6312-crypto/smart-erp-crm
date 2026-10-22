@@ -1,6 +1,6 @@
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-# 윈도우(빌드 서버)에서 이미 만들어진 JAR 파일만 복사 (초고속)
+RUN apt-get update && apt-get install -y python3 python3-pip ffmpeg curl && rm -rf /var/lib/apt/lists/*
 COPY erp-backend/build/libs/*-SNAPSHOT.jar app.jar
 EXPOSE 8080
 ENV TZ=Asia/Seoul

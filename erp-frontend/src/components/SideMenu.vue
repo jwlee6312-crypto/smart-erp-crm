@@ -80,18 +80,24 @@ const imageLoadError = ref(false)
 
 // 🚀 프로필 이미지 경로 계산
 const profileImageSrc = computed(() => {
-  if (authStore.photo_path) {
-    const path = authStore.photo_path.trim()
-    if (path.startsWith('http') || path.startsWith('data:')) return path
+  if (!authStore.photo_path) return ''
 
-    const cmpycd = (authStore.cmpycd || 'COIT').toUpperCase()
-    if (path.includes('/')) {
-      const cleanPath = path.replace(/^\/?(api\/)?(storage\/)?/, '')
-      return `/api/storage/${cleanPath}`
-    }
-    return `/api/storage/${cmpycd}/profile/${path}`
+  const path = authStore.photo_path.trim()
+
+  // 절대 경로 형태(http, data:)는 그대로 반환
+  if (path.startsWith('http') || path.startsWith('data:')) {
+    return path
   }
-  return ''
+
+  // DB에 이미 회사코드나 하위 폴더 구조가 포함되어 저장된 경우 (예: 'COIT/profile/image.jpg')
+  if (path.includes('/')) {
+    const cleanPath = path.replace(/^\/?(api\/)?(storage\/)?/, '')
+    return `/api/storage/${cleanPath}`
+  }
+
+  // DB에 오직 순수 파일명만 저장되어 있는 경우 (예: 'image.jpg')
+  const cmpycd = (authStore.cmpycd || 'COIT').toUpperCase()
+  return `/api/storage/${cmpycd}/profile/${path}`
 })
 
 watch(() => authStore.photo_path, () => {

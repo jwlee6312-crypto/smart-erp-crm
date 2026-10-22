@@ -12,6 +12,8 @@ public interface Ha00Mapper {
      */
     List<Map<String, Object>> HA00_00P_STR(Map<String, Object> params);
     
+    List<Map<String, Object>> HA00_MENU_GROUP_STR(Map<String, Object> params);
+    
     /**
      * HA00_010S_STR: 공통 코드 조회
      */

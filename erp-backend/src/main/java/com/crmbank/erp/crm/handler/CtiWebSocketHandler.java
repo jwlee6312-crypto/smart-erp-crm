@@ -100,22 +100,32 @@ public class CtiWebSocketHandler extends TextWebSocketHandler {
         log.info("🔍 [CTI WS] 메시지 전송 요청 내선 [{}]. 현재 서버에 등록된 모든 세션 내선 목록: {}", cleanExt, SESSIONS.keySet());
         List<WebSocketSession> sessions = SESSIONS.get(cleanExt);
 
-        if (sessions != null && !sessions.isEmpty()) {
-            log.info("🚀 [CTI WS] 메시지 전송 시작 -> 내선: {}, 세션수: {}", cleanExt, sessions.size());
+        if (sessions == null || sessions.isEmpty()) {
+            log.warn("⚠️ [CTI WS] 내선 [{}] 세션 없음. 접속 중인 모든 활성 세션으로 브로드캐스트 전환합니다. (등록된 내선: {})", cleanExt, SESSIONS.keySet());
+            sessions = new ArrayList<>();
+            for (List<WebSocketSession> sList : SESSIONS.values()) {
+                if (sList != null) {
+                    sessions.addAll(sList);
+                }
+            }
+        }
+
+        if (!sessions.isEmpty()) {
+            log.info("🚀 [CTI WS] 메시지 전송 시작 -> 대상 세션수: {}", sessions.size());
             for (WebSocketSession session : sessions) {
                 if (session.isOpen()) {
                     try {
                         session.sendMessage(new TextMessage(message));
-                        log.info("✅ [CTI WS] 메시지 전송 성공 -> 내선: {}", cleanExt);
+                        log.info("✅ [CTI WS] 메시지 전송 성공 -> 세션 ID: {}", session.getId());
                     } catch (IOException e) {
-                        log.error("❌ [CTI WS] 전송 실패 (내선: {}): {}", cleanExt, e.getMessage());
+                        log.error("❌ [CTI WS] 전송 실패: {}", e.getMessage());
                     }
                 } else {
-                    log.warn("⚠️ [CTI WS] 세션이 닫혀있음 (내선: {})", cleanExt);
+                    log.warn("⚠️ [CTI WS] 세션이 닫혀있음");
                 }
             }
         } else {
-            log.warn("⚠️ [CTI WS] 전송 실패: 내선 [{}]에 연결된 세션이 없습니다. (등록된 전체 내선: {})", cleanExt, SESSIONS.keySet());
+            log.warn("⚠️ [CTI WS] 전송 실패: 현재 서버에 등록된 활성 세션이 전혀 없습니다.");
         }
     }
 }
