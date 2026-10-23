@@ -3,16 +3,37 @@
 <mapper namespace="com.crmbank.erp.hp00.mapper.Hp00Mapper">
 
     <select id="HP00_000S_STR" parameterType="map" resultType="map">
-        SELECT codecd as code, codenm, remark as etcval
-        FROM haba900t_tbl
-        WHERE useyn = 'Y'
-        <if test="gbncd != null and gbncd != ''">
-            AND cdtype = #{gbncd}
-        </if>
-        <if test="code != null and code != ''">
-            AND codecd = #{code}
-        </if>
-        ORDER BY dspord
+        <choose>
+            <!-- 1. 품목 마스터 조회 -->
+            <when test="gubun != null and (gubun.equals('I1') or gubun.equals('I0') or gubun.equals('P1'))">
+                SELECT itemcd AS itemcd, itemcd AS codecd, itemcd AS code, itemnm AS itemnm, itemnm AS codenm, itemnm AS cdnm, itsize AS itsize, unit AS unit, itsize AS etcval, itsize AS remark
+                FROM hsba100t_tbl
+                WHERE cmpycd = #{cmpycd}
+                <if test="itemnm != null and itemnm != ''">
+                    AND itemnm LIKE CONCAT('%', #{itemnm}, '%')
+                </if>
+                <if test="code != null and code != ''">
+                    AND (itemnm LIKE CONCAT('%', #{code}, '%') OR itemcd LIKE CONCAT('%', #{code}, '%'))
+                </if>
+                ORDER BY itemnm
+            </when>
+            <!-- 2. 공통 코드 조회 (haba900t_tbl) -->
+            <otherwise>
+                SELECT codecd AS code, codenm AS codenm, remark AS etcval, dspord
+                FROM haba900t_tbl
+                WHERE useyn = 'Y'
+                <if test="cmpycd != null and cmpycd != ''">
+                    AND cmpycd = #{cmpycd}
+                </if>
+                <if test="gbncd != null and gbncd != ''">
+                    AND cdtype = #{gbncd}
+                </if>
+                <if test="code != null and code != ''">
+                    AND codecd LIKE CONCAT('%', #{code}, '%')
+                </if>
+                ORDER BY dspord
+            </otherwise>
+        </choose>
     </select>
 
 </mapper>

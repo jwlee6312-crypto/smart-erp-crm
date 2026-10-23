@@ -31,20 +31,24 @@ public class Hs00Controller {
     }
 
     private ResponseEntity<List<Map<String, Object>>> execute(String procedure, Map<String, Object> params, HttpSession session) {
-        injectSession(params, session);
+        Map<String, Object> lowParams = new HashMap<>();
+        if (params != null) {
+            params.forEach((k, v) -> lowParams.put(k.toLowerCase(), v));
+        }
+        injectSession(lowParams, session);
         String proc = procedure.toUpperCase();
         try {
             List<Map<String, Object>> result;
             if ("HS00_000S_STR".equals(proc)) {
-                params.putIfAbsent("gubun", "");
-                params.putIfAbsent("gbncd", "");
-                params.putIfAbsent("code", "");
-                params.putIfAbsent("codenm", "");
-                params.putIfAbsent("etcval", "");
-                result = hs00Mapper.HS00_000S_STR(params);
+                lowParams.putIfAbsent("gubun", "");
+                lowParams.putIfAbsent("gbncd", "");
+                lowParams.putIfAbsent("code", "");
+                lowParams.putIfAbsent("codenm", "");
+                lowParams.putIfAbsent("etcval", "");
+                result = hs00Mapper.HS00_000S_STR(lowParams);
             } else if ("HS00_150S_STR".equals(proc)) {
-                params.putIfAbsent("custnm", "");
-                result = hs00Mapper.HS00_150S_STR(params);
+                lowParams.putIfAbsent("custnm", "");
+                result = hs00Mapper.HS00_150S_STR(lowParams);
             } else {
                 return ResponseEntity.notFound().build();
             }

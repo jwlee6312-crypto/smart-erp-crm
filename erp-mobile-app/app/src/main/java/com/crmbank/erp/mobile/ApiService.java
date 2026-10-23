@@ -493,4 +493,46 @@ public interface ApiService {
 
     @POST("hsio/HSIO_104U_STR")
     Call<List<Map<String, Object>>> getBarcodeScanHistory(@Body Map<String, Object> payload);
+
+    // --- 견적서 등록 (MHSQT_100U) ---
+    @GET("hsqt/master")
+    Call<List<Map<String, Object>>> getHsqtMaster(@QueryMap Map<String, Object> params);
+
+    @GET("hsqt/detail")
+    Call<List<Map<String, Object>>> getHsqtDetail(@QueryMap Map<String, Object> params);
+
+    @GET("hsqt/status")
+    Call<List<Map<String, Object>>> getHsqtStatus(@QueryMap Map<String, Object> params);
+
+    @POST("hsqt/save")
+    Call<Object> saveHsqt(@Body Map<String, Object> payload);
+
+    @POST("hsqt/delete")
+    Call<Object> deleteHsqt(@Body Map<String, Object> params);
+
+    // --- 영업목표 관리 (MHSAA600U) ---
+    @GET("hsaa/targets")
+    Call<ApiResponse<List<Map<String, Object>>>> getSalesTargetList(@Query("yyyy") String yyyy, @Query("userid") String userid);
+
+    @POST("hsaa/targets/save")
+    Call<ApiResponse<Object>> saveSalesTargets(@Body Map<String, Object> payload);
+
+    // --- 회의록 관리 (HMET100U) ---
+    @GET("hmet/master")
+    Call<List<Map<String, Object>>> getHmetMaster(@QueryMap Map<String, Object> params);
+
+    @GET("hmet/detail")
+    Call<List<Map<String, Object>>> getHmetDetail(@QueryMap Map<String, Object> params);
+
+    @GET("hmet/files")
+    Call<List<Map<String, Object>>> getHmetFiles(@QueryMap Map<String, Object> params);
+
+    @POST("hmet/save")
+    Call<String> saveHmet(@Body Map<String, Object> payload);
+
+    @POST("hmet/delete")
+    Call<Object> deleteHmet(@Body Map<String, Object> params);
+
+    @POST("hmet/stt-simulate")
+    Call<Map<String, Object>> sttSimulate(@Body Map<String, Object> payload);
 }

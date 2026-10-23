@@ -750,8 +750,8 @@ const handleFileChange = (e: any) => {
 const handleOpenHelp = (type: string, target?: any) => {
   if (type === 'CUST') {
     Object.assign(modalProps, {
-      title: '거래처 선택', path: '/ha00/HA00_00P_STR', defaultField: 'custnm',
-      data: { gubun: 'C4', cmpycd: authStore.cmpycd },
+      title: '거래처 선택', path: '/erp/customer', defaultField: 'custnm',
+      data: { cmpycd: authStore.cmpycd },
       columns: [ { title: '코드', field: 'custcd', width: 80 }, { title: '거래처명', field: 'custnm', width: 200 } ],
       onConfirm: (d: any) => Object.assign(formSales, d)
     })
@@ -781,9 +781,9 @@ const handleOpenHelp = (type: string, target?: any) => {
   } else if (type === 'ITEM') {
     Object.assign(modalProps, {
       title: '품목 선택',
-      path: '/hs00/HS00_000S_STR',
+      path: '/erp/item',
       defaultField: 'itemnm',
-      data: { gubun: 'I1', cmpycd: authStore.cmpycd, gbncd: '1', code: '', remark: '' },
+      data: { cmpycd: authStore.cmpycd },
       columns: [
         { title: '품목코드', field: 'itemcd', width: 100, hozAlign: 'center' },
         { title: '품목명', field: 'itemnm', width: 200 },

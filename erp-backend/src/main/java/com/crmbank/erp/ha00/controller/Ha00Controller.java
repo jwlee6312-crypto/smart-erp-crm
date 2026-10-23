@@ -28,28 +28,37 @@ public class Ha00Controller {
             return ResponseEntity.status(401).build();
         }
 
-        injectSession(params, session);
+        Map<String, Object> lowParams = new HashMap<>();
+        if (params != null) {
+            params.forEach((k, v) -> lowParams.put(k.toLowerCase(), v));
+        }
+        injectSession(lowParams, session);
         
         try {
             String proc = procedure.toUpperCase();
             List<Map<String, Object>> result;
             
             if ("HA00_00P_STR".equals(proc)) {
-                params.putIfAbsent("gbncd", "");
-                params.putIfAbsent("code", "");
-                params.putIfAbsent("remark", "");
-                String gubun = (String) params.get("gubun");
+                lowParams.putIfAbsent("gbncd", "");
+                lowParams.putIfAbsent("code", "");
+                lowParams.putIfAbsent("remark", "");
+                String gubun = (String) lowParams.get("gubun");
+                if (lowParams.get("gbncd") == null || ((String)lowParams.get("gbncd")).isEmpty()) {
+                    if (gubun != null) {
+                        lowParams.put("gbncd", gubun);
+                    }
+                }
                 if ("sc".equals(gubun)) {
-                    result = ha00Mapper.HA00_MENU_GROUP_STR(params);
+                    result = ha00Mapper.HA00_MENU_GROUP_STR(lowParams);
                 } else {
-                    result = ha00Mapper.HA00_00P_STR(params);
+                    result = ha00Mapper.HA00_00P_STR(lowParams);
                 }
             } else if ("HA00_010S_STR".equals(proc)) {
-                params.putIfAbsent("cdkind", "");
-                params.putIfAbsent("cdgbn", "");
-                params.putIfAbsent("code", "");
-                params.putIfAbsent("code_1", "");
-                result = ha00Mapper.HA00_010S_STR(params);
+                lowParams.putIfAbsent("cdkind", "");
+                lowParams.putIfAbsent("cdgbn", "");
+                lowParams.putIfAbsent("code", "");
+                lowParams.putIfAbsent("code_1", "");
+                result = ha00Mapper.HA00_010S_STR(lowParams);
             } else {
                 return ResponseEntity.notFound().build();
             }

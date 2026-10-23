@@ -21,8 +21,8 @@ echo "[0/4] Clearing previous log files..."
 > backend_run.log 2>/dev/null
 
 # 3. 백엔드 JAR 빌드 (도커 빌드 시 필수)
-echo "[1/4] Building backend BootJar..."
-bash ./gradlew :erp-backend:bootJar
+echo "[1/4] Building backend BootJar (with clean)..."
+bash ./gradlew :erp-backend:clean :erp-backend:bootJar
 
 # 4. 필수 권한 보정 및 데이터 디렉토리 생성
 echo "[2/4] Fixing directory permissions & creating data dirs..."

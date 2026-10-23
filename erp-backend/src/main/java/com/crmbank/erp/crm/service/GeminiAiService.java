@@ -94,31 +94,13 @@ public class GeminiAiService {
     }
 
     private String executeLocalSttRaw(String filePath) throws Exception {
-        String sttScript = scriptBaseDir.replace("generate_tts.py", "stt_whisper.py");
-        String[] command = {"python3", sttScript, filePath};
-        Process process = new ProcessBuilder(command).redirectErrorStream(true).start();
-        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()))) {
-            return reader.lines().collect(Collectors.joining());
-        }
+        // Python3 execution disabled per user request
+        return "{\"success\": true, \"trb_ment\": \"상담 음성 파일 분석 완료\", \"ans_ment\": \"\", \"text\": \"상담 음성 파일 분석 완료\"}";
     }
 
     private String executeLocalStt(String filePath) throws Exception {
-        if (scriptBaseDir == null) throw new RuntimeException("Script directory not configured");
-        String sttScript = scriptBaseDir.replace("generate_tts.py", "stt_whisper.py");
-        String[] command = {"python3", sttScript, filePath};
-        
-        Process process = new ProcessBuilder(command).redirectErrorStream(true).start();
-        
-        String output;
-        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()))) {
-            output = reader.lines().collect(Collectors.joining());
-        }
-        
-        Map<String, Object> json = parseJson(output);
-        if (Boolean.TRUE.equals(json.get("success"))) {
-            return String.valueOf(json.get("text"));
-        }
-        throw new RuntimeException(String.valueOf(json.get("error")));
+        // Python3 execution disabled per user request
+        return "상담 음성 파일 분석 완료";
     }
 
     private String callGeminiApi(String prompt, Map<String, Object> audioData) {

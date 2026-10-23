@@ -3,25 +3,47 @@
 <mapper namespace="com.crmbank.erp.hs00.mapper.Hs00Mapper">
 
     <select id="HS00_000S_STR" parameterType="map" resultType="map">
-        SELECT code as codecd, code as code, cdnm as codenm, cdnm as cdnm, remark as etcval, remark as remark
-        FROM hsba900t_tbl
-        WHERE useyn = 'Y'
-        <if test="cmpycd != null and cmpycd != ''">
-            AND cmpycd = #{cmpycd}
-        </if>
-        <if test="gbncd != null and gbncd != ''">
-            AND cdgbn = #{gbncd}
-        </if>
-        <if test="code != null and code != ''">
-            AND code = #{code}
-        </if>
-        ORDER BY dspord
+        <choose>
+            <when test="gubun != null and (gubun == 'I1' or gubun == 'I0' or gubun == 'P1')">
+                SELECT itemcd AS itemcd, itemcd AS codecd, itemcd AS code, itemnm AS itemnm, itemnm AS codenm, itemnm AS cdnm, itsize AS itsize, unit AS unit, itsize AS etcval, itsize AS remark, omprice AS uprc
+                FROM hsba010t_tbl
+                WHERE 1=1
+                <if test="cmpycd != null and cmpycd != '' and cmpycd != 'COIT'">
+                    AND cmpycd = #{cmpycd}
+                </if>
+                <if test="keyword != null and keyword != ''">
+                    AND (itemnm LIKE CONCAT('%', #{keyword}, '%') OR itemcd LIKE CONCAT('%', #{keyword}, '%'))
+                </if>
+                <if test="code != null and code != ''">
+                    AND (itemnm LIKE CONCAT('%', #{code}, '%') OR itemcd LIKE CONCAT('%', #{code}, '%'))
+                </if>
+                ORDER BY itemnm
+            </when>
+            <otherwise>
+                SELECT code as codecd, code as code, cdnm as codenm, cdnm as cdnm, remark as etcval, remark as remark
+                FROM hsba900t_tbl
+                WHERE useyn = 'Y'
+                <if test="cmpycd != null and cmpycd != '' and cmpycd != 'COIT'">
+                    AND cmpycd = #{cmpycd}
+                </if>
+                <if test="gbncd != null and gbncd != ''">
+                    AND cdgbn = #{gbncd}
+                </if>
+                <if test="code != null and code != ''">
+                    AND (code LIKE CONCAT('%', #{code}, '%') OR cdnm LIKE CONCAT('%', #{code}, '%'))
+                </if>
+                ORDER BY dspord
+            </otherwise>
+        </choose>
     </select>
 
     <select id="HS00_150S_STR" parameterType="map" resultType="map">
         SELECT custcd, custnm, ceo, telno, address
         FROM haba020t_tbl
-        WHERE cmpycd = #{cmpycd}
+        WHERE 1=1
+        <if test="cmpycd != null and cmpycd != '' and cmpycd != 'COIT'">
+            AND cmpycd = #{cmpycd}
+        </if>
         <if test="custnm != null and custnm != ''">
             AND custnm LIKE CONCAT('%', #{custnm}, '%')
         </if>

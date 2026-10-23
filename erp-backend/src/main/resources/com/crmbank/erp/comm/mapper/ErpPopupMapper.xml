@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.comm.controller.ErpPopupMapper">
+
+    <select id="selectCustomerList" parameterType="map" resultType="map">
+        SELECT custcd AS custcd, custcd AS code, custnm AS custnm, ceo AS ceo, telno AS telno, address AS address
+        FROM haba020t_tbl
+        WHERE cmpycd = #{cmpycd}
+        <if test="keyword != null and keyword != ''">
+            AND (custnm LIKE CONCAT('%', #{keyword}, '%') OR custcd LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY custnm
+    </select>
+
+    <select id="selectItemList" parameterType="map" resultType="map">
+        SELECT itemcd AS itemcd, itemcd AS code, itemnm AS itemnm, itsize AS itsize, unit AS unit, omprice AS uprc
+        FROM hsba010t_tbl
+        WHERE cmpycd = #{cmpycd}
+        <if test="keyword != null and keyword != ''">
+            AND (itemnm LIKE CONCAT('%', #{keyword}, '%') OR itemcd LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY itemnm
+    </select>
+
+    <select id="selectCodeList" parameterType="map" resultType="map">
+        <choose>
+            <!-- 구매/물류 공통 코드 테이블 (hsba900t_tbl) -->
+            <when test="table != null and table == 'hsba'">
+                SELECT code AS code, cdnm AS codenm, remark AS remark, dspord
+                FROM hsba900t_tbl
+                WHERE useyn = 'Y'
+                  and cmpycd = #{cmpycd}
+                <if test="gbncd != null and gbncd != ''">
+                    AND cdgbn = #{gbncd}
+                </if>
+                <if test="keyword != null and keyword != ''">
+                    AND (cdnm LIKE CONCAT('%', #{keyword}, '%') OR code LIKE CONCAT('%', #{keyword}, '%'))
+                </if>
+                ORDER BY dspord
+            </when>
+            <!-- 영업/기본 공통 코드 테이블 (haba900t_tbl) -->
+            <otherwise>
+                SELECT codecd AS code, codenm AS codenm, remark AS remark, dspord
+                FROM haba900t_tbl
+                WHERE useyn = 'Y'
+                <if test="gbncd != null and gbncd != ''">
+                    AND cdtype = #{gbncd}
+                </if>
+                <if test="keyword != null and keyword != ''">
+                    AND (codenm LIKE CONCAT('%', #{keyword}, '%') OR codecd LIKE CONCAT('%', #{keyword}, '%'))
+                </if>
+                ORDER BY dspord
+            </otherwise>
+        </choose>
+    </select>
+
+</mapper>

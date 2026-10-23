@@ -10,8 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.crmbank.erp.mobile.hmet.MHMET100U;
+import com.crmbank.erp.mobile.hsaa.MHSAA400S;
+import com.crmbank.erp.mobile.hsaa.MHSAA600U;
+import com.crmbank.erp.mobile.hsqt.MHSQT110U;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,6 +124,31 @@ public class SubMenuActivity extends BaseActivity {
 
     private void handleProgramClick(String pgmid, String pgnm) {
         // 🚀 바코드 전용 독립 메뉴 라우팅 (기존 HSIO010U/HSIO510U 수동 입출고 화면과 100% 완전 분리)
+        if ("HMET100U".equalsIgnoreCase(pgmid) || "MHMET100U".equalsIgnoreCase(pgmid)) {
+            Intent intent = new Intent(this, MHMET100U.class);
+            startActivity(intent);
+            return;
+        }
+        if ("HSAA400S".equalsIgnoreCase(pgmid) || "MHSAA400S".equalsIgnoreCase(pgmid)) {
+            Intent intent = new Intent(this, MHSAA400S.class);
+            startActivity(intent);
+            return;
+        }
+        if ("HSAA600U".equalsIgnoreCase(pgmid) || "MHSAA600U".equalsIgnoreCase(pgmid)) {
+            Intent intent = new Intent(this, MHSAA600U.class);
+            startActivity(intent);
+            return;
+        }
+        if ("HSQT100U".equalsIgnoreCase(pgmid) || "MHSQT_100U".equalsIgnoreCase(pgmid)) {
+            Intent intent = new Intent(this, MHSQT_100U.class);
+            startActivity(intent);
+            return;
+        }
+        if ("HSQTY110U".equalsIgnoreCase(pgmid) || "MHSQTY110U".equalsIgnoreCase(pgmid) || "HSQT110U".equalsIgnoreCase(pgmid)) {
+            Intent intent = new Intent(this, MHSQT110U.class);
+            startActivity(intent);
+            return;
+        }
         if ("HSIO104U".equalsIgnoreCase(pgmid) || "MHSIO104U".equalsIgnoreCase(pgmid) || "BARCODE_INBOUND".equalsIgnoreCase(pgmid)) {
             Intent intent = new Intent(this, InboundRegisterActivity.class);
             intent.putExtra("IOGBN_MODE", "100");

@@ -45,8 +45,8 @@ services:
     build:
       context: .
       dockerfile: ./k8s-deploy/backend/Dockerfile
-    image: smart-erp-crm-backend:latest
     container_name: backend-crm
+    entrypoint: java -jar app.jar
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATA_REDIS_HOST=chatwoot-redis-crm
@@ -60,8 +60,8 @@ services:
       - SECURITY_USERNAME=admin
       - SECURITY_PASSWORD=Crmbank123!
     ports: ["8090:8080"]
-    volumes: 
-
+    volumes:
+      - /data/smart-erp-crm/storage:/app/storage
       - /data/smart-erp-crm/sounds/custom:/var/lib/asterisk/sounds/custom:rw
       - /data/smart-erp-crm/recordings:/var/spool/asterisk/monitor:ro
       - ./backend.log:/app/backend.log

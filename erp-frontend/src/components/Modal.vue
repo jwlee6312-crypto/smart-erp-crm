@@ -31,7 +31,6 @@
 									/>
 								</div>
 
-								<!-- 💡 날짜 검색 필터 추가 -->
 								<div v-if="props.modalProps.searchDate" class="d-flex align-items-center gap-1 shadow-sm rounded overflow-hidden">
 									<input v-model="startDate" type="date" class="form-control form-control-sm border-0" style="width: 130px; font-size: 12px;" />
 									<span class="px-1 text-muted" style="font-size: 11px;">~</span>
@@ -122,6 +121,7 @@ watch(() => props.visible, async (isVisible) => {
 		search()
 
 		popupGrid.value.on('rowClick', (_e, row) => {
+			console.log('🖱️ [Modal Row Clicked]:', row.getData())
 			props.modalProps.onConfirm?.(row.getData())
 			close()
 		})
@@ -132,30 +132,26 @@ async function search() {
 	if (!popupGrid.value) return
 	loading.value = true;
 	try {
+		const keyword = filterValue.value || props.modalProps.data.keyword || props.modalProps.data.code || ''
 		const body = {
 			...props.modalProps.data,
-			gubun: props.modalProps.data.gubun || '',
-			codenm: filterValue.value || props.modalProps.data.codenm || '',
-			custnm: filterValue.value || props.modalProps.data.custnm || '',
-			etcval: props.modalProps.data.etcval || ''
+			keyword: keyword
 		}
 
-		if (!props.modalProps.data.code) {
-			body.code = filterValue.value || '';
-		} else {
-			body.code = props.modalProps.data.code;
-		}
+		console.log('🔍 [Modal GET Request Path]:', props.modalProps.path, 'Params:', body)
+		const res = await api.get(props.modalProps.path, { params: body })
+		console.log('📦 [Modal GET Response Data]:', res.data)
 
-		const res = await api.post(props.modalProps.path, body)
 		const resData = res.data || (Array.isArray(res.data) ? res.data : [])
 		totalCount.value = resData.length
 
 		if (popupGrid.value) {
 			await popupGrid.value.setData(resData)
 			popupGrid.value.redraw(true)
+			console.log('📊 [Modal Grid SetData Complete]: Rows count =', resData.length)
 		}
 	} catch (error) {
-		console.error('팝업 조회 실패:', error)
+		console.error('❌ [Modal Search Error]:', error)
 	} finally {
 		loading.value = false;
 	}

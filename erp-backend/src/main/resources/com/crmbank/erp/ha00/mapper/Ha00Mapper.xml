@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.crmbank.erp.ha00.mapper.Ha00Mapper">
 
-    <!-- 💡 공통 코드 테이블(haba900t_tbl) 조회 기능을 도메인 모듈로 이전 -->
     <select id="GET_CODE_LIST" resultType="map">
         select cdtype, codecd, codenm, remark, dspord, useyn
         from haba900t_tbl
@@ -11,16 +10,44 @@
     </select>
 
     <select id="HA00_00P_STR" parameterType="map" resultType="map">
-        SELECT codecd as codecd, codecd as code, codenm as codenm, codenm as remark, dspord, useyn
-        FROM haba900t_tbl
-        WHERE 1=1
-        <if test="gbncd != null and gbncd != ''">
-            AND cdtype = #{gbncd}
-        </if>
-        <if test="code != null and code != ''">
-            AND codecd LIKE CONCAT('%', #{code}, '%')
-        </if>
-        ORDER BY dspord
+        <choose>
+            <when test="gubun != null and (gubun == 'C4' or gubun == 'C0' or gubun == 'C7' or gubun == 'C9')">
+                SELECT custcd AS custcd, custcd AS codecd, custcd AS code, custnm AS custnm, custnm AS codenm, custnm AS remark, custno AS dspord, 'Y' AS useyn, ceo AS ceo, telno AS telno, address AS address
+                FROM haba020t_tbl
+                WHERE 1=1
+                <if test="cmpycd != null and cmpycd != '' and cmpycd != 'COIT'">
+                    AND cmpycd = #{cmpycd}
+                </if>
+                <if test="keyword != null and keyword != ''">
+                    AND (custnm LIKE CONCAT('%', #{keyword}, '%') OR custcd LIKE CONCAT('%', #{keyword}, '%'))
+                </if>
+                <if test="code != null and code != ''">
+                    AND (custnm LIKE CONCAT('%', #{code}, '%') OR custcd LIKE CONCAT('%', #{code}, '%'))
+                </if>
+                ORDER BY custnm
+            </when>
+            <when test="gubun != null and gubun == 'sc'">
+                SELECT grpcd as grpcd, grpcd as code, grpnm as grpnm, grpnm as remark, dspord, useyn
+                FROM haaa810t_tbl
+                WHERE 1=1
+                <if test="gbncd != null and gbncd != ''">
+                    AND upmucd = #{gbncd}
+                </if>
+                ORDER BY dspord
+            </when>
+            <otherwise>
+                SELECT codecd as codecd, codecd as code, codenm as codenm, codenm as remark, dspord, useyn
+                FROM haba900t_tbl
+                WHERE 1=1
+                <if test="gbncd != null and gbncd != ''">
+                    AND cdtype = #{gbncd}
+                </if>
+                <if test="code != null and code != ''">
+                    AND (codecd LIKE CONCAT('%', #{code}, '%') OR codenm LIKE CONCAT('%', #{code}, '%'))
+                </if>
+                ORDER BY dspord
+            </otherwise>
+        </choose>
     </select>
 
     <select id="HA00_010S_STR" parameterType="map" resultType="map">

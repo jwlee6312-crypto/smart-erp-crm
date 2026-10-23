@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.hmet.mapper.HmetMapper">
+
+    <select id="selectMeetingMaster" parameterType="map" resultType="map">
+        SELECT cmpycd, meetingid, meetingtit, meetingdt, meetingtime, location,
+               hostid, hostnm, content, summary, stt_text, audio_file_path, addtime, updtime, updemp
+          FROM meeting_master_tbl
+         WHERE cmpycd = #{cmpycd}
+           <if test="meetingid != null and meetingid != ''">
+           AND meetingid = #{meetingid}
+           </if>
+           <if test="sdate != null and sdate != '' and edate != null and edate != ''">
+           AND meetingdt BETWEEN REPLACE(#{sdate}, '-', '') AND REPLACE(#{edate}, '-', '')
+           </if>
+           <if test="meetingtit != null and meetingtit != ''">
+           AND meetingtit LIKE CONCAT('%', #{meetingtit}, '%')
+           </if>
+         ORDER BY meetingdt DESC, meetingid DESC
+    </select>
+
+    <select id="selectMeetingAttendees" parameterType="map" resultType="map">
+        SELECT cmpycd, meetingid, ser, userid, usernm, deptcd, deptnm, attendance_yn
+          FROM meeting_attendee_tbl
+         WHERE cmpycd = #{cmpycd}
+           AND meetingid = #{meetingid}
+         ORDER BY ser ASC
+    </select>
+
+    <select id="selectMeetingFiles" parameterType="map" resultType="map">
+        SELECT cmpycd, meetingid, fileid, filename, filepath, filesize, filetype, addtime
+          FROM meeting_file_tbl
+         WHERE cmpycd = #{cmpycd}
+           AND meetingid = #{meetingid}
+         ORDER BY fileid ASC
+    </select>
+
+    <insert id="insertMeetingMaster" parameterType="map">
+        INSERT INTO meeting_master_tbl (
+            cmpycd, meetingid, meetingtit, meetingdt, meetingtime, location,
+            hostid, hostnm, content, summary, stt_text, audio_file_path, addtime, updtime, updemp
+        ) VALUES (
+            #{cmpycd}, #{meetingid}, #{meetingtit}, #{meetingdt}, #{meetingtime}, #{location},
+            #{hostid}, #{hostnm}, #{content}, #{summary}, #{stt_text}, #{audio_file_path}, NOW(), NOW(), #{updemp}
+        )
+    </insert>
+
+    <update id="updateMeetingMaster" parameterType="map">
+        UPDATE meeting_master_tbl
+           SET meetingtit = #{meetingtit},
+               meetingdt = #{meetingdt},
+               meetingtime = #{meetingtime},
+               location = #{location},
+               hostid = #{hostid},
+               hostnm = #{hostnm},
+               content = #{content},
+               summary = #{summary},
+               stt_text = #{stt_text},
+               audio_file_path = #{audio_file_path},
+               updtime = NOW(),
+               updemp = #{updemp}
+         WHERE cmpycd = #{cmpycd}
+           AND meetingid = #{meetingid}
+    </update>
+
+    <delete id="deleteMeetingMaster" parameterType="map">
+        DELETE FROM meeting_master_tbl
+         WHERE cmpycd = #{cmpycd}
+           AND meetingid = #{meetingid}
+    </delete>
+
+    <insert id="insertMeetingAttendee" parameterType="map">
+        INSERT INTO meeting_attendee_tbl (
+            cmpycd, meetingid, ser, userid, usernm, deptcd, deptnm, attendance_yn
+        ) VALUES (
+            #{cmpycd}, #{meetingid}, #{ser}, #{userid}, #{usernm}, #{deptcd}, #{deptnm}, #{attendance_yn}
+        )
+    </insert>
+
+    <delete id="deleteMeetingAttendees">
+        DELETE FROM meeting_attendee_tbl
+         WHERE cmpycd = #{cmpycd}
+           AND meetingid = #{meetingid}
+    </delete>
+
+    <insert id="insertMeetingFile" parameterType="map">
+        INSERT INTO meeting_file_tbl (
+            cmpycd, meetingid, fileid, filename, filepath, filesize, filetype, addtime
+        ) VALUES (
+            #{cmpycd}, #{meetingid}, #{fileid}, #{filename}, #{filepath}, #{filesize}, #{filetype}, NOW()
+        )
+    </insert>
+
+    <delete id="deleteMeetingFiles">
+        DELETE FROM meeting_file_tbl
+         WHERE cmpycd = #{cmpycd}
+           AND meetingid = #{meetingid}
+    </delete>
+
+    <select id="selectMaxMeetingId" resultType="string">
+        SELECT CONCAT(#{meetingdt}, '-', LPAD(IFNULL(MAX(CAST(SUBSTRING_INDEX(meetingid, '-', -1) AS UNSIGNED)), 0) + 1, 3, '0'))
+          FROM meeting_master_tbl
+         WHERE cmpycd = #{cmpycd}
+           AND meetingdt = #{meetingdt}
+    </select>
+
+</mapper>
