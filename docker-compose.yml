@@ -2,6 +2,7 @@ services:
   asterisk-db:
     image: mysql:8.0
     container_name: asterisk-db-crm
+    command: --lower-case-table-names=0
     environment: 
       - MYSQL_ROOT_PASSWORD=Crmbank123!
       - MYSQL_DATABASE=asterisk
