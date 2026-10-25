@@ -670,7 +670,7 @@
                 <if test="rtncd != null and rtncd != ''"> AND A.RTNCD = #{rtncd} </if>
             </if>
         </where>
-        ORDER BY A.SALESID DESC
+        ORDER BY SALESID DESC
     </select>
 
     <!-- 1. 영업마스터 (HSAA200T) -->
@@ -694,7 +694,7 @@
         <if test="userid != null and userid != '' and userid != '000'">
           AND A.USERID = #{userid}
         </if>
-        ORDER BY A.SALESID DESC
+        ORDER BY SALESID DESC
     </select>
 
     <select id="selectSalesMaster" resultType="com.crmbank.erp.hsaa.dto.Hsaa200tDto">
@@ -956,7 +956,7 @@
         <if test="userid != null and userid != ''">
             AND E.feedback_user = #{userid}
         </if>
-        ORDER BY A.SALESID DESC
+        ORDER BY SALESID DESC
     </select>
 
     <update id="updateCallMstTransfer">
