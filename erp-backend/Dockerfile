@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=build /app/erp-backend/build/libs/*.jar app.jar
 
 # 서버 환경 설정
 ENV SPRING_PROFILES_ACTIVE=prod
