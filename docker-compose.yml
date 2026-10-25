@@ -44,8 +44,8 @@ services:
 
   backend:
     build:
-      context: .
-      dockerfile: ./k8s-deploy/backend/Dockerfile
+      context: ./erp-backend
+      dockerfile: Dockerfile
     container_name: backend-crm
     entrypoint: java -jar app.jar
     environment:
