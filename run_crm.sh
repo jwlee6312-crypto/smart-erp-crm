@@ -20,8 +20,10 @@ echo "[0/4] Clearing previous log files..."
 > backend.log 2>/dev/null
 > backend_run.log 2>/dev/null
 
-# 3. 백엔드 빌드 안내
-echo "[1/4] Backend build will be handled inside Docker multi-stage..."
+# 3. 백엔드 JAR 빌드
+echo "[1/4] Building backend BootJar..."
+chmod +x gradlew
+./gradlew :erp-backend:clean :erp-backend:bootJar --no-daemon
 
 # 4. 필수 권한 보정 및 데이터 디렉토리 생성
 echo "[2/4] Fixing directory permissions & creating data dirs..."
@@ -33,7 +35,7 @@ sudo chmod -R 777 /data/smart-erp-crm
 echo "[3/4] Cleaning up existing Docker resources..."
 sudo docker compose down
 
-# 6. 스마트 ERP CRM 서비스 기동 (3308 포트 MySQL 포함, 백엔드 멀티스테이지 이미지 빌드)
+# 6. 스마트 ERP CRM 서비스 기동 (3308 포트 MySQL 포함)
 echo "[4/4] Launching Smart ERP CRM services via Docker Compose (Port 3308)..."
 sudo docker compose up --build --force-recreate -d
 

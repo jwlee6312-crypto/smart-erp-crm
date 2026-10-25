@@ -1,12 +1,5 @@
-# 1. 빌드 스테이지
-FROM gradle:8.5-jdk21 AS build
-WORKDIR /app
-COPY . .
-RUN gradle :erp-backend:bootJar --no-daemon
-
-# 2. 실행 스테이지
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-COPY --from=build /app/erp-backend/build/libs/*.jar app.jar
+COPY erp-backend/build/libs/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
