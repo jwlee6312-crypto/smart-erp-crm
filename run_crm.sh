@@ -15,10 +15,13 @@ else
     cd "$PROJECT_ROOT"
 fi
 
+# 1.5. 프로젝트 파일 소유권 및 권한 자동 보정 (root 권한 빌드로 인한 stash-dir 에러 방지)
+echo "[*] Ensuring correct project file permissions..."
+sudo chown -R $(whoami):$(id -gn) "$PROJECT_ROOT" 2>/dev/null || true
+
 # 2. 백엔드 로그 초기화 (Clear log)
 echo "[0/4] Clearing previous log files..."
-> backend.log 2>/dev/null
-> backend_run.log 2>/dev/null
+sudo rm -f backend.log backend_run.log 2>/dev/null
 
 # 3. 백엔드 JAR 빌드
 echo "[1/4] Building backend BootJar..."
