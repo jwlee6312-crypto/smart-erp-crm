@@ -26,6 +26,30 @@ const routes = [
                 component: () => import('@/views/HGOA/HGOA100U.vue'),
                 meta: { topMenuCode: 'CRM', sideMenuCode: 'HGOA100U', title: '옴니채널상담원' }
             },
+            {
+                path: '/HGOA/HGOA400U',
+                name: '상담모니터링',
+                component: () => import('@/views/HGOA/HGOA400U.vue'),
+                meta: { topMenuCode: 'CRM', sideMenuCode: 'HGOA400U', title: '상담모니터링' }
+            },
+            {
+                path: '/HGOA/HGOA410S',
+                name: '개인별상담실적현황',
+                component: () => import('@/views/HGOA/HGOA410S.vue'),
+                meta: { topMenuCode: 'CRM', sideMenuCode: 'HGOA410S', title: '개인별상담실적현황' }
+            },
+            {
+                path: '/HGOA/HGOA500U',
+                name: '맞춤설문동적조회',
+                component: () => import('@/views/HGOA/HGOA500U.vue'),
+                meta: { topMenuCode: 'CRM', sideMenuCode: 'HGOA500U', title: '맞춤설문동적조회' }
+            },
+            {
+                path: '/HMET/HMET100U',
+                name: '회의록관리',
+                component: () => import('@/views/HMET/HMET100U.vue'),
+                meta: { topMenuCode: 'CRM', sideMenuCode: 'HMET100U', title: '회의록관리' }
+            },
 
 
 		],

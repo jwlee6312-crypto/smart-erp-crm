@@ -104,5 +104,9 @@ public interface HsaaMapper {
     // void syncDiaryPlan(@Param("userid") String userid, @Param("subject") String subject, @Param("startdate") String startdate, @Param("content") String content, @Param("keyword") String keyword); // erp_diary
     
     List<Map<String, Object>> selectHsbaCodes(@Param("cmpycd") String cmpycd, @Param("cdgbn") String cdgbn);
+
+    List<Map<String, Object>> selectActiveDealsForVisitPlan(@Param("cmpycd") String cmpycd, @Param("userid") String userid);
+    List<Map<String, Object>> selectImportanceCycles(@Param("cmpycd") String cmpycd);
+    List<Map<String, Object>> selectHolidaysForMonth(@Param("cmpycd") String cmpycd, @Param("ym") String ym);
 }
 

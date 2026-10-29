@@ -22,6 +22,8 @@
                remark AS remark,
                remark AS remk,
                keymannm AS keymannm,
+               keymannm AS custemp,
+               email AS email,
                validdate AS validdate,
                addtime AS addtime,
                updtime AS updtime,
@@ -41,6 +43,9 @@
            <if test="custnm != null and custnm != ''">
            AND custnm LIKE CONCAT('%', #{custnm}, '%')
            </if>
+           <if test="frdt != null and frdt != '' and todt != null and todt != ''">
+           AND quatymd BETWEEN REPLACE(#{frdt}, '-', '') AND REPLACE(#{todt}, '-', '')
+           </if>
          ORDER BY quatym DESC, quatno DESC
     </select>
 
@@ -52,6 +57,7 @@
                itemcd AS itemcd,
                itemnm AS itemnm,
                itsize AS itsize,
+               itsize AS spec,
                unit AS unit,
                quatqty AS quatqty,
                quatqty AS quty,
@@ -59,6 +65,7 @@
                quatamt AS uprc,
                quatamt AS amtx,
                quatvat AS quatvat,
+               quatvat AS vat,
                pchamt AS pchamt,
                cost AS cost,
                profit AS profit,
@@ -73,32 +80,32 @@
     </select>
 
     <select id="selectQuotationStatus" parameterType="map" resultType="map">
-        SELECT A.cmpycd AS cmpycd, A.quatym AS quatym, A.quatno AS quatno, A.quatno AS qutno,
-               A.deptcd AS deptcd, A.deptnm AS deptnm, A.empno AS empno, A.empnm AS empnm,
-               A.custcd AS custcd, A.custnm AS custnm, A.quatymd AS quatymd, A.quatymd AS qutdt,
-               A.validdate AS validdate, A.remark AS remark, A.remark AS remk, A.keymannm AS keymannm, A.tel AS tel,
-               B.qrowno AS qrowno, B.itemcd AS itemcd, B.itemnm AS itemnm, B.itsize AS itsize, B.unit AS unit,
-               B.quatqty AS quatqty, B.quatqty AS quty, B.quatamt AS quatamt, B.quatamt AS uprc, B.quatamt AS amtx, B.quatvat AS quatvat,
-               (IFNULL(B.quatamt, 0) + IFNULL(B.quatvat, 0)) AS quatsum
-          FROM hsqt100t_tbl A
-          LEFT JOIN hsqt101t_tbl B ON A.cmpycd = B.cmpycd AND A.quatym = B.quatym AND A.quatno = B.quatno
-         WHERE A.cmpycd = #{cmpycd}
+        select a.cmpycd as cmpycd, a.quatym as quatym, a.quatno as quatno, a.quatno as qutno,
+               a.deptcd as deptcd, a.deptnm as deptnm, a.empno as empno, a.empnm as empnm,
+               a.custcd as custcd, a.custnm as custnm, a.quatymd as quatymd, a.quatymd as qutdt,
+               a.validdate as validdate, a.remark as remark, a.remark as remk, a.keymannm as keymannm, a.tel as tel,
+               b.qrowno as qrowno, b.itemcd as itemcd, b.itemnm as itemnm, b.itsize as itsize, b.itsize as spec, b.unit as unit,
+               b.quatqty as quatqty, b.quatqty as quty, b.quatamt as quatamt, b.quatamt as uprc, b.quatamt as amtx, b.quatvat as quatvat, b.quatvat as vat,
+               (ifnull(b.quatamt, 0) + ifnull(b.quatvat, 0)) as quatsum
+          from hsqt100t_tbl a
+          left join hsqt101t_tbl b on a.cmpycd = b.cmpycd and a.quatym = b.quatym and a.quatno = b.quatno
+         where a.cmpycd = #{cmpycd}
            <if test="deptcd != null and deptcd != ''">
-           AND A.deptcd = #{deptcd}
+           and a.deptcd = #{deptcd}
            </if>
            <if test="custnm != null and custnm != ''">
-           AND A.custnm LIKE CONCAT('%', #{custnm}, '%')
+           and a.custnm like concat('%', #{custnm}, '%')
            </if>
-         ORDER BY A.quatym DESC, A.quatno DESC, B.qrowno ASC
+         order by a.quatym desc, a.quatno desc, b.qrowno asc
     </select>
 
     <insert id="insertQuotationMaster" parameterType="map">
-        INSERT INTO hsqt100t_tbl (
+        insert into hsqt100t_tbl (
             cmpycd, quatym, quatno, deptcd, deptnm, empno, empnm, custcd, custnm,
-            paycdn, paycdnm, endwk, quatymd, tel, remark, keymannm, validdate, addtime, updtime, updemp
-        ) VALUES (
+            paycdn, paycdnm, endwk, quatymd, tel, remark, keymannm, email, validdate, addtime, updtime, updemp
+        ) values (
             #{cmpycd}, #{quatym}, #{quatno}, #{deptcd}, #{deptnm}, #{empno}, #{empnm}, #{custcd}, #{custnm},
-            #{paycdn}, #{paycdnm}, #{endwk}, #{quatymd}, #{tel}, #{remark}, #{keymannm}, #{validdate}, NOW(), NOW(), #{updemp}
+            #{paycdn}, #{paycdnm}, #{endwk}, #{quatymd}, #{tel}, #{remark}, #{keymannm}, #{email}, #{validdate}, now(), now(), #{updemp}
         )
     </insert>
 
@@ -117,6 +124,7 @@
                tel = #{tel},
                remark = #{remark},
                keymannm = #{keymannm},
+               email = #{email},
                validdate = #{validdate},
                updtime = NOW(),
                updemp = #{updemp}

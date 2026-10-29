@@ -124,8 +124,8 @@ public class SubMenuActivity extends BaseActivity {
 
     private void handleProgramClick(String pgmid, String pgnm) {
         // 🚀 바코드 전용 독립 메뉴 라우팅 (기존 HSIO010U/HSIO510U 수동 입출고 화면과 100% 완전 분리)
-        if ("HMET100U".equalsIgnoreCase(pgmid) || "MHMET100U".equalsIgnoreCase(pgmid)) {
-            Intent intent = new Intent(this, MHMET100U.class);
+        if ("HMET100U".equalsIgnoreCase(pgmid) || "HMET_100U".equalsIgnoreCase(pgmid) || "MHMET100U".equalsIgnoreCase(pgmid)) {
+            Intent intent = new Intent(this, com.crmbank.erp.mobile.hmet.MHMET100U.class);
             startActivity(intent);
             return;
         }
@@ -139,8 +139,8 @@ public class SubMenuActivity extends BaseActivity {
             startActivity(intent);
             return;
         }
-        if ("HSQT100U".equalsIgnoreCase(pgmid) || "MHSQT_100U".equalsIgnoreCase(pgmid)) {
-            Intent intent = new Intent(this, MHSQT_100U.class);
+        if ("HSQT100U".equalsIgnoreCase(pgmid) || "HSQT_100U".equalsIgnoreCase(pgmid) || "HSQT200U".equalsIgnoreCase(pgmid) || "HSQT_200U".equalsIgnoreCase(pgmid) || "MHSQT100U".equalsIgnoreCase(pgmid) || "MHSQT_100U".equalsIgnoreCase(pgmid)) {
+            Intent intent = new Intent(this, com.crmbank.erp.mobile.hsqt.MHSQT100U.class);
             startActivity(intent);
             return;
         }

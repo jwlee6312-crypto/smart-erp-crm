@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -554,5 +555,104 @@ public class HsaaService {
         String s = val.toString().toLowerCase();
         if ("true".equals(s) || "y".equals(s) || "1".equals(s)) return "Y";
         return "N";
+    }
+
+    public List<Map<String, Object>> getVisitPlan(String cmpycd, String ym, String userid) {
+        return new ArrayList<>();
+    }
+
+    @Transactional
+    public List<Map<String, Object>> generateVisitPlan(String cmpycd, String ym, String userid, int dailyCapa) {
+        List<Map<String, Object>> deals = hsaaMapper.selectActiveDealsForVisitPlan(cmpycd, userid);
+        List<Map<String, Object>> cycles = hsaaMapper.selectImportanceCycles(cmpycd);
+
+        Map<String, Integer> cycleMap = new HashMap<>();
+        Map<String, String> gradeNameMap = new HashMap<>();
+        for (Map<String, Object> c : cycles) {
+            String code = String.valueOf(c.getOrDefault("code", ""));
+            String remark = String.valueOf(c.getOrDefault("remark", "30"));
+            int days = 30;
+            try { days = Integer.parseInt(remark.replaceAll("[^0-9]", "")); } catch (Exception ignored) {}
+            cycleMap.put(code, days);
+            gradeNameMap.put(code, "등급 " + code);
+        }
+
+        List<Map<String, Object>> holidays = hsaaMapper.selectHolidaysForMonth(cmpycd, ym);
+        java.util.Set<String> holidaySet = new java.util.HashSet<>();
+        for (Map<String, Object> h : holidays) {
+            holidaySet.add(String.valueOf(h.get("holi_dt")));
+        }
+
+        List<String> workDays = new ArrayList<>();
+        try {
+            int year = Integer.parseInt(ym.substring(0, 4));
+            int month = Integer.parseInt(ym.substring(4, 6));
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.set(year, month - 1, 1);
+            int maxDay = cal.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault());
+
+            for (int d = 1; d <= maxDay; d++) {
+                cal.set(year, month - 1, d);
+                int dayOfWeek = cal.get(java.util.Calendar.DAY_OF_WEEK);
+                if (dayOfWeek == java.util.Calendar.SATURDAY || dayOfWeek == java.util.Calendar.SUNDAY) continue;
+                String dateStr = sdf.format(cal.getTime());
+                if (!holidaySet.contains(dateStr)) {
+                    workDays.add(dateStr);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error generating work days: {}", e.getMessage());
+        }
+
+        for (Map<String, Object> deal : deals) {
+            String imp = String.valueOf(deal.getOrDefault("import", "100"));
+            int cycleDays = cycleMap.getOrDefault(imp, 30);
+            deal.put("import_nm", gradeNameMap.getOrDefault(imp, "일반"));
+
+            double succrate = 50.0;
+            try { succrate = Double.parseDouble(String.valueOf(deal.getOrDefault("succrate", "50"))); } catch (Exception ignored) {}
+
+            double score = cycleDays * (succrate / 100.0);
+            deal.put("_score", score);
+        }
+
+        deals.sort((a, b) -> Double.compare((Double) b.get("_score"), (Double) a.get("_score")));
+
+        List<Map<String, Object>> generatedPlan = new ArrayList<>();
+        int dayIdx = 0;
+        int countToday = 0;
+
+        for (Map<String, Object> deal : deals) {
+            if (dayIdx >= workDays.size()) break;
+            String targetDate = workDays.get(dayIdx);
+
+            Map<String, Object> planItem = new HashMap<>();
+            planItem.put("cmpycd", cmpycd);
+            planItem.put("userid", userid);
+            planItem.put("plan_dt", targetDate);
+            planItem.put("salesid", deal.get("salesid"));
+            planItem.put("custcd", deal.get("custcd"));
+            planItem.put("custnm", deal.get("custnm"));
+            planItem.put("deal_title", deal.get("deal_title"));
+            planItem.put("import_nm", deal.get("import_nm"));
+            planItem.put("succrate", deal.get("succrate"));
+            planItem.put("lastmtdt", deal.get("lastmtdt"));
+            planItem.put("address", deal.get("address"));
+            generatedPlan.add(planItem);
+
+            countToday++;
+            if (countToday >= dailyCapa) {
+                countToday = 0;
+                dayIdx++;
+            }
+        }
+
+        return generatedPlan;
+    }
+
+    @Transactional
+    public void confirmVisitPlan(Map<String, Object> payload, String cmpycd) {
+        // No-op until storage table is agreed upon
     }
 }

@@ -3,15 +3,16 @@
 	프로그램명	: 견적등록 (HSQT100U)
 	작성일자	: 2026.10.24
 	작성자      : AI Assistant
-	설명        : 영업활동등록(HSAA100U)과 동일한 Modal 및 useCommonHelp 패턴을 적용한 견적등록 화면
+	설명        : HSOD100U 표준 디자인 패턴 적용 및 업체담당자명/메일주소 필드 추가 견적등록 화면
 	=============================================================
 -->
 
 <template>
   <AppAlert :show="showAlert" :error="showError" :message="alertMessage" />
+  <Modal v-model:visible="modalVisible" :modalProps="modalProps" />
 
   <div class="erp-container d-flex flex-column h-100 bg-white">
-    <!-- 상단 액션 바 -->
+    <!-- 🚀 상단 글로벌 액션 바 (HSOD100U 표준) -->
     <div class="erp-header d-flex justify-content-between align-items-center flex-shrink-0 border-bottom bg-white py-2 px-3 sticky-top shadow-sm">
       <div class="fw-bold ps-1 text-dark d-flex align-items-center" style="font-size: 14px;">
         <i class="bi bi-file-earmark-text-fill me-2 text-primary" style="font-size: 18px;"></i>
@@ -22,13 +23,13 @@
         <button class="btn-erp btn-init" @click="initialize">초기화</button>
         <button class="btn-erp btn-search" @click="fetchMaster">조회</button>
         <button class="btn-erp btn-save" @click="saveData">저장</button>
-        <button class="btn-erp btn-danger" @click="deleteData">삭제</button>
+        <button class="btn-erp btn-delete" @click="deleteData">삭제</button>
         <button class="btn-erp btn-print" @click="printQuotation"><i class="bi bi-printer-fill me-1"></i>견적서출력</button>
         <button class="btn-erp btn-print" @click="sendEmailReport"><i class="bi bi-envelope-fill me-1"></i>메일보내기</button>
       </div>
     </div>
 
-    <!-- 검색 필터 -->
+    <!-- 💡 검색 필터 (HSOD100U 표준 덴스 테이블) -->
     <div class="p-2 bg-light border-bottom flex-shrink-0">
       <div class="card border shadow-sm">
         <div class="card-body p-0 bg-white">
@@ -62,7 +63,7 @@
       </div>
     </div>
 
-    <!-- 50:50 레이아웃 영역 -->
+    <!-- 📑 메인 50:50 분할 레이아웃 영역 (HSOD100U 표준) -->
     <div class="flex-grow-1 p-2 bg-light overflow-hidden d-flex flex-row gap-2">
       <!-- (Left 50%) 견적 마스터 리스트 -->
       <div class="card border shadow-sm overflow-hidden d-flex flex-column" style="flex: 0 0 50%; width: 50%;">
@@ -78,9 +79,6 @@
       <div class="card border shadow-sm overflow-hidden d-flex flex-column bg-white" style="flex: 0 0 50%; width: 50%;">
         <div class="card-header bg-white border-bottom py-1 px-3 d-flex justify-content-between align-items-center">
           <span class="small fw-bold text-primary"><i class="bi bi-pencil-square me-2"></i>견적 상세 품목 정보</span>
-          <div class="btn-group-erp d-flex gap-1">
-            <button class="btn-erp btn-init" @click="addDetailRow">행추가</button>
-          </div>
         </div>
         <div class="card-body p-3 overflow-auto scrollbar-sm d-flex flex-column gap-3">
           <table class="erp-table-dense w-100">
@@ -104,8 +102,12 @@
                 </td>
               </tr>
               <tr>
-                <th class="bg-light">담당자사번</th>
-                <td><input v-model="formMaster.empno" class="form-control form-control-sm w-50" placeholder="담당자" /></td>
+                <th class="bg-light">업체담당자명</th>
+                <td><input v-model="formMaster.custemp" class="form-control form-control-sm w-50" placeholder="업체담당자명 입력" /></td>
+              </tr>
+              <tr>
+                <th class="bg-light">메일주소</th>
+                <td><input v-model="formMaster.email" type="email" class="form-control form-control-sm" placeholder="수신 메일주소 입력" /></td>
               </tr>
               <tr>
                 <th class="bg-light">비고</th>
@@ -118,6 +120,7 @@
           <div class="flex-grow-1 d-flex flex-column" style="min-height: 250px;">
             <div class="small fw-bold text-dark mb-1 d-flex justify-content-between align-items-center">
               <span><i class="bi bi-box-seam me-1"></i> 품목 상세 목록 (품목명 클릭 시 팝업 선택 가능)</span>
+              <button class="btn-erp btn-init" @click="addDetailRow">행추가</button>
             </div>
             <div ref="detailGridRef" class="tabulator-instance flex-grow-1 border rounded" style="height: 250px;"></div>
           </div>
@@ -125,9 +128,6 @@
       </div>
     </div>
   </div>
-
-  <!-- HSAA100U와 동일한 Modal 공통 도움창 팝업 -->
-  <Modal v-model:visible="modalVisible" :modalProps="modalProps" />
 </template>
 
 <script setup lang="ts">
@@ -160,7 +160,8 @@ const formMaster = reactive({
   qutdt: new Date().toISOString().split('T')[0],
   custcd: '',
   custnm: '',
-  empno: '',
+  custemp: '',
+  email: '',
   remk: ''
 })
 
@@ -191,20 +192,43 @@ const initMasterTable = () => {
     selectable: 1,
     placeholder: '조회된 데이터가 없습니다.',
     columns: [
-      { formatter: 'rownum', title: 'No', width: 60, hozAlign: 'center' },
-      { title: '견적번호', field: 'qutno', width: 130, hozAlign: 'center' },
-      { title: '견적일자', field: 'qutdt', width: 110, hozAlign: 'center' },
-      { title: '거래처명', field: 'custnm', width: 180, hozAlign: 'left' },
-      { title: '합계금액', field: 'totamt', width: 120, hozAlign: 'right', formatter: 'money', formatterParams: { thousand: ',' } },
-      { title: '비고', field: 'remk', width: 180, hozAlign: 'left' }
+      { formatter: 'rownum', title: 'No', width: 80, hozAlign: 'center' },
+      { title: '견적번호', field: 'qutno', width: 120, hozAlign: 'center' },
+      { title: '견적일자', field: 'qutdt', width: 100, hozAlign: 'center', formatter: (cell) => {
+          const val = cell.getValue()
+          if (val && val.length === 8 && !val.includes('-')) {
+            return `${val.substring(0, 4)}-${val.substring(4, 6)}-${val.substring(6, 8)}`
+          }
+          return val
+        }
+      },
+      { title: '거래처명', field: 'custnm', width: 150, hozAlign: 'left' },
+      { title: '업체담당자', field: 'custemp', width: 100, hozAlign: 'center' },
+      { title: '메일주소', field: 'email', width: 150, hozAlign: 'left' },
+      { title: '합계금액', field: 'totamt', width: 110, hozAlign: 'right', formatter: 'money', formatterParams: { thousand: ',' } },
+      { title: '비고', field: 'remk', width: 140, hozAlign: 'left' }
     ]
   })
 
   masterTabulator.on('rowClick', (e, row) => {
     const data = row.getData()
     Object.assign(formMaster, data)
-    fetchDetail(data.qutno)
+    if (formMaster.qutdt && formMaster.qutdt.length === 8 && !formMaster.qutdt.includes('-')) {
+      formMaster.qutdt = `${formMaster.qutdt.substring(0, 4)}-${formMaster.qutdt.substring(4, 6)}-${formMaster.qutdt.substring(6, 8)}`
+    }
+    const quatym = data.quatym || (data.qutdt ? data.qutdt.replace(/-/g, '').substring(0, 6) : '')
+    const quatno = data.quatno || data.qutno
+    fetchDetail(quatym, quatno)
   })
+}
+
+const calculateRow = (row: any) => {
+  const data = row.getData()
+  const quty = Math.round(Number(data.quty) || 0)
+  const uprc = Math.round(Number(data.uprc) || 0)
+  const amtx = quty * uprc
+  const vat = Math.floor(amtx * 0.1)
+  row.update({ quty, uprc, amtx, vat })
 }
 
 const initDetailTable = () => {
@@ -214,16 +238,19 @@ const initDetailTable = () => {
     height: '100%',
     placeholder: '상세 품목이 없습니다.',
     columns: [
-      { formatter: 'rownum', title: 'No', width: 50, hozAlign: 'center' },
-      { title: '품목명', field: 'itemnm', width: 180, hozAlign: 'left', editor: 'input', cellClick: (e, cell) => {
+      { formatter: 'rownum', title: 'No', width: 70, hozAlign: 'center' },
+      { title: '품목명', field: 'itemnm', minWidth: 180, hozAlign: 'left', editor: 'input', cellClick: (e, cell) => {
           if (e.target.tagName !== 'INPUT') {
             openItemHelp(cell.getRow())
           }
         }
       },
-      { title: '수량', field: 'quty', width: 80, hozAlign: 'right', editor: 'input', formatter: 'money' },
-      { title: '단가', field: 'uprc', width: 100, hozAlign: 'right', editor: 'input', formatter: 'money' },
-      { title: '금액', field: 'amtx', width: 110, hozAlign: 'right', formatter: 'money' }
+      { title: '규격', field: 'spec', width: 100, hozAlign: 'left' },
+      { title: '단위', field: 'unit', width: 60, hozAlign: 'center' },
+      { title: '수량', field: 'quty', width: 75, hozAlign: 'right', editor: 'input', formatter: 'money', formatterParams: { precision: 0 }, cellEdited: (cell) => calculateRow(cell.getRow()) },
+      { title: '단가', field: 'uprc', width: 90, hozAlign: 'right', editor: 'input', formatter: 'money', formatterParams: { precision: 0 }, cellEdited: (cell) => calculateRow(cell.getRow()) },
+      { title: '금액', field: 'amtx', width: 100, hozAlign: 'right', formatter: 'money', formatterParams: { precision: 0 }, cellEdited: (cell) => calculateRow(cell.getRow()) },
+      { title: '부가세', field: 'vat', width: 90, hozAlign: 'right', editor: 'input', formatter: 'money', formatterParams: { precision: 0 }, cellEdited: (cell) => calculateRow(cell.getRow()) }
     ]
   })
 }
@@ -236,6 +263,8 @@ const openCustHelp = (target: 'filter' | 'form') => {
     } else {
       formMaster.custcd = d.custcd || ''
       formMaster.custnm = d.custnm || ''
+      if (d.email) formMaster.email = d.email
+      if (d.keymannm || d.custemp) formMaster.custemp = d.keymannm || d.custemp
     }
   }, { gubun: 'C4' })
 }
@@ -244,10 +273,18 @@ const openItemHelp = (row: any) => {
   activeDetailRow = row
   openHelp('ITEM', (d: any) => {
     if (activeDetailRow) {
+      const uprc = Number(d.uprc || d.saleuprc || d.outcost || 0)
+      const quty = Number(activeDetailRow.getData().quty) || 1
+      const amtx = quty * uprc
+      const vat = Math.floor(amtx * 0.1)
       activeDetailRow.update({
         itemcd: d.itemcd || d.codecd || '',
         itemnm: d.itemnm || d.codenm || '',
-        uprc: d.uprc || d.saleuprc || d.outcost || 0
+        spec: d.spec || d.itemspec || '',
+        unit: d.unit || d.itemunit || '',
+        uprc: uprc,
+        amtx: amtx,
+        vat: vat
       })
     }
   }, { gubun: 'I1' })
@@ -258,7 +295,8 @@ const initialize = () => {
   formMaster.qutdt = new Date().toISOString().split('T')[0]
   formMaster.custcd = ''
   formMaster.custnm = ''
-  formMaster.empno = ''
+  formMaster.custemp = ''
+  formMaster.email = ''
   formMaster.remk = ''
   if (detailTabulator) detailTabulator.clearData()
   vAlert('초기화되었습니다.')
@@ -273,9 +311,9 @@ const fetchMaster = async () => {
   }
 }
 
-const fetchDetail = async (qutno: string) => {
+const fetchDetail = async (quatym: string, quatno: string) => {
   try {
-    const res = await api.get('/api/hsqt/detail', { params: { qutno } })
+    const res = await api.get('/api/hsqt/detail', { params: { quatym, quatno, qutno: quatno } })
     if (detailTabulator) detailTabulator.setData(res.data || [])
   } catch (err: any) {
     vAlertError(err.response?.data?.message || '디테일 조회 중 오류가 발생했습니다.')
@@ -284,15 +322,19 @@ const fetchDetail = async (qutno: string) => {
 
 const addDetailRow = () => {
   if (detailTabulator) {
-    detailTabulator.addRow({ itemcd: '', itemnm: '', quty: 1, uprc: 0, amtx: 0 })
+    detailTabulator.addRow({ itemcd: '', itemnm: '', spec: '', unit: '', quty: 1, uprc: 0, amtx: 0, vat: 0 })
   }
 }
 
 const saveData = async () => {
   try {
     const details = detailTabulator ? detailTabulator.getData() : []
+    const formattedMaster = {
+      ...formMaster,
+      qutdt: formMaster.qutdt ? formMaster.qutdt.replace(/-/g, '') : ''
+    }
     const payload = {
-      master: formMaster,
+      master: formattedMaster,
       details: details
     }
     await api.post('/api/hsqt/save', payload)
@@ -337,12 +379,16 @@ const sendEmailReport = async () => {
     vAlert('메일로 발송할 견적서를 선택해주세요.')
     return
   }
+  if (!formMaster.email) {
+    vAlert('수신 메일주소를 입력해주세요.')
+    return
+  }
   const ioym = formMaster.qutdt ? formMaster.qutdt.replace(/-/g, '').substring(0, 6) : '202610'
   const iono = formMaster.qutno
   try {
-    vAlert('선택된 견적서 메일 출력을 준비합니다...')
+    vAlert(`[${formMaster.email}]로 견적서 메일 발송을 준비합니다...`)
     await printSpecification(ioym, iono, detailTabulator ? detailTabulator.getData() : [], formMaster)
-    vAlert('견적서 메일 발송(출력)창이 호출되었습니다.')
+    vAlert('견적서 메일 발송창이 호출되었습니다.')
   } catch (err: any) {
     vAlertError(err.message || '메일 발송 중 오류가 발생했습니다.')
   }

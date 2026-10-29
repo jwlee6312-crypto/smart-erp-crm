@@ -3,11 +3,11 @@
 <mapper namespace="com.crmbank.erp.comm.controller.ErpPopupMapper">
 
     <select id="selectCustomerList" parameterType="map" resultType="map">
-        SELECT custcd AS custcd, custcd AS code, custnm AS custnm, ceo AS ceo, telno AS telno, address AS address
-        FROM haba020t_tbl
-        WHERE cmpycd = #{cmpycd}
+        select custcd as custcd, custcd as code, custnm as custnm, bossnm as ceo, telno as telno, address, d_address
+        from haba020t_tbl
+        where cmpycd = #{cmpycd}
         <if test="keyword != null and keyword != ''">
-            AND (custnm LIKE CONCAT('%', #{keyword}, '%') OR custcd LIKE CONCAT('%', #{keyword}, '%'))
+            and (custnm like concat('%', #{keyword}, '%') or custcd like concat('%', #{keyword}, '%'))
         </if>
         ORDER BY custnm
     </select>

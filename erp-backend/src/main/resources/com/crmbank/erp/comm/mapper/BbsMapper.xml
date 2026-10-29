@@ -4,40 +4,40 @@
 
     <!-- 📋 게시판 목록 조회 (ASP 테이블 BOAD001T_TBL 연동) -->
     <select id="selectBbsList" parameterType="map" resultType="map">
-        SELECT
-            A.BOARDID, A.FANCODE, A.SUBJECT, A.USERID, A.FILENAME, A.FILESIZE,
-            A.READCNT, A.COMMENTCNT, DATE_FORMAT(A.ADDTIME, '%Y-%m-%d') as ADDTIME,
-            B.USERNM, B.EMAIL
-        FROM BOAD001T_TBL A
-        LEFT OUTER JOIN HABA920T_TBL B ON A.USERID = B.USERID AND A.CMPYCD = B.CMPYCD
-        WHERE UPPER(A.CMPYCD) = UPPER(#{cmpycd})
-          AND LTRIM(RTRIM(A.FANCODE)) = LTRIM(RTRIM(#{fancode}))
+        select
+            a.boardid, a.fancode, a.subject, a.userid, a.filename, a.filesize,
+            a.readcnt, a.commentcnt, date_format(a.addtime, '%y-%m-%d') as addtime,
+            b.usernm, b.email
+        from boad001t_tbl a
+        left outer join haba920t_tbl b on a.userid = b.userid and a.cmpycd = b.cmpycd
+        where upper(a.cmpycd) = upper(#{cmpycd})
+          and ltrim(rtrim(a.fancode)) = ltrim(rtrim(#{fancode}))
         <if test="stx != null and stx != ''">
             <choose>
-                <when test="sfi == 'SUBJECT'"> AND A.SUBJECT LIKE CONCAT('%', #{stx}, '%') </when>
-                <when test="sfi == 'MEMO'"> AND A.MEMO LIKE CONCAT('%', #{stx}, '%') </when>
-                <when test="sfi == 'USERID'"> AND B.USERNM LIKE CONCAT('%', #{stx}, '%') </when>
+                <when test="sfi == 'SUBJECT'"> and a.subject like concat('%', #{stx}, '%') </when>
+                <when test="sfi == 'MEMO'"> and a.memo like concat('%', #{stx}, '%') </when>
+                <when test="sfi == 'USERID'"> and b.usernm like concat('%', #{stx}, '%') </when>
                 <otherwise>
-                    AND (A.SUBJECT LIKE CONCAT('%', #{stx}, '%') OR A.MEMO LIKE CONCAT('%', #{stx}, '%') OR B.USERNM LIKE CONCAT('%', #{stx}, '%'))
+                    and (a.subject like concat('%', #{stx}, '%') or a.memo like concat('%', #{stx}, '%') or b.usernm like concat('%', #{stx}, '%'))
                 </otherwise>
             </choose>
         </if>
-        ORDER BY A.BOARDID DESC
-        LIMIT #{limit} OFFSET #{offset}
+        order by a.boardid desc
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="countBbsList" parameterType="map" resultType="int">
-        SELECT COUNT(*)
-        FROM BOAD001T_TBL A
-        LEFT OUTER JOIN HABA920T_TBL B ON A.USERID = B.USERID AND A.CMPYCD = B.CMPYCD
-        WHERE UPPER(A.CMPYCD) = UPPER(#{cmpycd})
-          AND LTRIM(RTRIM(A.FANCODE)) = LTRIM(RTRIM(#{fancode}))
+        select count(*)
+        from boad001t_tbl a
+        left outer join haba920t_tbl b on a.userid = b.userid and a.cmpycd = b.cmpycd
+        where upper(a.cmpycd) = upper(#{cmpycd})
+          and ltrim(rtrim(a.fancode)) = ltrim(rtrim(#{fancode}))
     </select>
 
     <select id="selectBbsDetail" parameterType="map" resultType="map">
-        SELECT A.*, B.USERNM, B.EMAIL FROM BOAD001T_TBL A
-        LEFT OUTER JOIN HABA920T_TBL B ON A.USERID = B.USERID AND A.CMPYCD = B.CMPYCD
-        WHERE UPPER(A.CMPYCD) = UPPER(#{cmpycd}) AND A.BOARDID = #{boardid}
+        select a.*, b.usernm, b.email from boad001t_tbl a
+        left outer join haba920t_tbl b on a.userid = b.userid and a.cmpycd = b.cmpycd
+        where a.cmpycd = #{cmpycd} and a.boardid = #{boardid}
     </select>
 
     <!-- 📝 게시글 등록 (제공해주신 DDL 컬럼 100% 반영) -->
@@ -52,15 +52,15 @@
     </insert>
 
     <update id="updateBbs" parameterType="map">
-        UPDATE BOAD001T_TBL SET subject = #{subject}, memo = #{memo}, updtime = NOW(), updemp = #{userid}
-        WHERE cmpycd = #{cmpycd} and boardid = #{boardid}
+        update boad001t_tbl set subject = #{subject}, memo = #{memo}, updtime = now(), updemp = #{userid}
+        where cmpycd = #{cmpycd} and boardid = #{boardid}
     </update>
 
     <delete id="deleteBbs" parameterType="map">
-        DELETE FROM BOAD001T_TBL WHERE cmpycd = #{cmpycd} AND boardid = #{boardid}
+        delete from boad001t_tbl where cmpycd = #{cmpycd} and boardid = #{boardid}
     </delete>
 
     <update id="updateReadCount" parameterType="map">
-        UPDATE BOAD001T_TBL SET readcnt = readcnt + 1 WHERE cmpycd = #{cmpycd} AND boardid = #{boardid}
+        update boad001t_tbl set readcnt = readcnt + 1 where cmpycd = #{cmpycd} and boardid = #{boardid}
     </update>
 </mapper>

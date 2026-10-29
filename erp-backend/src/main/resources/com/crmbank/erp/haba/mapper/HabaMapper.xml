@@ -3,20 +3,20 @@
 <mapper namespace="com.crmbank.erp.haba.mapper.HabaMapper">
 
     <select id="HABA_060U_SELECT" parameterType="map" resultType="map">
-        SELECT A.cmpycd,  A.deptcd,  A.deptnm,  A.deptsnm, IFNULL(A.deptenm,'') AS deptenm, A.updept, IFNULL(A.deptdum, '') AS deptdum, IFNULL(A.deptemp, '') AS deptemp,
-               A.frymd,   A.toymd,   A.taxunit, A.costgbn, A.dspord, 0 AS lev, IFNULL(C.deptnm, '') AS updeptnm, IFNULL(D.usernm, '') AS empnm
-          FROM haba120t_tbl A
-          LEFT OUTER JOIN haba120t_tbl C
-            ON A.cmpycd  = C.cmpycd
-           AND A.updept  = C.deptcd
-          LEFT OUTER JOIN haba920t_tbl D
-            ON A.cmpycd  = D.cmpycd
-           AND A.deptemp = D.userid
-         WHERE A.cmpycd   = #{cmpycd}
+        select a.cmpycd,  a.deptcd,  a.deptnm,  a.deptsnm, ifnull(a.deptenm,'') as deptenm, a.updept, ifnull(a.deptdum, '') as deptdum, ifnull(a.deptemp, '') as deptemp,
+               a.frymd,   a.toymd,   a.taxunit, a.costgbn, a.dspord, 0 as lev, ifnull(c.deptnm, '') as updeptnm, ifnull(d.usernm, '') as empnm
+          from haba120t_tbl a
+          left outer join haba120t_tbl c
+            on a.cmpycd  = c.cmpycd
+           and a.updept  = c.deptcd
+          left outer join haba920t_tbl d
+            on a.cmpycd  = d.cmpycd
+           and a.deptemp = d.userid
+         where a.cmpycd   = #{cmpycd}
            <if test="deptnm != null and deptnm != ''">
-             AND A.deptnm LIKE CONCAT('%', TRIM(#{deptnm}), '%')
+             and a.deptnm like concat('%', trim(#{deptnm}), '%')
            </if>
-         ORDER BY A.dspord
+         order by a.dspord
     </select>
 
     <insert id="HABA_060U_INSERT" parameterType="map">
@@ -57,28 +57,28 @@
     <select id="HABA_100U_STR" parameterType="map" resultType="map">
         <choose>
             <when test="actkind == 'S0'">
-                SELECT A.clsymd, A.gline1, A.gline2, A.gline3, A.gline4, A.gline5, A.bgtype, A.stkgbn, A.mnfyn,
-                       A.logoimg, A.stampimg, A.slipyn, A.cardcust, B.custnm, A.pricegbn, A.stokyn, A.yeosinyn, A.iocnfmyn, A.outacctyn, A.ai_mode
-                  FROM haba910t_tbl A LEFT OUTER JOIN haba020t_tbl B
-                    ON A.cmpycd   = B.cmpycd
-                   AND A.cardcust = B.custcd
-                 WHERE A.cmpycd    = #{cmpycd}
+                select a.clsymd, a.gline1, a.gline2, a.gline3, a.gline4, a.gline5, a.bgtype, a.stkgbn, a.mnfyn,
+                       a.logoimg, a.stampimg, a.slipyn, a.cardcust, b.custnm, a.pricegbn, a.stokyn, a.yeosinyn, a.iocnfmyn, a.outacctyn, a.ai_mode
+                  from haba910t_tbl a left outer join haba020t_tbl b
+                    on a.cmpycd   = b.cmpycd
+                   and a.cardcust = b.custcd
+                 where a.cmpycd    = #{cmpycd}
             </when>
             <when test="actkind == 'U0'">
-                INSERT INTO haba910t_tbl
+                insert into haba910t_tbl
                 (cmpycd, clsymd, gline1, gline2, gline3, gline4, gline5, bgtype, stkgbn,
                  mnfyn, pricegbn, stokyn, slipyn, cardcust, logoimg, stampimg, updtime, updemp, yeosinyn, iocnfmyn, outacctyn, ai_mode)
-                VALUES
+                values
                 (#{cmpycd}, #{clsymd}, #{gline1}, #{gline2}, #{gline3}, #{gline4}, #{gline5}, #{bgtype}, #{stkgbn},
-                 #{mnfyn}, #{pricegbn}, #{stokyn}, #{slipyn}, #{cardcust}, #{logoimg}, #{stampimg}, NOW(), #{updemp}, #{yeosinyn}, #{iocnfmyn}, #{outacctyn}, #{ai_mode})
-                ON DUPLICATE KEY UPDATE
-                clsymd = VALUES(clsymd), gline1 = VALUES(gline1), gline2 = VALUES(gline2),
-                gline3 = VALUES(gline3), gline4 = VALUES(gline4), gline5 = VALUES(gline5),
-                bgtype = VALUES(bgtype), stkgbn = VALUES(stkgbn), mnfyn = VALUES(mnfyn),
-                cardcust = VALUES(cardcust), pricegbn = VALUES(pricegbn), stokyn = VALUES(stokyn),
-                slipyn = VALUES(slipyn), updtime = NOW(), updemp = VALUES(updemp),
-                logoimg = VALUES(logoimg), stampimg = VALUES(stampimg),
-                yeosinyn = VALUES(yeosinyn), iocnfmyn = VALUES(iocnfmyn), outacctyn = VALUES(outacctyn), ai_mode = VALUES(ai_mode);
+                 #{mnfyn}, #{pricegbn}, #{stokyn}, #{slipyn}, #{cardcust}, #{logoimg}, #{stampimg}, now(), #{updemp}, #{yeosinyn}, #{iocnfmyn}, #{outacctyn}, #{ai_mode})
+                on duplicate key update
+                clsymd = values(clsymd), gline1 = values(gline1), gline2 = values(gline2),
+                gline3 = values(gline3), gline4 = values(gline4), gline5 = values(gline5),
+                bgtype = values(bgtype), stkgbn = values(stkgbn), mnfyn = values(mnfyn),
+                cardcust = values(cardcust), pricegbn = values(pricegbn), stokyn = values(stokyn),
+                slipyn = values(slipyn), updtime = now(), updemp = values(updemp),
+                logoimg = values(logoimg), stampimg = values(stampimg),
+                yeosinyn = values(yeosinyn), iocnfmyn = values(iocnfmyn), outacctyn = values(outacctyn), ai_mode = values(ai_mode);
 
                 SELECT 'OK' AS RESULT, '' AS MSG;
             </when>
@@ -142,12 +142,12 @@
     </select>
 
     <select id="HABA_910U_SELECT" parameterType="map" resultType="map">
-        SELECT  A.cmpycd,   A.userid,   A.usernm,   A.deptcd,   A.deptnm,
-                A.pw,       A.telno,    A.hpno,     A.email,
-                A.useyn,    A.pricegbn, A.photo_path, A.inner_no
-          FROM  haba920t_tbl A
-         WHERE A.cmpycd  = #{cmpycd}
-           AND A.userid  = #{userid}
+        select  a.cmpycd,   a.userid,   a.usernm,   a.deptcd,   a.deptnm,
+                a.pw,       a.telno,    a.hpno,     a.email,
+                a.useyn,    a.pricegbn, a.photo_path, a.inner_no
+          from  haba920t_tbl a
+         where a.cmpycd  = #{cmpycd}
+           and a.userid  = #{userid}
     </select>
 
     <update id="HABA_910U_UPDATE" parameterType="map">
@@ -172,35 +172,35 @@
     <select id="HABA_920U_SELECT" parameterType="map" resultType="map">
         <choose>
             <when test="actkind == 'S1'">
-                SELECT  A.cmpycd,   A.userid,   A.usernm,   A.deptcd,   A.deptnm,   A.empno,    A.salsyn,
-                        A.pw,       A.telno,    A.hpno,     A.email,    A.sdept,    B.deptnm AS sdeptnm,
-                        A.useyn,    A.addtime,  A.updtime,  A.usergrp,  A.pricegbn, A.positionoff,
-                        IFNULL(C.codenm,'') AS  positionoffnm, A.inner_no, A.photo_path
-                  FROM  haba920t_tbl A LEFT OUTER JOIN haba120t_tbl B
-                    ON A.cmpycd  = B.cmpycd
-                   AND A.sdept   = B.deptcd
-                       LEFT OUTER JOIN haba900t_tbl C
-                    ON C.cdtype = '800'
-                   AND C.useyn   = 'Y'
-                   AND A.positionoff = C.codecd
-                 WHERE A.cmpycd  = #{cmpycd}
-                   AND (A.userid LIKE CONCAT('%', #{word}, '%') OR A.usernm LIKE CONCAT('%', #{word}, '%'))
-                 ORDER BY A.deptcd, A.positionoff, A.userid
+                select  a.cmpycd,   a.userid,   a.usernm,   a.deptcd,   a.deptnm,   a.empno,    a.salsyn,
+                        a.pw,       a.telno,    a.hpno,     a.email,    a.sdept,    b.deptnm as sdeptnm,
+                        a.useyn,    a.addtime,  a.updtime,  a.usergrp,  a.pricegbn, a.positionoff,
+                        ifnull(c.codenm,'') as  positionoffnm, a.inner_no, a.photo_path
+                  from  haba920t_tbl a left outer join haba120t_tbl b
+                    on a.cmpycd  = b.cmpycd
+                   and a.sdept   = b.deptcd
+                       left outer join haba900t_tbl c
+                    on c.cdtype = '800'
+                   and c.useyn   = 'y'
+                   and a.positionoff = c.codecd
+                 where a.cmpycd  = #{cmpycd}
+                   and (a.userid like concat('%', #{word}, '%') or a.usernm like concat('%', #{word}, '%'))
+                 order by a.deptcd, a.positionoff, a.userid
             </when>
             <when test="actkind == 'S2'">
-                SELECT  A.cmpycd,   A.userid,   A.usernm,   A.deptcd,   A.deptnm,   A.pw,   A.telno,    A.hpno, A.inner_no,
-                        A.email,    A.empno,    A.salsyn,   A.sdept,    B.deptnm AS sdeptnm,A.useyn,    A.addtime,
-                        A.updtime,  A.usergrp,  A.pricegbn, A.positionoff, IFNULL(C.codenm,'') AS  positionoffnm, A.photo_path
-                  FROM   haba920t_tbl A LEFT OUTER JOIN haba120t_tbl B
-                    ON   A.cmpycd  = B.cmpycd
-                   AND   A.sdept   = B.deptcd
-                       LEFT OUTER JOIN haba900t_tbl C
-                    ON C.cdtype = '800'
-                   AND C.useyn   = 'Y'
-                   AND A.positionoff = C.codecd
-                 WHERE   A.cmpycd = #{cmpycd}
-                   AND  (A.userid LIKE CONCAT('%', #{word}, '%') OR A.usernm LIKE CONCAT('%', #{word}, '%'))
-                 ORDER  BY A.addtime, A.userid
+                select  a.cmpycd,   a.userid,   a.usernm,   a.deptcd,   a.deptnm,   a.pw,   a.telno,    a.hpno, a.inner_no,
+                        a.email,    a.empno,    a.salsyn,   a.sdept,    b.deptnm as sdeptnm,a.useyn,    a.addtime,
+                        a.updtime,  a.usergrp,  a.pricegbn, a.positionoff, ifnull(c.codenm,'') as  positionoffnm, a.photo_path
+                  from   haba920t_tbl a left outer join haba120t_tbl b
+                    on   a.cmpycd  = b.cmpycd
+                   and   a.sdept   = b.deptcd
+                       left outer join haba900t_tbl c
+                    on c.cdtype = '800'
+                   and c.useyn   = 'Y'
+                   and a.positionoff = c.codecd
+                 where   a.cmpycd = #{cmpycd}
+                   and  (a.userid like concat('%', #{word}, '%') or a.usernm like concat('%', #{word}, '%'))
+                 order  by a.addtime, a.userid
             </when>
         </choose>
     </select>
@@ -250,17 +250,17 @@
     </delete>
 
     <select id="HABA_935U_SELECT_PERM" parameterType="map" resultType="map">
-        SELECT A.pgmid, A.pgmnm, IFNULL(B.useyn,'N') AS useyn,
-               IFNULL(B.dspord, A.dspord) AS dspord, IFNULL(B.mypgm,'N') AS mypgm
-          FROM haaa800t_tbl A LEFT OUTER JOIN haba935t_tbl B
-            ON A.pgmid  = B.pgmid
-           AND A.useyn   = 'Y'
-           AND B.cmpycd = #{cmpycd}
-           AND B.usergrp = #{usergrp}
-         WHERE A.upmucd  = #{upmucd}
-           AND A.grpcd   = #{grpcd}
-           AND A.useyn   = 'Y'
-         ORDER BY IFNULL(B.dspord, A.dspord)
+        select a.pgmid, a.pgmnm, ifnull(b.useyn,'N') as useyn,
+               ifnull(b.dspord, a.dspord) as dspord, ifnull(b.mypgm,'N') as mypgm
+          from haaa800t_tbl a left outer join haba935t_tbl b
+            on a.pgmid  = b.pgmid
+           and a.useyn   = 'Y'
+           and b.cmpycd = #{cmpycd}
+           and b.usergrp = #{usergrp}
+         where a.upmucd  = #{upmucd}
+           and a.grpcd   = #{grpcd}
+           and a.useyn   = 'Y'
+         order by ifnull(b.dspord, a.dspord)
     </select>
 
     <select id="HABA_935U_SELECT_TREE" parameterType="map" resultType="map">

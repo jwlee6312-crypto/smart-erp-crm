@@ -2,6 +2,9 @@ package com.crmbank.erp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 
@@ -17,5 +20,10 @@ public class ErpApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ErpApplication.class, args);
+    }
+
+    @Bean
+    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> servletContainerCustomizer() {
+        return factory -> factory.addContextCustomizers(context -> context.setSessionTimeout(120)); // 120 minutes (2 hours)
     }
 }

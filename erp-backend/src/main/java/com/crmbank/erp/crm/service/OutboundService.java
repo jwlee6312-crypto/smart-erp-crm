@@ -327,4 +327,49 @@ public class OutboundService {
         updateParams.put("status", "030");
         outboundMapper.updateCallListStatus(updateParams);
     }
+
+    public List<Map<String, Object>> getMonitoringMasterList(Map<String, Object> params) {
+        return outboundMapper.selectMonitoringMasterList(params);
+    }
+
+    public List<Map<String, Object>> getMonitoringQaList(Map<String, Object> params) {
+        return outboundMapper.selectMonitoringQaList(params);
+    }
+
+    @Transactional
+    public void saveMonitoringCorrection(Map<String, Object> payload, String defaultUserid) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> correctionForm = (Map<String, Object>) payload.get("correctionForm");
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> selectedMaster = (List<Map<String, Object>>) payload.get("selectedMaster");
+
+        String evaluator = correctionForm != null && correctionForm.get("evaluator") != null ? String.valueOf(correctionForm.get("evaluator")) : defaultUserid;
+        String grade = correctionForm != null && correctionForm.get("grade") != null ? String.valueOf(correctionForm.get("grade")) : "A";
+        String managerComment = correctionForm != null && correctionForm.get("managerComment") != null ? String.valueOf(correctionForm.get("managerComment")) : "";
+
+        if (selectedMaster != null) {
+            for (Map<String, Object> master : selectedMaster) {
+                master.put("evaluator", evaluator);
+                master.put("grade", grade);
+                master.put("remark", managerComment);
+                outboundMapper.updateMonitoringRslt(master);
+            }
+        }
+    }
+
+    public List<Map<String, Object>> getUsers(Map<String, Object> params) {
+        return outboundMapper.selectUsers(params);
+    }
+
+    public List<Map<String, Object>> getCounselorStats(Map<String, Object> params) {
+        return outboundMapper.selectCounselorStats(params);
+    }
+
+    public List<Map<String, Object>> getCounselorCallList(Map<String, Object> params) {
+        return outboundMapper.selectCounselorCallList(params);
+    }
+
+    public List<Map<String, Object>> getCounselorQaDetail(Map<String, Object> params) {
+        return outboundMapper.selectCounselorQaDetail(params);
+    }
 }

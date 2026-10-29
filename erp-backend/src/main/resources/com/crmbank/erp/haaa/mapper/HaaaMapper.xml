@@ -56,21 +56,21 @@
 
     <!-- HAAA_800U_STR Procedures -->
     <select id="HAAA_800U_SELECT" parameterType="map" resultType="map">
-        SELECT A.pgmid, A.pgmnm, A.upmucd, C.codenm AS upmunm, A.grpcd, B.grpnm, A.dspord, A.useyn
-          FROM haaa800t_tbl A
-          LEFT OUTER JOIN haaa810t_tbl B ON A.upmucd = B.upmucd AND A.grpcd = B.grpcd
-          LEFT OUTER JOIN haba900t_tbl C ON C.cdtype = '320' AND A.upmucd = C.codecd
-         WHERE 1=1
+        select a.pgmid, a.pgmnm, a.upmucd, c.codenm as upmunm, a.grpcd, b.grpnm, a.dspord, a.useyn
+          from haaa800t_tbl a
+          left outer join haaa810t_tbl b on a.upmucd = b.upmucd and a.grpcd = b.grpcd
+          left outer join haba900t_tbl c on c.cdtype = '320' and a.upmucd = c.codecd
+         where 1=1
            <if test='upmucd != null and upmucd != ""'>
-             AND A.upmucd = #{upmucd}
+             and a.upmucd = #{upmucd}
            </if>
            <if test='grpcd != null and grpcd != ""'>
-             AND A.grpcd = #{grpcd}
+             and a.grpcd = #{grpcd}
            </if>
            <if test='pgmnm != null and pgmnm != ""'>
-             AND A.pgmnm LIKE CONCAT('%', #{pgmnm}, '%')
+             and a.pgmnm like concat('%', #{pgmnm}, '%')
            </if>
-         ORDER BY A.dspord
+         order by a.dspord
     </select>
 
     <insert id="HAAA_800U_INSERT" parameterType="map">

@@ -274,22 +274,22 @@
     </insert>
 
     <insert id="HSBA_070U_INSERT_CUST" parameterType="map">
-        INSERT INTO HABA020T_TBL
-        (CMPYCD, CUSTCD, CUSTNO, CUSTNM,  CUSTGBN, BOSSNM, JUMINNO,  LEGALNO, CUSTKIND, CUSTTYPE,
-         TELNO,  FAXNO,  POSTNO, ADDRESS, D_ADDRESS, IOGBN,   FNDYMD, STDYMD,   CLSYMD,  SINGRD,   STATUS,
-         GUJOA,  BANKNM, ELCYN,  USEYN,  ADDTIME, UPDTIME, UPDEMP,   GIGBCD, OUTCUSTCD)
-        VALUES
+        insert into haba020t_tbl
+        (cmpycd, custcd, custno, custnm,  custgbn, bossnm, juminno,  legalno, custkind, custtype,
+         telno,  faxno,  postno, address, d_address, iogbn,   fndymd, stdymd,   clsymd,  singrd,   status,
+         gujoa,  banknm, elcyn,  useyn,  addtime, updtime, updemp,   gigbcd, outcustcd)
+        values
         (#{cmpycd},
-         COALESCE(NULLIF(#{custcd}, ''), CONCAT(#{custcd}, LPAD(IFNULL(MAX(CAST(x.CUSTCD AS UNSIGNED)), 0) + 2, 7, '0'))),
+         coalesce(nullif(#{custcd}, ''), concat(#{custcd}, lpad(ifnull(max(cast(x.custcd as unsigned)), 0) + 2, 7, '0'))),
          #{custno}, #{custnm},  #{custgbn}, #{bossnm}, #{juminno}, #{legalno}, #{custkind}, #{custtype},
          #{telno},  #{faxno},  #{postno}, #{address}, #{d_address}, #{iogbn},  #{fndymd}, #{stdymd},  #{clsymd},  #{singrd},   #{status},
          #{gujoa},  #{banknm}, #{elcyn},  #{useyn},
-         NOW(), NOW(), #{updemp}, #{gigbcd}, #{outcustcd})
+         now(), now(), #{updemp}, #{gigbcd}, #{outcustcd})
     </insert>
 
     <insert id="HSBA_070U_INSERT_SUB" parameterType="map">
-        INSERT INTO HSBA100T_TBL
-        (CMPYCD, CUSTCD, INPRCGBN, OUTPRCGBN, HDAMT, RCVDD, AGRPCD, BGRPCD, CGRPCD, AREA, DAMDANG, TELNO, EMAIL, REMARK, USEYN, ADDTIME, UPDTIME, UPDEMP)
+        insert into hsba100t_tbl
+        (cmpycd, custcd, inprcgbn, outprcgbn, hdamt, rcvdd, agrpcd, bgrpcd, cgrpcd, area, damdang, telno, email, remark, useyn, addtime, updtime, updemp)
         VALUES (#{cmpycd}, #{custcd}, #{inprcgbn}, #{outprcgbn}, IFNULL(#{hdamt}, 0), IFNULL(#{rcvdd}, 0), #{agrpcd}, #{bgrpcd}, #{cgrpcd}, #{area}, #{cdamdang}, #{ctelno}, #{cemail}, #{remark}, #{useyn}, NOW(), NOW(), #{updemp})
     </insert>
 
@@ -329,5 +329,73 @@
            AND CDGBN     = #{cdgbn}
            AND CODE      = #{code}
     </update>
+
+    <!-- ========================================== -->
+    <!-- HSBA_130U: 거래처 배송처 등록 (위·경도 포함)   -->
+    <!-- ========================================== -->
+    <select id="HSBA_130U_SELECT" parameterType="map" resultType="map">
+        select a.cmpycd, a.custcd, b.custnm, a.trancd, a.postno, a.address, a.d_address,
+               '' as area, '' as areanm,
+               a.damdang, a.telno, a.email, a.useyn, a.latitude, a.longitude
+          from hsba130t_tbl a
+          left outer join haba020t_tbl b
+            on a.cmpycd = b.cmpycd
+           and a.custcd = b.custcd
+         where b.cmpycd = #{cmpycd}
+           <if test="custnm != null and custnm != ''">
+             and b.custnm like concat('%', #{custnm}, '%')
+           </if>
+           <if test="custcd != null and custcd != ''">
+             and a.custcd = #{custcd}
+           </if>
+           and b.iogbn in ('010','030')
+         order by b.custnm, a.trancd
+    </select>
+
+    <select id="HSBA_130U_SELECT_CUST" parameterType="map" resultType="map">
+        select custcd, custnm from haba020t_tbl
+         where cmpycd = #{cmpycd}
+           and iogbn in ('010','030')
+           <if test="custnm != null and custnm != ''">
+             and custnm like concat('%', #{custnm}, '%')
+           </if>
+           and useyn = 'Y'
+         order by custcd
+    </select>
+
+    <insert id="HSBA_130U_INSERT" parameterType="map">
+        INSERT INTO hsba130t_tbl
+        (CMPYCD, CUSTCD, TRANCD, AREA, POSTNO, ADDRESS, D_ADDRESS, DAMDANG, TELNO, EMAIL, USEYN, LATITUDE, LONGITUDE, ADDTIME, UPDTIME, UPDEMP)
+        VALUES
+        (#{cmpycd}, #{custcd},
+         IFNULL((SELECT LPAD(CAST(IFNULL(MAX(CAST(x.TRANCD AS UNSIGNED)), 0) + 1 AS CHAR), 2, '0') FROM hsba130t_tbl x WHERE x.CMPYCD = #{cmpycd} AND x.CUSTCD = #{custcd}), '01'),
+         IFNULL(NULLIF(#{area}, ''), '000'), #{postno}, #{address}, #{d_address}, #{damdang}, #{telno}, #{email}, IFNULL(#{useyn}, 'Y'), #{latitude}, #{longitude}, NOW(), NOW(), #{updemp})
+    </insert>
+
+    <update id="HSBA_130U_UPDATE" parameterType="map">
+        UPDATE hsba130t_tbl
+           SET AREA      = IFNULL(NULLIF(#{area}, ''), '000'),
+               POSTNO    = #{postno},
+               ADDRESS   = #{address},
+               D_ADDRESS = #{d_address},
+               DAMDANG   = #{damdang},
+               TELNO     = #{telno},
+               EMAIL     = #{email},
+               USEYN     = #{useyn},
+               LATITUDE  = #{latitude},
+               LONGITUDE = #{longitude},
+               UPDTIME   = NOW(),
+               UPDEMP    = #{updemp}
+         WHERE CMPYCD    = #{cmpycd}
+           AND CUSTCD    = #{custcd}
+           AND TRANCD    = #{trancd}
+    </update>
+
+    <delete id="HSBA_130U_DELETE" parameterType="map">
+        DELETE FROM hsba130t_tbl
+         WHERE CMPYCD = #{cmpycd}
+           AND CUSTCD = #{custcd}
+           AND TRANCD = #{trancd}
+    </delete>
 
 </mapper>

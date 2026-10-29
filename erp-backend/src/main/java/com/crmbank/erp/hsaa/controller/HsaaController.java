@@ -534,6 +534,47 @@ public class HsaaController {
         }
     }
 
+    // --- HSAA700U 방문 계획 자동 수립 API ---
+
+    @GetMapping("/visit-plan")
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getVisitPlan(
+            @RequestParam String ym,
+            @RequestParam(required = false) String userid,
+            HttpSession session) {
+        UserSession user = (UserSession) session.getAttribute("user_session");
+        if (user == null) return ResponseEntity.status(401).build();
+
+        String targetUser = (userid == null || userid.isEmpty()) ? user.getUserid() : userid;
+        List<Map<String, Object>> plan = hsaaService.getVisitPlan(user.getCmpycd(), ym, targetUser);
+        return ResponseEntity.ok(ApiResponse.success(plan, "조회 성공"));
+    }
+
+    @PostMapping("/visit-plan/generate")
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> generateVisitPlan(
+            @RequestBody Map<String, Object> payload,
+            HttpSession session) {
+        UserSession user = (UserSession) session.getAttribute("user_session");
+        if (user == null) return ResponseEntity.status(401).build();
+
+        String ym = String.valueOf(payload.getOrDefault("ym", ""));
+        String userid = String.valueOf(payload.getOrDefault("userid", user.getUserid()));
+        int dailyCapa = Integer.parseInt(String.valueOf(payload.getOrDefault("dailyCapa", "4")));
+
+        List<Map<String, Object>> plan = hsaaService.generateVisitPlan(user.getCmpycd(), ym, userid, dailyCapa);
+        return ResponseEntity.ok(ApiResponse.success(plan, "방문 계획 자동 수립 성공"));
+    }
+
+    @PostMapping("/visit-plan/confirm")
+    public ResponseEntity<ApiResponse<?>> confirmVisitPlan(
+            @RequestBody Map<String, Object> payload,
+            HttpSession session) {
+        UserSession user = (UserSession) session.getAttribute("user_session");
+        if (user == null) return ResponseEntity.status(401).build();
+
+        hsaaService.confirmVisitPlan(payload, user.getCmpycd());
+        return ResponseEntity.ok(ApiResponse.success("방문 계획 확정 성공"));
+    }
+
     @GetMapping("/codes/{group}")
     public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getHsbaCodes(
             @PathVariable("group") String group,

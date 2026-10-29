@@ -13,8 +13,8 @@
         from campaign_mst a
         left join haba900t_tbl b on a.surv_gb = b.codecd and b.cdtype = '910'
         where a.cmpycd = #{cmpycd}
-        <if test="camp_nm != null and camp_nm != ''"> AND A.CAMP_NM LIKE CONCAT('%', #{camp_nm}, '%') </if>
-        ORDER BY A.CAMP_NO DESC
+        <if test="camp_nm != null and camp_nm != ''"> and a.camp_nm like concat('%', #{camp_nm}, '%') </if>
+        order by a.camp_no desc
     </select>
 
     <insert id="insertCampMst" parameterType="com.crmbank.erp.crm.dto.CampMstDto">
@@ -30,23 +30,23 @@
     </update>
 
     <select id="selectCampCallList" parameterType="map" resultType="map">
-        SELECT
+        select
             a.call_seq as call_seq, a.cmpycd as cmpycd, a.camp_no as camp_no, a.surv_gb as surv_gb, a.cust_nm as cust_nm, a.email as email, a.tel_no as tel_no, a.status as status,
-            IFNULL(a.rslt_cd,'') as rslt_cd, IFNULL(b.codenm, '미처리') as rslt_nm,
+            ifnull(a.rslt_cd,'') as rslt_cd, ifnull(b.codenm, '미처리') as rslt_nm,
             a.userid as userid, a.ext_data as ext_data, r.rslt_no as rslt_no,
-            DATE_FORMAT(r.start_dtime, '%Y-%m-%d %H:%i:%s') as start_dtime,
+            date_format(r.start_dtime, '%Y-%m-%d %H:%i:%s') as start_dtime,
             DATE_FORMAT(r.end_dtime, '%Y-%m-%d %H:%i:%s') as end_dtime,
             r.remark as remark, r.rec_file as rec_file, r.media_type as media_type, r.chat_log as chat_log,
             u.usernm as consultnm
         from campaign_call_list a
         left outer join haba900t_tbl b on b.cdtype = '920' and a.rslt_cd = b.codecd
-        LEFT JOIN LATERAL (
+        left join lateral (
             select rs.rslt_no, rs.start_dtime, rs.end_dtime, rs.remark, rs.rec_file, rs.media_type, rs.chat_log, rs.userid, rs.cmpycd
             from campaign_rslt_mst rs
             where rs.cmpycd = a.cmpycd and rs.call_seq = a.call_seq
             order by rs.rslt_no desc
-            LIMIT 1
-        ) r ON TRUE
+            limit 1
+        ) r on true
         left outer join haba920t_tbl u on r.userid = u.userid and r.cmpycd = u.cmpycd
         where a.cmpycd = #{cmpycd}
           and a.camp_no = #{camp_no}
@@ -236,23 +236,23 @@
     </insert>
 
     <select id="selectCampaignHistory" parameterType="map" resultType="map">
-        SELECT x.cust_nm AS cust_nm,
-               a.start_time AS addtime,
-               IFNULL(c.codenm, '미처리') AS rslt_nm,
-               a.media_type AS media_type,
-               IFNULL(b.remark, '') AS memo,
-               a.interaction_id AS interaction_id
-        FROM total_interaction_log a
-        JOIN campaign_call_list x ON a.cmpycd = x.cmpycd AND x.call_seq = #{call_seq}
-        LEFT JOIN campaign_rslt_mst b ON a.interaction_id = b.interaction_id
-        LEFT JOIN HABA900T_TBL c ON c.cdtype = '920' AND a.result_cd = c.codecd
-        WHERE a.cmpycd = #{cmpycd}
-        AND (
-            (a.keyword = x.tel_no AND x.tel_no IS NOT NULL AND x.tel_no != '')
-            OR
-            (a.keyword = x.email AND x.email IS NOT NULL AND x.email != '')
+        select x.cust_nm as cust_nm,
+               a.start_time as addtime,
+               ifnull(c.codenm, '미처리') as rslt_nm,
+               a.media_type as media_type,
+               ifnull(b.remark, '') as memo,
+               a.interaction_id as interaction_id
+        from total_interaction_log a
+        join campaign_call_list x on a.cmpycd = x.cmpycd and x.call_seq = #{call_seq}
+        left join campaign_rslt_mst b on a.interaction_id = b.interaction_id
+        left join haba900t_tbl c on c.cdtype = '920' and a.result_cd = c.codecd
+        where a.cmpycd = #{cmpycd}
+        and (
+            (a.keyword = x.tel_no and x.tel_no is not null and x.tel_no != '')
+            or
+            (a.keyword = x.email and x.email is not null and x.email != '')
         )
-        ORDER BY a.start_time DESC
+        order by a.start_time desc
     </select>
 
     <select id="selectCrmCodeList" parameterType="map" resultType="map">
@@ -261,8 +261,8 @@
 
     <select id="selectCampSurvMstList" parameterType="map" resultType="map">
         select a.surv_no as surv_no, b.question as question, b.ans_tp as ans_tp, b.dspord as dspord, b.useyn as useyn,
-        (select GROUP_CONCAT(ans_cont ORDER BY ans_no SEPARATOR ', ') from surv_dtl
-        where cmpycd = b.cmpycd and surv_no = b.surv_no and useyn = 'y') as answers
+        (select group_concat(ans_cont order by ans_no separator ', ') from surv_dtl
+        where cmpycd = b.cmpycd and surv_no = b.surv_no and useyn = 'Y') as answers
         from camp_survey a left outer join surv_mst b
         on a.cmpycd = b.cmpycd
         and a.surv_no = b.surv_no
@@ -271,17 +271,161 @@
     </select>
 
     <select id="selectCampaignRsltDtl" parameterType="map" resultType="map">
-        SELECT a.surv_no AS surv_no, b.question AS question, a.ans_no AS ans_no, c.ans_cont AS ans_cont, a.point AS point, a.remark AS remark
-        FROM campaign_rslt_dtl a
-        JOIN surv_mst b ON a.cmpycd = b.cmpycd AND a.surv_no = b.surv_no
-        LEFT JOIN surv_dtl c ON a.cmpycd = c.cmpycd AND a.surv_no = c.surv_no AND a.ans_no = c.ans_no
-        WHERE a.cmpycd = #{cmpycd} AND a.rslt_no = #{rslt_no}
-        ORDER BY b.dspord, a.surv_no
+        select a.surv_no as surv_no, b.question as question, a.ans_no as ans_no, c.ans_cont as ans_cont, a.point as point, a.remark as remark
+        from campaign_rslt_dtl a
+        join surv_mst b on a.cmpycd = b.cmpycd and a.surv_no = b.surv_no
+        left join surv_dtl c on a.cmpycd = c.cmpycd and a.surv_no = c.surv_no and a.ans_no = c.ans_no
+        where a.cmpycd = #{cmpycd} and a.rslt_no = #{rslt_no}
+        order by b.dspord, a.surv_no
     </select>
 
     <select id="selectAnsPoint" parameterType="map" resultType="java.math.BigDecimal">
-        SELECT IFNULL(ans_point, 0) FROM surv_dtl
-        WHERE cmpycd = #{cmpycd} AND surv_no = #{surv_no} AND ans_no = #{ans_no}
+        select ifnull(ans_point, 0) from surv_dtl
+        where cmpycd = #{cmpycd} and surv_no = #{surv_no} and ans_no = #{ans_no}
+    </select>
+
+    <select id="selectMonitoringMasterList" parameterType="map" resultType="map">
+        SELECT rs.rslt_no AS id,
+               rs.rslt_no AS rslt_no,
+               rs.call_seq AS callSeq,
+               rs.cmpycd AS cmpycd,
+               rs.camp_no AS campNo,
+               c.camp_nm AS campNm,
+               rs.userid AS userId,
+               u.usernm AS userNm,
+               cl.cust_nm AS custNm,
+               cl.tel_no AS telNo,
+               rs.rslt_cd AS rsltCd,
+               bc.codenm AS rsltCdNm,
+               IFNULL(rs.grade, 'A') AS grade,
+               IFNULL(rs.evaluator, #{userid}) AS evaluator,
+               DATE_FORMAT(rs.start_dtime, '%Y-%m-%d %H:%i:%s') AS callDtime,
+               rs.rec_file AS recUrl,
+               rs.remark AS managerComment,
+               CONCAT('[상담 메모]\n', IFNULL(rs.remark, ''), '\n[채팅로그]\n', IFNULL(rs.chat_log, '')) AS callMemo
+          FROM campaign_rslt_mst rs
+          LEFT JOIN campaign_mst c ON rs.cmpycd = c.cmpycd AND rs.camp_no = c.camp_no
+          LEFT JOIN campaign_call_list cl ON rs.cmpycd = cl.cmpycd AND rs.call_seq = cl.call_seq
+          LEFT JOIN haba900t_tbl bc ON bc.cdtype = '920' AND rs.rslt_cd = bc.codecd
+          LEFT JOIN haba920t_tbl u ON rs.cmpycd = u.cmpycd AND rs.userid = u.userid
+         WHERE rs.cmpycd = #{cmpycd}
+           <if test="campno != null and campno != ''">
+           AND rs.camp_no = #{campno}
+           </if>
+           <if test="userid != null and userid != ''">
+           AND rs.userid = #{userid}
+           </if>
+           <if test="frdt != null and frdt != '' and todt != null and todt != ''">
+           AND DATE(rs.start_dtime) BETWEEN #{frdt} AND #{todt}
+           </if>
+           <if test="keyword != null and keyword != ''">
+           AND (cl.cust_nm LIKE CONCAT('%', #{keyword}, '%') OR cl.tel_no LIKE CONCAT('%', #{keyword}, '%'))
+           </if>
+         ORDER BY rs.rslt_no DESC
+    </select>
+
+    <select id="selectMonitoringQaList" parameterType="map" resultType="map">
+        SELECT sm.surv_no AS id,
+               sm.question AS questionText,
+               IFNULL(sd.ans_cont, '응답없음') AS answerText,
+               IFNULL(sd.ans_cont, '') AS correctedAnswer
+          FROM campaign_call_list cl
+          LEFT JOIN surv_mst sm ON cl.cmpycd = sm.cmpycd
+          LEFT JOIN surv_dtl sd ON sm.cmpycd = sd.cmpycd AND sm.surv_no = sd.surv_no
+         WHERE cl.cmpycd = #{cmpycd}
+           AND cl.call_seq = #{callseq}
+         LIMIT 10
+    </select>
+
+    <update id="updateMonitoringRslt" parameterType="map">
+        UPDATE campaign_rslt_mst
+           SET rslt_cd = IFNULL(#{rsltCdNm}, #{rslt_cd}),
+               grade = #{grade},
+               evaluator = #{evaluator},
+               remark = #{remark},
+               updtime = NOW()
+         WHERE cmpycd = #{cmpycd}
+           AND rslt_no = #{id}
+    </update>
+
+    <select id="selectUsers" parameterType="map" resultType="map">
+        SELECT userid AS userid,
+               usernm AS usernm
+          FROM haba920t_tbl
+         WHERE cmpycd = #{cmpycd}
+           AND (useyn = 'Y' OR useyn = 'y' OR useyn = '1' OR useyn IS NULL)
+         ORDER BY usernm ASC
+    </select>
+
+    <select id="selectCounselorStats" parameterType="map" resultType="map">
+        SELECT cl.userid AS userid,
+               u.usernm AS userNm,
+               cl.camp_no AS campNo,
+               c.camp_nm AS campNm,
+               COUNT(cl.call_seq) AS totCnt,
+               SUM(CASE WHEN cl.rslt_cd = '041' THEN 1 ELSE 0 END) AS absentCnt,
+               SUM(CASE WHEN cl.rslt_cd = '042' THEN 1 ELSE 0 END) AS threeWayCnt,
+               SUM(CASE WHEN cl.rslt_cd = '043' THEN 1 ELSE 0 END) AS surveyStopCnt,
+               SUM(CASE WHEN cl.rslt_cd = '061' THEN 1 ELSE 0 END) AS rejectCnt,
+               SUM(CASE WHEN cl.rslt_cd = '062' THEN 1 ELSE 0 END) AS wrongNumCnt,
+               SUM(CASE WHEN cl.rslt_cd = '063' THEN 1 ELSE 0 END) AS etcCnt,
+               SUM(CASE WHEN cl.rslt_cd = '081' THEN 1 ELSE 0 END) AS reserveCnt,
+               SUM(CASE WHEN cl.rslt_cd = '099' THEN 1 ELSE 0 END) AS successCnt
+          FROM campaign_call_list cl
+          LEFT JOIN campaign_mst c ON cl.cmpycd = c.cmpycd AND cl.camp_no = c.camp_no
+          LEFT JOIN haba920t_tbl u ON cl.cmpycd = u.cmpycd AND cl.userid = u.userid
+         WHERE cl.cmpycd = #{cmpycd}
+           <if test="campno != null and campno != ''">
+           AND cl.camp_no = #{campno}
+           </if>
+           <if test="userid != null and userid != ''">
+           AND cl.userid = #{userid}
+           </if>
+           <if test="frdt != null and frdt != '' and todt != null and todt != ''">
+           AND DATE(cl.addtime) BETWEEN #{frdt} AND #{todt}
+           </if>
+         GROUP BY cl.camp_no, c.camp_nm, cl.userid, u.usernm
+         ORDER BY c.camp_nm ASC, u.usernm ASC
+    </select>
+
+    <select id="selectCounselorCallList" parameterType="map" resultType="map">
+        SELECT cl.call_seq AS callSeq,
+               cl.call_seq AS id,
+               cl.cust_nm AS custNm,
+               cl.tel_no AS telNo,
+               cl.rslt_cd AS rsltCd,
+               IFNULL(bc.codenm, cl.rslt_cd) AS rsltCdNm,
+               DATE_FORMAT(rs.start_dtime, '%Y-%m-%d %H:%i:%s') AS callDtime,
+               IF(rs.rec_file IS NOT NULL AND rs.rec_file != '', '유', '무') AS recYn,
+               rs.rec_file AS recUrl
+          FROM campaign_call_list cl
+          LEFT JOIN campaign_rslt_mst rs ON cl.cmpycd = rs.cmpycd AND cl.call_seq = rs.call_seq
+          LEFT JOIN haba900t_tbl bc ON bc.cdtype = '920' AND cl.rslt_cd = bc.codecd
+         WHERE cl.cmpycd = #{cmpycd}
+           <if test="campno != null and campno != ''">
+           AND cl.camp_no = #{campno}
+           </if>
+           <if test="userid != null and userid != ''">
+           AND cl.userid = #{userid}
+           </if>
+           <if test="status != null and status != ''">
+           AND (cl.rslt_cd = #{status} OR bc.codenm LIKE CONCAT('%', #{status}, '%'))
+           </if>
+         ORDER BY cl.call_seq DESC
+    </select>
+
+    <select id="selectCounselorQaDetail" parameterType="map" resultType="map">
+        SELECT sm.surv_no AS id,
+               sm.question AS questionText,
+               IFNULL(sd.ans_cont, rd.remark) AS answerText,
+               DATE_FORMAT(rd.addtime, '%Y-%m-%d %H:%i:%s') AS addTime
+          FROM campaign_rslt_dtl rd
+          JOIN surv_mst sm ON rd.cmpycd = sm.cmpycd AND rd.surv_no = sm.surv_no
+          LEFT JOIN surv_dtl sd ON rd.cmpycd = sd.cmpycd AND rd.surv_no = sd.surv_no AND rd.ans_no = sd.ans_no
+          JOIN campaign_rslt_mst rm ON rd.cmpycd = rm.cmpycd AND rd.rslt_no = rm.rslt_no
+         WHERE rd.cmpycd = #{cmpycd}
+           AND rm.call_seq = #{callseq}
+         ORDER BY sm.dspord, sm.surv_no
     </select>
 
 </mapper>

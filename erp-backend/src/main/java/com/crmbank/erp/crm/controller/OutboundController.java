@@ -27,7 +27,11 @@ public class OutboundController {
             params.forEach((k, v) -> lowParams.put(k.toLowerCase(), v));
         }
         UserSession user = (UserSession) session.getAttribute("user_session");
-        lowParams.put("cmpycd", user != null ? user.getCmpycd() : "");
+        String cmpycd = user != null ? user.getCmpycd() : null;
+        if (cmpycd == null || cmpycd.trim().isEmpty()) {
+            cmpycd = "COIT";
+        }
+        lowParams.put("cmpycd", cmpycd.trim());
         lowParams.put("userid", user != null ? user.getUserid() : "SYSTEM");
         return lowParams;
     }
@@ -169,5 +173,44 @@ public class OutboundController {
             result.put("message", e.getMessage());
         }
         return result;
+    }
+
+    // 8. 상담 모니터링 및 결과 보정 (HGOA400U)
+    @GetMapping("/monitoring/master")
+    public List<Map<String, Object>> getMonitoringMaster(@RequestParam Map<String, Object> params, HttpSession session) {
+        return outboundService.getMonitoringMasterList(getParams(params, session));
+    }
+
+    @GetMapping("/monitoring/qa")
+    public List<Map<String, Object>> getMonitoringQa(@RequestParam Map<String, Object> params, HttpSession session) {
+        return outboundService.getMonitoringQaList(getParams(params, session));
+    }
+
+    @PostMapping("/monitoring/save")
+    public void saveMonitoringCorrection(@RequestBody Map<String, Object> payload, HttpSession session) {
+        UserSession user = (UserSession) session.getAttribute("user_session");
+        String userid = user != null ? user.getUserid() : "SYSTEM";
+        outboundService.saveMonitoringCorrection(payload, userid);
+    }
+
+    @GetMapping("/users")
+    public List<Map<String, Object>> getUsers(@RequestParam Map<String, Object> params, HttpSession session) {
+        return outboundService.getUsers(getParams(params, session));
+    }
+
+    // 9. 개인별 상담실적 현황 통계 (HGOA410S)
+    @GetMapping("/stats/counselor")
+    public List<Map<String, Object>> getCounselorStats(@RequestParam Map<String, Object> params, HttpSession session) {
+        return outboundService.getCounselorStats(getParams(params, session));
+    }
+
+    @GetMapping("/stats/calls")
+    public List<Map<String, Object>> getCounselorCalls(@RequestParam Map<String, Object> params, HttpSession session) {
+        return outboundService.getCounselorCallList(getParams(params, session));
+    }
+
+    @GetMapping("/stats/qa")
+    public List<Map<String, Object>> getCounselorQa(@RequestParam Map<String, Object> params, HttpSession session) {
+        return outboundService.getCounselorQaDetail(getParams(params, session));
     }
 }

@@ -21,6 +21,13 @@ public class HsqtService {
     }
 
     public List<Map<String, Object>> getQuotationDetail(Map<String, Object> params) {
+        if (params.get("quatym") == null && params.get("qutdt") != null) {
+            String ymd = String.valueOf(params.get("qutdt")).replace("-", "");
+            if (ymd.length() >= 6) params.put("quatym", ymd.substring(0, 6));
+        }
+        if (params.get("quatno") == null && params.get("qutno") != null) {
+            params.put("quatno", params.get("qutno"));
+        }
         return hsqtMapper.selectQuotationDetail(params);
     }
 
@@ -51,6 +58,9 @@ public class HsqtService {
         if (master.get("remark") == null && master.get("remk") != null) {
             master.put("remark", master.get("remk"));
         }
+        if (master.get("keymannm") == null && master.get("custemp") != null) {
+            master.put("keymannm", master.get("custemp"));
+        }
 
         String cmpycd = String.valueOf(master.getOrDefault("cmpycd", "COIT"));
         String quatym = String.valueOf(master.getOrDefault("quatym", "202610"));
@@ -76,6 +86,9 @@ public class HsqtService {
                 detail.put("quatno", quatno);
 
                 // Normalize detail fields
+                if (detail.get("itsize") == null && detail.get("spec") != null) {
+                    detail.put("itsize", detail.get("spec"));
+                }
                 if (detail.get("quatqty") == null && detail.get("quty") != null) {
                     detail.put("quatqty", detail.get("quty"));
                 }
@@ -89,7 +102,11 @@ public class HsqtService {
                     }
                 }
                 if (detail.get("quatvat") == null) {
-                    detail.put("quatvat", 0);
+                    if (detail.get("vat") != null) {
+                        detail.put("quatvat", detail.get("vat"));
+                    } else {
+                        detail.put("quatvat", 0);
+                    }
                 }
                 if (detail.get("pchamt") == null) {
                     detail.put("pchamt", 0);

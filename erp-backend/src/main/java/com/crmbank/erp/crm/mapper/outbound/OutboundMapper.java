@@ -59,4 +59,15 @@ public interface OutboundMapper {
     
     // 💡 답변 점수 조회
     BigDecimal selectAnsPoint(Map<String, Object> params);
+
+    // 7. 상담 모니터링 및 결과 보정 (HGOA400U)
+    List<Map<String, Object>> selectMonitoringMasterList(Map<String, Object> params);
+    List<Map<String, Object>> selectMonitoringQaList(Map<String, Object> params);
+    int updateMonitoringRslt(Map<String, Object> params);
+    List<Map<String, Object>> selectUsers(Map<String, Object> params);
+
+    // 8. 개인별 상담실적 현황 통계 (HGOA410S)
+    List<Map<String, Object>> selectCounselorStats(Map<String, Object> params);
+    List<Map<String, Object>> selectCounselorCallList(Map<String, Object> params);
+    List<Map<String, Object>> selectCounselorQaDetail(Map<String, Object> params);
 }

@@ -25,6 +25,11 @@ public interface HsbaMapper {
     int HSBA_070U_INSERT_CUST(Map<String, Object> params);
     int HSBA_070U_INSERT_SUB(Map<String, Object> params);
     List<Map<String, Object>> HSBA_130U_STR(Map<String, Object> params);
+    List<Map<String, Object>> HSBA_130U_SELECT(Map<String, Object> params);
+    List<Map<String, Object>> HSBA_130U_SELECT_CUST(Map<String, Object> params);
+    int HSBA_130U_INSERT(Map<String, Object> params);
+    int HSBA_130U_UPDATE(Map<String, Object> params);
+    int HSBA_130U_DELETE(Map<String, Object> params);
 
     List<Map<String, Object>> HSBA_140U_STR(Map<String, Object> params);
     List<Map<String, Object>> HSBA_170U_STR(Map<String, Object> params);

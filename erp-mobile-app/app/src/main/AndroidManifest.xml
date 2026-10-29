@@ -31,7 +31,7 @@
         <activity android:name="com.crmbank.erp.mobile.CommonMenuActivity" />
         <activity android:name="com.crmbank.erp.mobile.InboundRegisterActivity" />
         <activity android:name="com.crmbank.erp.mobile.OutboundRegisterActivity" />
-        <activity android:name="com.crmbank.erp.mobile.MHSQT_100U" />
+        <activity android:name="com.crmbank.erp.mobile.hsqt.MHSQT100U" />
         <activity android:name="com.crmbank.erp.mobile.hsqt.MHSQT110U" />
 
         <!-- 🚀 콜백 관리 (HGOA) -->

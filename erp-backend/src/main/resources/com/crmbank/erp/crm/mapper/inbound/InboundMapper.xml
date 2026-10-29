@@ -213,13 +213,13 @@
         a.consultid,
         a.rec_file,
         a.cmpycd
-        FROM CALL_MST_TBL A
+        from call_mst_tbl a
         left join haba020t_tbl c on a.cmpycd = c.cmpycd and a.custcd = c.custcd
         left join haba920t_tbl u on a.cmpycd = u.cmpycd and a.consultid = u.userid
-        WHERE A.CMPYCD = #{cmpycd, jdbcType=VARCHAR}
-        AND A.SVCYMD BETWEEN #{fromdt, jdbcType=VARCHAR} AND #{todt, jdbcType=VARCHAR}
+        where a.cmpycd = #{cmpycd, jdbcType=VARCHAR}
+        and a.svcymd between #{fromdt, jdbcType=VARCHAR} and #{todt, jdbcType=VARCHAR}
         <if test="custnm != null and custnm != ''">
-            AND C.CUSTNM LIKE CONCAT('%', #{custnm, jdbcType=VARCHAR}, '%')
+            and c.custnm like concat('%', #{custnm, jdbcType=VARCHAR}, '%')
         </if>
         order by a.start_time desc
     </select>
@@ -234,10 +234,10 @@
 
     <!-- [9. 콜백 통합 관리] HGOA110U 조회 및 결과 저장 -->
     <select id="selectCallbackList" parameterType="map" resultType="map">
-        SELECT
+        select
             a.start_time,
             a.src_no,
-            IFNULL(b.custnm, a.keyword) as custnm,
+            ifnull(b.custnm, a.keyword) as custnm,
             a.callback_no,
             a.rec_file,
             a.callback_agent_id,
@@ -246,8 +246,8 @@
             a.call_memo,
             a.interaction_id,
             a.status as callback_status
-        FROM total_interaction_log a
-        LEFT JOIN haba020t_tbl b ON a.cmpycd = b.cmpycd AND a.src_no = b.telno
+        from total_interaction_log a
+        left join haba020t_tbl b on a.cmpycd = b.cmpycd and a.src_no = b.telno
         WHERE a.cmpycd = #{cmpycd}
           AND a.callback_yn = 'y'
         <if test="fromdt != null and fromdt != ''">

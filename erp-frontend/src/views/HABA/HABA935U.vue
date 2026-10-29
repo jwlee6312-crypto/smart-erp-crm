@@ -98,6 +98,7 @@ import AppAlert from '@/components/AppAlert.vue'
 import { useAlerts } from '@/composables/useAlerts'
 import { api } from '@/utils/axios'
 import { useAuthStore } from '@/stores/authStore'
+import { fetchSelectData } from '@/composables/useFetchSelectData'
 
 const authStore = useAuthStore()
 const { showAlert, showError, alertMessage, vAlert, vAlertError } = useAlerts()
@@ -116,7 +117,7 @@ let grid2: Tabulator | null = null
 // 2. 기초 데이터 로드
 async function fetchGrp() {
   try {
-    const res = await api.post('/hs00/HS00_000S_STR', { gubun: 'GB', cmpycd: authStore.cmpycd, gbncd: '600' })
+    const res = await api.post('/hs00/HS00_000S_STR', { cmpycd: authStore.cmpycd , gbncd: '600' })
     if (res.data) {
       userGrpData.value = res.data.map((i: any) => ({
         codecd: (i.code || i.codecd || '').toString().trim(),
@@ -132,7 +133,7 @@ async function fetchGrp() {
 
 async function fetchUpmu() {
   try {
-    const res = await api.post('/ha00/HA00_00P_STR', { gubun: 'E0', gbncd: '320', cmpycd: authStore.cmpycd })
+    const res = await api.get('/crm/outbound/code', { params: { cdtype: '320' } })
     if (res.data) {
       upmuData.value = res.data.map((i: any) => ({
         codecd: (i.codecd || i.code || '').toString().trim(),

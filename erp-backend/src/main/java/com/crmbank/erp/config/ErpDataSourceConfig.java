@@ -56,7 +56,7 @@ public class ErpDataSourceConfig {
         String password = env.getProperty("ERP_DB_PASSWORD", "Crmbank123!");
         
         String jdbcUrl = String.format(
-                "jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true",
+                "jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true",
                 host, port, dbName);
         
         log.info("🔌 [MySQL ERP DB - CRM] Connecting to URL: {}, Host: {}, Port: {}, DB: {}, User: {}", jdbcUrl, host, port, dbName, username);

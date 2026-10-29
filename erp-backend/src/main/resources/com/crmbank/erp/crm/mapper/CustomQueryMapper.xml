@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crmbank.erp.crm.mapper.CustomQueryMapper">
+
+    <select id="selectQueryList" parameterType="map" resultType="map">
+        SELECT query_id AS queryid,
+               query_nm AS querynm,
+               query_desc AS querydesc,
+               query_json AS queryjson
+          FROM custom_query_mst
+         WHERE cmpycd = #{cmpycd}
+         ORDER BY query_id DESC
+    </select>
+
+    <insert id="insertQuery" parameterType="map">
+        INSERT INTO custom_query_mst (
+            cmpycd, query_id, query_nm, query_desc, query_json, addtime, updtime, updemp
+        ) VALUES (
+            #{cmpycd}, #{query_id}, #{query_nm}, #{query_desc}, #{query_json}, NOW(), NOW(), #{userid}
+        )
+    </insert>
+
+    <update id="updateQuery" parameterType="map">
+        UPDATE custom_query_mst
+           SET query_nm = #{query_nm},
+               query_desc = #{query_desc},
+               query_json = #{query_json},
+               updtime = NOW(),
+               updemp = #{userid}
+         WHERE cmpycd = #{cmpycd}
+           AND query_id = #{query_id}
+    </update>
+
+    <delete id="deleteQuery" parameterType="map">
+        DELETE FROM custom_query_mst
+         WHERE cmpycd = #{cmpycd}
+           AND query_id = #{query_id}
+    </delete>
+
+    <select id="selectCustomQueryExecution" parameterType="map" resultType="map">
+        SELECT cl.cmpycd AS cmpycd,
+               cl.camp_no AS campno,
+               c.camp_nm AS campnm,
+               cl.cust_nm AS custnm,
+               cl.tel_no AS telno,
+               DATE_FORMAT(rm.start_dtime, '%Y-%m-%d %H:%i:%s') AS calldtime,
+               '-' AS survno,
+               '복수 조건 검색 결과' AS questiontext,
+               '-' AS ansno,
+               IFNULL(rm.remark, '상담 완료') AS answertext
+          FROM campaign_call_list cl
+          JOIN campaign_mst c ON cl.cmpycd = c.cmpycd AND cl.camp_no = c.camp_no
+          JOIN campaign_rslt_mst rm ON cl.cmpycd = rm.cmpycd AND cl.call_seq = rm.call_seq
+         WHERE cl.cmpycd = #{cmpycd}
+           <if test="campno != null and campno != ''">
+           AND cl.camp_no = #{campno}
+           </if>
+           <if test="dynamicWhere != null and dynamicWhere != ''">
+           AND ${dynamicWhere}
+           </if>
+         ORDER BY rm.rslt_no DESC
+         LIMIT 200
+    </select>
+
+</mapper>

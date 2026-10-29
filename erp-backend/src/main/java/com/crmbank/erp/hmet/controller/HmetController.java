@@ -1,6 +1,7 @@
 package com.crmbank.erp.hmet.controller;
 
 import com.crmbank.erp.comm.dto.UserSession;
+import com.crmbank.erp.crm.service.GeminiAiService;
 import com.crmbank.erp.hmet.service.HmetService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class HmetController {
 
     private final HmetService hmetService;
+    private final GeminiAiService geminiAiService;
 
     private Map<String, Object> getParams(Map<String, Object> params, HttpSession session) {
         Map<String, Object> lowParams = new HashMap<>();
@@ -70,6 +72,22 @@ public class HmetController {
         result.put("success", true);
         result.put("stt_text", "[자동 STT 변환 완료] \n- 일시: 2026년 10월 23일\n- 안건: 회의록 관리 시스템 구축 방안 논의\n- 주요발언: 1번 참석자 - 회의록 자동화 기능 필수, 2번 참석자 - STT 정확도 향상 필요.");
         result.put("summary", "[AI 회의 자동 요약]\n1. 목표: 회의록 작성 및 녹취 변환 자동화 시스템 구축\n2. 주요 결정사항: STT 변환 텍스트를 기반으로 핵심 요약 및 액션 아이템 추출 기능 도입\n3. 후속조치: 백엔드 API 연동 및 모바일 화면 개발 추진");
+        return result;
+    }
+
+    @PostMapping("/stt-correct")
+    public Map<String, Object> sttCorrect(@RequestBody Map<String, Object> payload) {
+        String rawText = String.valueOf(payload.getOrDefault("stt_text", ""));
+        Map<String, Object> result = new HashMap<>();
+        try {
+            String corrected = geminiAiService.correctSpelling(rawText);
+            result.put("success", true);
+            result.put("corrected_text", corrected);
+        } catch (Exception e) {
+            log.error("맞춤법 교정 실패: {}", e.getMessage());
+            result.put("success", false);
+            result.put("message", e.getMessage());
+        }
         return result;
     }
 }

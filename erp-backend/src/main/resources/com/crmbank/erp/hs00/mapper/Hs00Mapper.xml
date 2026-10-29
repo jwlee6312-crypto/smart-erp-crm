@@ -8,9 +8,7 @@
                 SELECT itemcd AS itemcd, itemcd AS codecd, itemcd AS code, itemnm AS itemnm, itemnm AS codenm, itemnm AS cdnm, itsize AS itsize, unit AS unit, itsize AS etcval, itsize AS remark, omprice AS uprc
                 FROM hsba010t_tbl
                 WHERE 1=1
-                <if test="cmpycd != null and cmpycd != '' and cmpycd != 'COIT'">
-                    AND cmpycd = #{cmpycd}
-                </if>
+                AND cmpycd = #{cmpycd}
                 <if test="keyword != null and keyword != ''">
                     AND (itemnm LIKE CONCAT('%', #{keyword}, '%') OR itemcd LIKE CONCAT('%', #{keyword}, '%'))
                 </if>
@@ -23,9 +21,7 @@
                 SELECT code as codecd, code as code, cdnm as codenm, cdnm as cdnm, remark as etcval, remark as remark
                 FROM hsba900t_tbl
                 WHERE useyn = 'Y'
-                <if test="cmpycd != null and cmpycd != '' and cmpycd != 'COIT'">
-                    AND cmpycd = #{cmpycd}
-                </if>
+                AND cmpycd = #{cmpycd}
                 <if test="gbncd != null and gbncd != ''">
                     AND cdgbn = #{gbncd}
                 </if>
