@@ -15,7 +15,12 @@ else
     cd "$PROJECT_ROOT"
 fi
 
-# 1.5. 프로젝트 파일 소유권 및 권한 자동 보정 (root 권한 빌드로 인한 stash-dir 에러 방지)
+# 1.2. 기존 프로세스 종료 및 빌드 캐시 디렉토리 강제 삭제 (파일 잠금/Clean 실패 방지)
+echo "[*] Terminating lingering gradle processes & cleaning build dirs..."
+sudo pkill -f gradle 2>/dev/null || true
+sudo rm -rf erp-backend/build 2>/dev/null || true
+
+# 1.5. 프로젝트 파일 소유권 및 권한 자동 보정
 echo "[*] Ensuring correct project file permissions..."
 sudo chown -R $(whoami):$(id -gn) "$PROJECT_ROOT" 2>/dev/null || true
 
