@@ -558,7 +558,16 @@ public class HsaaController {
 
         String ym = String.valueOf(payload.getOrDefault("ym", ""));
         String userid = String.valueOf(payload.getOrDefault("userid", user.getUserid()));
-        int dailyCapa = Integer.parseInt(String.valueOf(payload.getOrDefault("dailyCapa", "4")));
+        int dailyCapa = 4;
+        Object dcObj = payload.get("dailyCapa");
+        if (dcObj != null && !String.valueOf(dcObj).trim().isEmpty()) {
+            try {
+                int parsed = Integer.parseInt(String.valueOf(dcObj).trim());
+                if (parsed >= 1) {
+                    dailyCapa = parsed;
+                }
+            } catch (Exception ignored) {}
+        }
 
         List<Map<String, Object>> plan = hsaaService.generateVisitPlan(user.getCmpycd(), ym, userid, dailyCapa);
         return ResponseEntity.ok(ApiResponse.success(plan, "방문 계획 자동 수립 성공"));
@@ -584,5 +593,41 @@ public class HsaaController {
 
         List<Map<String, Object>> result = hsaaService.getHsbaCodes(user.getCmpycd(), group);
         return ResponseEntity.ok(ApiResponse.success(result, "조회 성공"));
+    }
+
+    // --- MHSAA500U 주간영업보고 API ---
+
+    @GetMapping("/weekly-report")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getWeeklyReport(
+            @RequestParam String weekid,
+            @RequestParam String userid,
+            HttpSession session) {
+        UserSession user = (UserSession) session.getAttribute("user_session");
+        if (user == null) return ResponseEntity.status(401).build();
+
+        Map<String, Object> result = hsaaService.getWeeklyReport(user.getCmpycd(), weekid, userid);
+        return ResponseEntity.ok(ApiResponse.success(result, "조회 성공"));
+    }
+
+    @PostMapping("/weekly-report/save")
+    public ResponseEntity<ApiResponse<?>> saveWeeklyReport(
+            @RequestBody Map<String, Object> payload,
+            HttpSession session) {
+        UserSession user = (UserSession) session.getAttribute("user_session");
+        if (user == null) return ResponseEntity.status(401).build();
+
+        hsaaService.saveWeeklyReport(payload, user.getCmpycd());
+        return ResponseEntity.ok(ApiResponse.success("저장 성공"));
+    }
+
+    @PostMapping("/weekly-report/auto")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> autoGenerateWeeklyReport(
+            @RequestBody Map<String, Object> payload,
+            HttpSession session) {
+        UserSession user = (UserSession) session.getAttribute("user_session");
+        if (user == null) return ResponseEntity.status(401).build();
+
+        Map<String, Object> result = hsaaService.autoGenerateWeeklyReport(payload, user.getCmpycd());
+        return ResponseEntity.ok(ApiResponse.success(result, "자동 생성 성공"));
     }
 }

@@ -66,7 +66,7 @@
       <div class="card border shadow-sm flex-grow-1 d-flex flex-column overflow-hidden">
         <div class="card-header bg-white py-1 px-3 border-bottom d-flex align-items-center justify-content-between flex-shrink-0">
           <span class="fw-bold small text-dark"><i class="bi bi-calendar-check me-2 text-primary"></i>스마트 방문 계획 스케줄</span>
-          <span class="x-small text-muted fst-italic">* 영업건 중요도(IMPORT), 확도(SUCCRATE), 최종접촉일(LASTMTDT), 공휴일(PD_HOLIDAY), 위·경도 동선 기반 자동 산출 결과입니다.</span>
+          <span class="x-small text-muted fst-italic"><i class="bi bi-info-circle me-1"></i>진행 중인 영업건의 고객 중요도(주기), 최근 미팅일 경과 기간, 주말·공휴일 제외 평일 근무일, 그리고 일일 방문 CAPA와 위·경도 동선을 종합하여 최적의 월간 방문 스케줄을 자동 산출합니다.</span>
         </div>
         <div class="card-body p-0 flex-grow-1 bg-white overflow-hidden d-flex flex-column">
           <div ref="gridRef" class="tabulator-instance flex-grow-1"></div>

@@ -606,14 +606,16 @@ public class HsaaService {
         }
 
         for (Map<String, Object> deal : deals) {
-            String imp = String.valueOf(deal.getOrDefault("import", "100"));
-            int cycleDays = cycleMap.getOrDefault(imp, 30);
+            String imp = String.valueOf(deal.getOrDefault("import", "60"));
+            int cycleDays = cycleMap.getOrDefault(imp, 60); // 기본값 60일 (중급 Fallback)
             deal.put("import_nm", gradeNameMap.getOrDefault(imp, "일반"));
 
             double succrate = 50.0;
             try { succrate = Double.parseDouble(String.valueOf(deal.getOrDefault("succrate", "50"))); } catch (Exception ignored) {}
 
-            double score = cycleDays * (succrate / 100.0);
+            // 💡 주기가 짧을수록(예: 30일) 우선순위 점수가 높고, 미정의 코드는 60일(중급)으로 안전하게 Fallback
+            double cycleWeight = 60.0 / Math.max(cycleDays, 1);
+            double score = cycleWeight * (succrate / 100.0);
             deal.put("_score", score);
         }
 
@@ -654,5 +656,26 @@ public class HsaaService {
     @Transactional
     public void confirmVisitPlan(Map<String, Object> payload, String cmpycd) {
         // No-op until storage table is agreed upon
+    }
+
+    // --- MHSAA500U 주간영업보고 API ---
+    public Map<String, Object> getWeeklyReport(String cmpycd, String weekid, String userid) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("last_week_perf", "전주 영업 실적 내용 없음");
+        map.put("next_week_plan", "차주 영업 계획 내용 없음");
+        map.put("issues_comments", "특이사항 없음");
+        return map;
+    }
+
+    public Map<String, Object> autoGenerateWeeklyReport(Map<String, Object> payload, String cmpycd) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("last_week_perf", "자동 생성된 전주 실적 요약");
+        map.put("next_week_plan", "자동 생성된 차주 계획 요약");
+        map.put("issues_comments", "자동 생성된 특이사항");
+        return map;
+    }
+
+    public void saveWeeklyReport(Map<String, Object> payload, String cmpycd) {
+        log.info("💡 [HSAA] Saving weekly report for cmpycd={}", cmpycd);
     }
 }
